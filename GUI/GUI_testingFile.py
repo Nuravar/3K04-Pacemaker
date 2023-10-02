@@ -1,21 +1,42 @@
 import customtkinter
 
-
 class checkboxFrame(customtkinter.CTkFrame):
-    def __init__(self,master):
+    def __init__(self, master, values):
         super().__init__(master)
-        #creates a checkbox
-        self.checkbox_1 = customtkinter.CTkCheckBox(self, text="checkbox1")
-        self.checkbox_1.grid(row=0, column=0, padx=20, pady=(0, 20), sticky="w")
+        self.values = values
+        self.checkboxes = []
+        #creates a certain number of checkboxes depending on the value entered
+        for i, value in enumerate(self.values):
+            checkbox = customtkinter.CTkCheckBox(self, text=value)
+            checkbox.grid(row=i, column=0, padx=10, pady=(10, 0), sticky="w")
+            self.checkboxes.append(checkbox)
 
-        #creates a second checkbox
-        self.checkbox_2 = customtkinter.CTkCheckBox(self, text="checkbox 2")
-        self.checkbox_2.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
+        # how to create 3 hardcoded checkboxes
+        # self.checkbox_1 = customtkinter.CTkCheckBox(self, text="checkbox1")
+        # self.checkbox_1.grid(row=0, column=0, padx=20, pady=(0, 20), sticky="w")
+        # #creates a second checkbox
+        # self.checkbox_2 = customtkinter.CTkCheckBox(self, text="checkbox 2")
+        # self.checkbox_2.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
+        # #the benefits of using a frame clbit ass is because the class itself is separate from the class App funciton we can just add another checkbox without any other changes
+        # #creates a third checkbox
+        # self.checkbox_3 = customtkinter.CTkCheckBox(self, text="checkbox 3")
+        # self.checkbox_3.grid(row=2, column=0, padx=20, pady=(0, 20), sticky="w")
 
-        #the benefits of using a frame clbit ass is because the class itself is separate from the class App funciton we can just add another checkbox without any other changes
-        #creates a third checkbox
-        self.checkbox_3 = customtkinter.CTkCheckBox(self, text="checkbox 2")
-        self.checkbox_3.grid(row=2, column=0, padx=20, pady=(0, 20), sticky="w")
+    #to add functionality to the buttons, we use a get function to check what checkboxes are pressed -- this will be checked when the button is pressed
+    def get(self):
+        checked_checkboxes = []
+        for checkbox in self.checkboxes:
+            if checkbox.get() == 1:
+                checked_checkboxes.append(checkbox.cget("text"))
+        # code for appending the hardcoded checkboxes
+        # if self.checkbox_1.get() == 1:
+        #     checked_checkboxes.append(self.checkbox_1.cget("text"))
+        # if self.checkbox_2.get() == 1:
+        #     checked_checkboxes.append(self.checkbox_2.cget("text"))
+        # if self.checkbox_3.get() == 1:
+        #     checked_checkboxes.append(self.checkbox_3.cget("text"))
+
+        return checked_checkboxes
 
 # we should use classes because it makes the code cleaner and more compact
 class App(customtkinter.CTk):
@@ -31,7 +52,7 @@ class App(customtkinter.CTk):
 
         #creating a frame -- a container for the button
         ## this is the gray background behind each checkbox
-        self.checkbox_frame = checkboxFrame(self) #we call the frame class we created above -- think of this as a component we just place into the main frame
+        self.checkbox_frame = checkboxFrame(self, values=["value 1", "value 2", "value 3"]) #we call the frame class we created above -- think of this as a component we just place into the main frame
         self.checkbox_frame.grid(row=0, column = 0, padx = 10, pady =(10,0), sticky ="nsw")
 
 
@@ -39,9 +60,9 @@ class App(customtkinter.CTk):
         self.button = customtkinter.CTkButton(self, text = "press here", command=self.button_callback)
         self.button.grid(row=3, column=0, padx=20, pady=20, sticky="ew", columnspan=2)
 
-    #creates command for the button above 
+    #creates command for the button above and prints what checkboxes have been pressed
     def button_callback(self):
-        print("button pressed")
+        print("checked checkboxes:", self.checkbox_frame.get())
 
 
 app = App()
