@@ -96,6 +96,7 @@ class ParametersWindow(customtkinter.CTkToplevel):
 
     def save_options(self):
         # Retrieve the values from the entries in the frames and print them
+        # ill add the other parameters later
         LRL_value = self.LRL_frame.entry.get()
         URL_value = self.URL_frame.entry.get()
         # print(f"Lower Rate Limit: {LRL_value}")
