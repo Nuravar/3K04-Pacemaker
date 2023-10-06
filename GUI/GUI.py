@@ -20,88 +20,28 @@ class ParametersWindow(customtkinter.CTkToplevel):
 
         self.overall_frame = customtkinter.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
-        # there is probably a way to convert all of these into a for loop and have all of the titles as a string
-        #       i will probably do that later since idk what we are gonna do to these values
-        # Frame containing the Lower Rate Limit
-        self.LRL_frame = InputFrame(self.overall_frame, "Lower Rate Limit           ")
-        self.LRL_frame.pack(padx=20, pady=20, anchor='w')
 
-        # Frame containing the Upper Rate Limit
-        self.URL_frame = InputFrame(self.overall_frame, "Upper Rate Limit           ")
-        self.URL_frame.pack(padx=20, pady=20, anchor='w')
+        titles = [
+            "Lower Rate Limit", "Upper Rate Limit", "Maximum Sensor Rate", "Fixed AV Delay",
+            "Atrial Amplitude", "Atrial Pulse Width", "Atrial Sensitivity", "Ventricular Amplitude",
+            "Ventricular Pulse Width", "Ventricular Sensitivity", "Absolute Refractory Period",
+            "Ventricular Refractory Period", "Post-Ventricular Atrial Refractory Period", "Activity Threshold",
+            "Reaction Time", "Response Factor", "Recovery Time"
+        ]
 
-        # Frame containing the Maximum Sensor Rate
-        self.MSR_frame = InputFrame(self.overall_frame, "Maximum Sensor Rate")
-        self.MSR_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Fixed AV Delay
-        self.FAV_frame = InputFrame(self.overall_frame, "Fixed AV Delay             ")
-        self.FAV_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Atrial Amplitude
-        self.AAM_frame = InputFrame(self.overall_frame, "Atrial Amplitude           ")
-        self.AAM_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Atrial Pulse Width
-        self.APW_frame = InputFrame(self.overall_frame, "Atrial Pulse Width         ")
-        self.APW_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Atrial Sensitivity
-        self.AST_frame = InputFrame(self.overall_frame, "Atrial Sensitivity          ")
-        self.AST_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.VTA_frame = InputFrame(self.overall_frame, "Ventricular Amplitude      ")
-        self.VTA_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.VPW_frame = InputFrame(self.overall_frame, "Ventricular Pulse Width    ")
-        self.VPW_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.VTS_frame = InputFrame(self.overall_frame, "Ventricular Sensitivity    ")
-        self.VTS_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.ARP_frame = InputFrame(self.overall_frame, "Absolute Refractory Period ")
-        self.ARP_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.VRP_frame = InputFrame(self.overall_frame, "Ventricular Refractory Period")
-        self.VRP_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.PVARP_frame = InputFrame(self.overall_frame, "Post-Ventricular Atrial Refractory Period")
-        self.PVARP_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.ACT_frame = InputFrame(self.overall_frame, "Activity Threshold         ")
-        self.ACT_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.RT_frame = InputFrame(self.overall_frame, "Reaction Time              ")
-        self.RT_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.RF_frame = InputFrame(self.overall_frame, "Response Factor           ")
-        self.RF_frame.pack(padx=20, pady=20, anchor='w')
-
-        # Frame containing the Ventricular Amplitude
-        self.RCT_frame = InputFrame(self.overall_frame, "Recovery Time            ")
-        self.RCT_frame.pack(padx=20, pady=20, anchor='w')
+        max_length = max(map(len, titles))
+        self.frames = []
+        for title in titles:
+            frame = InputFrame(self.overall_frame, title.ljust(max_length)).pack(padx=20, pady=20, anchor='w')
+            self.frames.append(frame)
 
         # Save Button
-        self.save_button = customtkinter.CTkButton(self, text="Save Options", command=self.save_options)
+        self.save_button = customtkinter.CTkButton(self, text="Save Options", command=self.save_options, fg_color="#1d3557", hover_color="#457B9D")
         self.save_button.pack(padx=20, pady=20)
 
     def save_options(self):
-        # Retrieve the values from the entries in the frames and print them
-        # ill add the other parameters later
-        LRL_value = self.LRL_frame.entry.get()
-        URL_value = self.URL_frame.entry.get()
-        # print(f"Lower Rate Limit: {LRL_value}")
-        # print(f"Upper Rate Limit: {URL_value}")
-
+        values = [frame.entry.get() for frame in self.frames]
+        print(values)
 
 class App(customtkinter.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
