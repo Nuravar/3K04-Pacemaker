@@ -180,7 +180,7 @@ class App(customtkinter.CTk):
             self.switch.configure(text="🌙")
         else: 
             customtkinter.set_appearance_mode("light")
-            self.switch.configure(text="🌞")       
+            self.switch.configure(text="☀")       
 
     def show_parameters_popup(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
