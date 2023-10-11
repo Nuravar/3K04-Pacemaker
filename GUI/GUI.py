@@ -29,10 +29,9 @@ class ParametersWindow(customtkinter.CTkToplevel):
             "Reaction Time", "Response Factor", "Recovery Time"
         ]
 
-        max_length = max(map(len, titles))
         self.frames = []
         for title in titles:
-            frame = InputFrame(self.overall_frame, title.ljust(max_length)).pack(padx=20, pady=20, anchor='w')
+            frame = InputFrame(self.overall_frame, title).pack(padx=20, pady=20, anchor='w')
             self.frames.append(frame)
 
         # Save Button
@@ -110,7 +109,7 @@ class App(customtkinter.CTk):
         customtkinter.CTkLabel(self.footer_frame, text='Footer Content').pack()
 
         self.connection = customtkinter.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'right') #initial state is not connected
-        self.show_parameters_popup()
+        self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
 
 
     def theme_event(self):
