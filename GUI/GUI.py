@@ -252,7 +252,7 @@ class App(customtkinter.CTk):
         self.footer_frame.pack(fill='x', side='bottom')
         
         customtkinter.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        customtkinter.CTkLabel(self.footer_frame, text='Heart Murderers Ltd.').pack(side='right', padx=(0,200))  
+        customtkinter.CTkLabel(self.footer_frame, text='Fake Name Ltd.').pack(side='right', padx=(0,200))  
 
         self.connection = customtkinter.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left') #initial state is not connected
         #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
