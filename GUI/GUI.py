@@ -71,13 +71,11 @@ class App(customtkinter.CTk):
         customtkinter.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
 
         # Entry for username
-        customtkinter.CTkLabel(self.login_frame, text='Username').pack()
-        self.username_entry = customtkinter.CTkEntry(self.login_frame)
+        self.username_entry = customtkinter.CTkEntry(self.login_frame, placeholder_text="Username")
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        customtkinter.CTkLabel(self.login_frame, text='Password').pack()
-        self.password_entry = customtkinter.CTkEntry(self.login_frame, show="*")  # Password entry
+        self.password_entry = customtkinter.CTkEntry(self.login_frame, placeholder_text="Password", show="*")  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
@@ -92,18 +90,15 @@ class App(customtkinter.CTk):
         customtkinter.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
 
         # Entry for username
-        customtkinter.CTkLabel(self.register_frame, text='Username').pack()
-        self.create_username_entry = customtkinter.CTkEntry(self.register_frame)
+        self.create_username_entry = customtkinter.CTkEntry(self.register_frame, placeholder_text="Username")
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        customtkinter.CTkLabel(self.register_frame, text='Password').pack()
-        self.create_password_entry = customtkinter.CTkEntry(self.register_frame, show="*")  # Password entry
+        self.create_password_entry = customtkinter.CTkEntry(self.register_frame, placeholder_text="Password", show="*")  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        customtkinter.CTkLabel(self.register_frame, text='Re-Type Password').pack()
-        self.create_password_check = customtkinter.CTkEntry(self.register_frame, show="*")  # Password check
+        self.create_password_check = customtkinter.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*")  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
