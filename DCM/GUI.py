@@ -4,33 +4,39 @@ import hashlib
 #import numpy as np
 #import matplotlib.pyplot as plt
 
+# The code provides an interface to adjust and save parameters for a pacemaker.
+# It also provides a user login and registration system.
+
 class InputFrame(ctk.CTkFrame):
     def __init__(self, master, title, from_, to, ranges_and_increments, unit):
+        # This is a custom frame containing a label, slider and value label.
         super().__init__(master)
-
+        # Create and pack the label showing the title
         self.ranges_and_increments = self.process_ranges_and_increments(ranges_and_increments)
         self.label = ctk.CTkLabel(self, text=title)
         self.label.pack(side='left', padx=5)
-
+        # Set up variable for holding the slider's value
         self.value_var = ctk.DoubleVar()  # Create a DoubleVar
         self.value_var.set(from_)  # Set its initial value
-
+        # Create and pack the slider
         self.slider = ctk.CTkSlider(self, from_=from_, to=to, command=self.update_slider_value, variable=self.value_var)
         self.slider.pack(side='left', padx=5)
-
+        # Label that shows the current value of the slider
         self.value_label = ctk.CTkLabel(self, textvariable=self.value_var)
         self.value_label.pack(side='left', padx=5)
-
+        # Label that shows the unit of the value
         self.unit = unit
         self.value_label = ctk.CTkLabel(self, text=self.unit)
         self.value_label.pack(side='left', padx=5)
 
     def update_slider_value(self, value):
+        # Adjust the slider's value to increments and format it
         corrected_value = self.variable_increment(value, self.ranges_and_increments)
         formatted_value = "{:.2f}".format(corrected_value)  # Format the value to two decimal places with unit
         self.value_var.set(formatted_value)
 
     def variable_increment(self, value, rangeAndInc):
+        # Adjust the slider's value to the closest increment
         value = int(value)
         for (start, end, increment) in rangeAndInc:
             if start <= value <= end:
@@ -38,12 +44,14 @@ class InputFrame(ctk.CTkFrame):
         return value
 
     def process_ranges_and_increments(self, ranges):
+        # If a single value is provided, use it as the increment and set no limit
         # if ranges is just a single value, then create a list of one tuple
         if isinstance(ranges, (int, float)):
             return [(0, float('inf'), ranges)]
         return ranges
 
 class MessageWindow(ctk.CTkToplevel):
+    # This creates a simple message window with a given title and message.
     def __init__(self, title, msg):
         super().__init__()
         self.geometry("400x100")
@@ -52,6 +60,7 @@ class MessageWindow(ctk.CTkToplevel):
         self.msg = ctk.CTkLabel(self, text=msg).pack(padx=20, pady=20)
       
 class ParametersWindow(ctk.CTkToplevel):
+    # This window allows users to adjust pacemaker parameters with sliders.
     DEFAULT_VALUES = [60, 120, 120, 150, 3500, 400, 750,  3500, 400, 250, 250 , 320 , 250 , 4, 30 , 8, 5]
     values = []
 
@@ -60,7 +69,8 @@ class ParametersWindow(ctk.CTkToplevel):
         self.app = app
         self.geometry("600x400")
         self.title("Parameters")
-        self.focus()
+        self.focus() # Put the frame on top
+        # Create a scrollable frame
         self.overall_frame = ctk.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
         
@@ -94,7 +104,7 @@ class ParametersWindow(ctk.CTkToplevel):
             "Ventricular Refractory Period", "Post-Ventricular Atrial Refractory Period", "Activity Threshold",
             "Reaction Time", "Response Factor", "Recovery Time"
         ]
-
+        # Populate the parameters window with sliders
         if not ParametersWindow.values:
            ParametersWindow.values = ParametersWindow.DEFAULT_VALUES
 
@@ -104,7 +114,7 @@ class ParametersWindow(ctk.CTkToplevel):
             frame.slider.set(value)  # Set the slider to the default value
             frame.pack(padx=20, pady=20, anchor='w')
             self.frames.append(frame)
-
+        # Buttons to save changes or reset to default
         # Save Button
         self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options, fg_color="#1d3557", hover_color="#457B9D")
         self.save_button.pack(side='left', padx=20, pady=20)
@@ -114,6 +124,7 @@ class ParametersWindow(ctk.CTkToplevel):
         self.reset_button.pack(side='right', padx=20, pady=20)
 
     def get_user_list(self):
+        # Reads the file with users, returns a list of user lines
             # Check if the file exists, if not, return an empty list
             if not os.path.exists("user_accounts.txt"):
                 return []
@@ -125,6 +136,7 @@ class ParametersWindow(ctk.CTkToplevel):
                 return []
 
     def reset_to_default(self):
+        # Reset the sliders to their default values
         ParametersWindow.values = ParametersWindow.DEFAULT_VALUES.copy()  # Reset to default values in memory
         self.update_values()
         self.save_options()  # Save the default values back to the file
