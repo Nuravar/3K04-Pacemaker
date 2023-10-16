@@ -347,6 +347,8 @@ class App(ctk.CTk):
         self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
         self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI","VOO","VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right")
+        ctk.CTkButton(self.nav_bar, text='⏸ Stop', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='▶ Run', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
 
         self.toplevel_window = None
 
