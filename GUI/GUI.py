@@ -4,7 +4,7 @@ import hashlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-plt.style.use('./Gui/tmp/rose-pine.mplstyle')
+#plt.style.use('./Gui/tmp/rose-pine.mplstyle')
 
 
 class InputFrame(ctk.CTkFrame):
@@ -78,6 +78,7 @@ class App(ctk.CTk):
         self.title('Pacemaker')
         self.geometry('800x400')
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
+        self.msg_window = None
         self.create_welcome_screen()
         
     def create_welcome_screen(self):
