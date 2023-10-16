@@ -1,8 +1,8 @@
 import os
 import customtkinter as ctk
 import hashlib
-import numpy as np
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib.pyplot as plt
 
 class InputFrame(ctk.CTkFrame):
     def __init__(self, master, title, from_, to, ranges_and_increments, unit):
@@ -12,7 +12,7 @@ class InputFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self, text=title)
         self.label.pack(side='left', padx=5)
 
-        self.value_var = tkinter.DoubleVar()  # Create a DoubleVar
+        self.value_var = ctk.DoubleVar()  # Create a DoubleVar
         self.value_var.set(from_)  # Set its initial value
 
         self.slider = ctk.CTkSlider(self, from_=from_, to=to, command=self.update_slider_value, variable=self.value_var)
@@ -55,8 +55,9 @@ class ParametersWindow(ctk.CTkToplevel):
     DEFAULT_VALUES = [60, 120, 120, 150, 3500, 400, 750,  3500, 400, 250, 250 , 320 , 250 , 4, 30 , 8, 5]
     values = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.app = app
         self.geometry("600x400")
         self.title("Parameters")
         self.focus()
@@ -112,18 +113,52 @@ class ParametersWindow(ctk.CTkToplevel):
         self.reset_button = ctk.CTkButton(self, text="Reset to Default", command=self.reset_to_default, fg_color="#1d3557", hover_color="#457B9D")
         self.reset_button.pack(side='right', padx=20, pady=20)
 
-    def save_options(self):
-        for i, frame in enumerate(self.frames):
-            self.values[i] = frame.slider.get()
-        print(self.values)
+    def get_user_list(self):
+            # Check if the file exists, if not, return an empty list
+            if not os.path.exists("user_accounts.txt"):
+                return []
+
+            try:
+                with open("user_accounts.txt", "r") as file:
+                    return [line.strip() for line in file.readlines()]
+            except FileNotFoundError:
+                return []
 
     def reset_to_default(self):
-        ParametersWindow.values = ParametersWindow.DEFAULT_VALUES.copy()  # Reset to default values
+        ParametersWindow.values = ParametersWindow.DEFAULT_VALUES.copy()  # Reset to default values in memory
         self.update_values()
+        self.save_options()  # Save the default values back to the file
 
     def update_values(self):
         for i, frame in enumerate(self.frames):
-            frame.slider.set(self.values[i])
+            frame.slider.set(ParametersWindow.values[i])
+
+    def save_options(self):
+        # Check if a user is logged in
+        if not self.app.current_username:
+            print("No user logged in.")
+            return
+
+        # Update self.values with current slider values
+        self.values = [int(frame.slider.get()) for frame in self.frames]
+
+        # Read the existing user list from the file
+        user_list = self.get_user_list()
+
+        # Find the user entry for the currently logged-in user
+        for i, user_entry in enumerate(user_list):
+            username, hashed_password, _ = user_entry.split(":")
+            if self.app.current_username == username:
+                # Update the encoded parameters directly
+                user_list[i] = f"{username}:{hashed_password}:{','.join(map(str, self.values))}"
+                break
+
+        # Write the updated user list back to the file
+        with open("user_accounts.txt", "w") as file:
+            file.write(','.join(user_list) + "\n")
+
+        print(f"Saved options for user {self.app.current_username}")
+
 
     def variable_increment(value, rangeAndInc):
         value = int(value)
@@ -139,6 +174,7 @@ class App(ctk.CTk):
         self.geometry('800x400')
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
         self.msg_window = None
+        self.current_username = None  # Initialize the current_username variable
         self.create_welcome_screen()
         
     def create_welcome_screen(self):
@@ -220,9 +256,14 @@ class App(ctk.CTk):
 
         # Save the username and hashed password to the file
         with open("user_accounts.txt", "a") as file:
-            file.write(f"{username}:{hashed_password}\n")
+            file.write(f"{username}:{hashed_password}:{','.join(map(str, ParametersWindow.DEFAULT_VALUES))}\n")
 
         print(f"Registered: Username - {username}")
+
+        # Set the current_username after registration
+        self.current_username = username
+
+        # Continue with the main screen display
         self.show_main_screen()
 
     def login(self):
@@ -238,11 +279,25 @@ class App(ctk.CTk):
 
         # Check if the provided username and hashed password match any record in the file
         user_list = self.get_user_list()
-        for user in user_list:
-            stored_username, stored_hashed_password = user.split(":")
+        for user_entry in user_list:
+            stored_username, stored_hashed_password, _ = user_entry.split(":")
             if username == stored_username and hashed_password == stored_hashed_password:
                 print(f"Logged in: Username - {username}")
+
+                # Set the current_username variable
+                self.current_username = username
+
+                # Continue with the rest of the login process
                 self.show_main_screen()
+
+                # Create an instance of ParametersWindow after showing the main screen
+                self.toplevel_window = ParametersWindow(self, self)
+                self.toplevel_window.values = list(map(int, _.split(',')))  # Replace _ with the appropriate variable
+                self.toplevel_window.update_values()
+
+                # Focus on the ParametersWindow after the main screen is displayed
+                self.toplevel_window.focus()
+
                 return
 
         error_message = "Login failed: Invalid username or password."
