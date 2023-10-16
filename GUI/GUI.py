@@ -5,10 +5,9 @@ import hashlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-plt.style.use('./Gui/tmp/rose-pine.mplstyle')
 
 class InputFrame(customtkinter.CTkFrame):
-    def __init__(self, master, title, from_, to, ranges_and_increments):
+    def __init__(self, master, title, from_, to, ranges_and_increments, unit):
         super().__init__(master)
 
         self.ranges_and_increments = self.process_ranges_and_increments(ranges_and_increments)
@@ -24,9 +23,13 @@ class InputFrame(customtkinter.CTkFrame):
         self.value_label = customtkinter.CTkLabel(self, textvariable=self.value_var)
         self.value_label.pack(side='left', padx=5)
 
+        self.unit = unit
+        self.value_label = customtkinter.CTkLabel(self, text=self.unit)
+        self.value_label.pack(side='left', padx=5)
+
     def update_slider_value(self, value):
         corrected_value = self.variable_increment(value, self.ranges_and_increments)
-        formatted_value = "{:.2f}".format(corrected_value)  # Format the value to two decimal places
+        formatted_value = "{:.2f}".format(corrected_value)  # Format the value to two decimal places with unit
         self.value_var.set(formatted_value)
 
     def variable_increment(self, value, rangeAndInc):
@@ -43,7 +46,8 @@ class InputFrame(customtkinter.CTkFrame):
         return ranges
 
 class ParametersWindow(customtkinter.CTkToplevel):
-    values = []  # class level variable
+    DEFAULT_VALUES = [60, 120, 120, 150, 3500, 400, 750,  3500, 400, 250, 250 , 320 , 250 , 4, 30 , 8, 5]
+    values = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -53,20 +57,22 @@ class ParametersWindow(customtkinter.CTkToplevel):
         self.focus()
         self.overall_frame = customtkinter.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
+        
+        units = ["ppm", "ppm", "ppm", "ms", "µV", "µs", "µV", "µV", "µs", "µV", "ms", "ms", "ms", "", "sec", "", "min"]
 
         # Define unique slider ranges for each of the 17 variables
         slider_ranges = [
-            (30, 175, [(30, 50, 5), (50, 90, 1), (90, 175, 5)]),  #lower rate limit x 
-            (50, 175, 5), # Upper Rate Limit x
-            (50, 175, 5), # Maximum Sensor Rate x
+            (30, 175, [(30, 50, 5), (50, 90, 1), (90, 175, 5)]),  #lower rate limit x x 
+            (50, 175, 5), # Upper Rate Limit x x 
+            (50, 175, 5), # Maximum Sensor Rate x 
             (70, 300, 10), # Fixed AV Delay x
-            (500, 7000, [(500, 3200, 100), (3200, 3500, 300), (3500, 7000, 500)]), # Atrial Amplitude  
-            (50, 1900, [(50,100,50),(100,1900,100)]),  # Atrial Pulse Width x 
+            (500, 7000, [(500, 3200, 100), (3200, 3500, 300), (3500, 7000, 500)]), # Atrial Amplitude   x x 
+            (50, 1900, [(50,100,50),(100,1900,100)]),  # Atrial Pulse Width x x 
             (250, 10000, [(250,500,250), (500,750,250), (1000,10000,500)]),  # Atrial Sensitivity x 
-            (500, 7000, [(500, 3200, 100), (3200, 3500, 300), (3500, 7000, 500)]),  # Ventricular Amplitude 
-            (50, 1900, [(50,100,50),(100,1900,100)]), # Ventricular Pulse Width x
+            (500, 7000, [(500, 3200, 100), (3200, 3500, 300), (3500, 7000, 500)]),  # Ventricular Amplitude xx
+            (50, 1900, [(50,100,50),(100,1900,100)]), # Ventricular Pulse Width x 
             (25000, 1000000, [(250,500,250), (500,750,250), (0,75000,1000,250), (1000,10000,500)]), # Ventricular Sensitivity x 
-            (150, 500, 10), # Absolute Refractory Period x 
+            (150, 500, 10), # Absolute Refractory Period x  
             (150, 500, 10), # Ventricular Refractory Period x 
             (150, 500, 10), # Post-Ventricular Atrial Refractory Period x 
             (0, 7, 1), # Activity Threshold x 
@@ -84,28 +90,36 @@ class ParametersWindow(customtkinter.CTkToplevel):
         ]
 
         if not ParametersWindow.values:
-            ParametersWindow.values = [val[0] for val in slider_ranges]  # default to start of slider range
+           ParametersWindow.values = ParametersWindow.DEFAULT_VALUES
 
         self.frames = []
-        for (title, value, (from_, to_, increment)) in zip(titles, self.values, slider_ranges):
-            frame = InputFrame(self.overall_frame, title, from_, to_, increment)
+        for (title, value, (from_, to_, increment), unit) in zip(titles, self.values, slider_ranges, units):
+            frame = InputFrame(self.overall_frame, title, from_, to_, increment, unit)
             frame.slider.set(value)  # Set the slider to the default value
             frame.pack(padx=20, pady=20, anchor='w')
             self.frames.append(frame)
 
         # Save Button
         self.save_button = customtkinter.CTkButton(self, text="Save Options", command=self.save_options, fg_color="#1d3557", hover_color="#457B9D")
-        self.save_button.pack(padx=20, pady=20)
+        self.save_button.pack(side='left', padx=20, pady=20)
+
+        # Reset to Default Button
+        self.reset_button = customtkinter.CTkButton(self, text="Reset to Default", command=self.reset_to_default, fg_color="#1d3557", hover_color="#457B9D")
+        self.reset_button.pack(side='right', padx=20, pady=20)
 
     def save_options(self):
         for i, frame in enumerate(self.frames):
-            self.values[i] = frame.slider.get()  # Update the values list with the current slider value
+            self.values[i] = frame.slider.get()
         print(self.values)
+
+    def reset_to_default(self):
+        ParametersWindow.values = ParametersWindow.DEFAULT_VALUES.copy()  # Reset to default values
+        self.update_values()
 
     def update_values(self):
         for i, frame in enumerate(self.frames):
-            frame.slider.set(self.values[i])  # Set the slider to the updated value
-        
+            frame.slider.set(self.values[i])
+
     def variable_increment(value, rangeAndInc):
         value = int(value)
         for (start, end, increment) in rangeAndInc:
