@@ -32,8 +32,10 @@ class InputFrame(ctk.CTkFrame):
     def update_slider_value(self, value):
         # Adjust the slider's value to increments and format it
         corrected_value = self.variable_increment(value, self.ranges_and_increments)
-        formatted_value = "{:.2f}".format(corrected_value)  # Format the value to two decimal places with unit
-        self.value_var.set(formatted_value)
+        self.value_var.set(corrected_value)  # Set the internal value
+        # Update displayed value
+        formatted_value = "{:.2f}".format(corrected_value)
+        self.value_label['text'] = formatted_value + " " + self.unit
 
     def variable_increment(self, value, rangeAndInc):
         # Adjust the slider's value to the closest increment
@@ -74,6 +76,12 @@ class ParametersWindow(ctk.CTkToplevel):
         self.overall_frame = ctk.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
         
+        self.values = []  # Initialize the values list
+
+        loaded_values = self.load_user_values()  # Load the saved values for the current user
+        if loaded_values:
+            self.values = loaded_values
+
         units = ["ppm", "ppm", "ppm", "ms", "µV", "µs", "µV", "µV", "µs", "µV", "ms", "ms", "ms", "", "sec", "", "min"]
 
         # Define unique slider ranges for each of the 17 variables
@@ -105,8 +113,8 @@ class ParametersWindow(ctk.CTkToplevel):
             "Reaction Time", "Response Factor", "Recovery Time"
         ]
         # Populate the parameters window with sliders
-        if not ParametersWindow.values:
-           ParametersWindow.values = ParametersWindow.DEFAULT_VALUES
+        if self.values == []:
+           self.values = ParametersWindow.DEFAULT_VALUES
 
         self.frames = []
         for (title, value, (from_, to_, increment), unit) in zip(titles, self.values, slider_ranges, units):
@@ -137,13 +145,13 @@ class ParametersWindow(ctk.CTkToplevel):
 
     def reset_to_default(self):
         # Reset the sliders to their default values
-        ParametersWindow.values = ParametersWindow.DEFAULT_VALUES.copy()  # Reset to default values in memory
+        self.values = ParametersWindow.DEFAULT_VALUES.copy()  # Reset to default values in memory
         self.update_values()
         self.save_options()  # Save the default values back to the file
 
     def update_values(self):
         for i, frame in enumerate(self.frames):
-            frame.slider.set(ParametersWindow.values[i])
+            frame.slider.set(self.values[i])
 
     def save_options(self):
         # Check if a user is logged in
@@ -159,7 +167,7 @@ class ParametersWindow(ctk.CTkToplevel):
 
         # Find the user entry for the currently logged-in user
         for i, user_entry in enumerate(user_list):
-            username, hashed_password, _ = user_entry.split(":")
+            username, hashed_password, saved_parameters = user_entry.split(":")
             if self.app.current_username == username:
                 # Update the encoded parameters directly
                 user_list[i] = f"{username}:{hashed_password}:{','.join(map(str, self.values))}"
@@ -167,10 +175,26 @@ class ParametersWindow(ctk.CTkToplevel):
 
         # Write the updated user list back to the file
         with open("user_accounts.txt", "w") as file:
-            file.write(','.join(user_list) + "\n")
+            file.write('\n'.join(user_list) + '\n' if user_list else '')
 
         print(f"Saved options for user {self.app.current_username}")
 
+    def load_user_values(self):
+        # Check if a user is logged in
+        if not self.app.current_username:
+            print("No user logged in.")
+            return
+
+        # Read the existing user list from the file
+        user_list = self.get_user_list()
+
+        # Find the user entry for the currently logged-in user
+        for user_entry in user_list:
+            username, hashed_password, saved_parameters = user_entry.split(":")
+            if self.app.current_username == username:
+                # Update self.values with the saved parameters
+                self.values = list(map(int, saved_parameters.split(',')))
+                break
 
     def variable_increment(value, rangeAndInc):
         value = int(value)
@@ -292,7 +316,7 @@ class App(ctk.CTk):
         # Check if the provided username and hashed password match any record in the file
         user_list = self.get_user_list()
         for user_entry in user_list:
-            stored_username, stored_hashed_password, _ = user_entry.split(":")
+            stored_username, stored_hashed_password, saved_parameters = user_entry.split(":")
             if username == stored_username and hashed_password == stored_hashed_password:
                 print(f"Logged in: Username - {username}")
 
@@ -304,7 +328,7 @@ class App(ctk.CTk):
 
                 # Create an instance of ParametersWindow after showing the main screen
                 self.toplevel_window = ParametersWindow(self, self)
-                self.toplevel_window.values = list(map(int, _.split(',')))  # Replace _ with the appropriate variable
+                self.toplevel_window.values = list(map(int, saved_parameters.split(',')))  
                 self.toplevel_window.update_values()
 
                 # Focus on the ParametersWindow after the main screen is displayed
