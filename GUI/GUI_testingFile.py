@@ -1,14 +1,21 @@
 import customtkinter
 
 class checkboxFrame(customtkinter.CTkFrame):
-    def __init__(self, master, values):
+    def __init__(self, master,title, values):
         super().__init__(master)
+        #title initilization
+        self.grid_columnconfigure(0, weight=1)
+        self.title = title
         self.values = values
         self.checkboxes = []
+        #title placement
+        self.title = customtkinter.CTkLabel(self, text=self.title, fg_color="gray30", corner_radius=6)
+        self.title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew")
+
         #creates a certain number of checkboxes depending on the value entered
         for i, value in enumerate(self.values):
             checkbox = customtkinter.CTkCheckBox(self, text=value)
-            checkbox.grid(row=i, column=0, padx=10, pady=(10, 0), sticky="w")
+            checkbox.grid(row=i+1, column=0, padx=10, pady=(10, 0), sticky="w")
             self.checkboxes.append(checkbox)
 
         # how to create 3 hardcoded checkboxes
@@ -52,9 +59,12 @@ class App(customtkinter.CTk):
 
         #creating a frame -- a container for the button
         ## this is the gray background behind each checkbox
-        self.checkbox_frame = checkboxFrame(self, values=["value 1", "value 2", "value 3"]) #we call the frame class we created above -- think of this as a component we just place into the main frame
+        self.checkbox_frame = checkboxFrame(self, "Values", values=["value 1", "value 2", "value 3"]) #we call the frame class we created above -- think of this as a component we just place into the main frame
         self.checkbox_frame.grid(row=0, column = 0, padx = 10, pady =(10,0), sticky ="nsw")
-
+        
+        #creating a second instance of the above checkbox class beside the first class
+        self.checkbox_frame2 = checkboxFrame(self, "Options", values=["option 1", "option 2"]) 
+        self.checkbox_frame2.grid(row=0, column = 1, padx = 10, pady =(10,0), sticky ="nsew")
 
         #creates the button 
         self.button = customtkinter.CTkButton(self, text = "press here", command=self.button_callback)
@@ -63,7 +73,7 @@ class App(customtkinter.CTk):
     #creates command for the button above and prints what checkboxes have been pressed
     def button_callback(self):
         print("checked checkboxes:", self.checkbox_frame.get())
-
+        print("checked checkboxes 2:", self.checkbox_frame2.get()) 
 
 app = App()
 app.mainloop()  

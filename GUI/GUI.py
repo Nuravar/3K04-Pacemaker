@@ -1,6 +1,11 @@
 import os
 import customtkinter as ctk
 import hashlib
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.style.use('./Gui/tmp/rose-pine.mplstyle')
+
 
 class InputFrame(ctk.CTkFrame):
     def __init__(self, master, title):
@@ -21,11 +26,14 @@ class MessageWindow(ctk.CTkToplevel):
 
         self.title(title)
         self.msg = ctk.CTkLabel(self, text=msg).pack(padx=20, pady=20)
-
+        
 class ParametersWindow(ctk.CTkToplevel):
+    values = [] #class level variable
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("400x400")
+        self.title("Parameters")
 
         self.overall_frame = ctk.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
@@ -38,10 +46,14 @@ class ParametersWindow(ctk.CTkToplevel):
             "Reaction Time", "Response Factor", "Recovery Time"
         ]
 
-        max_length = max(map(len, titles))
+        if not ParametersWindow.values:
+            ParametersWindow.values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17']
+        
         self.frames = []
-        for title in titles:
-            frame = InputFrame(self.overall_frame, title.ljust(max_length)).pack(padx=20, pady=20, anchor='w')
+        for title, value in zip(titles, self.values):
+            frame = InputFrame(self.overall_frame, title)
+            frame.entry.insert(0, value)  # Insert the default value into the entry
+            frame.pack(padx=20, pady=20, anchor='w')
             self.frames.append(frame)
 
         # Save Button
@@ -49,8 +61,16 @@ class ParametersWindow(ctk.CTkToplevel):
         self.save_button.pack(padx=20, pady=20)
 
     def save_options(self):
-        values = [frame.entry.get() for frame in self.frames]
-        print(values)
+        for i, frame in enumerate(self.frames):
+            self.values[i] = frame.entry.get()  # Update the values list with the current entry value
+            frame.entry.delete(0, 'end')  # Clear the entry
+            frame.entry.insert(0, self.values[i])  # Insert the updated value back into the entry
+        print(self.values)
+
+    def update_values(self):
+        for i, frame in enumerate(self.frames):
+            frame.entry.delete(0, 'end')  # Clear the entry
+            frame.entry.insert(0, self.values[i])  # Insert the updated value into the entry
 
 class App(ctk.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
@@ -58,10 +78,8 @@ class App(ctk.CTk):
         self.title('Pacemaker')
         self.geometry('800x400')
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
-        self.msg_window = None
         self.create_welcome_screen()
         
-
     def create_welcome_screen(self):
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
@@ -71,7 +89,6 @@ class App(ctk.CTk):
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
         ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
 
-
     def show_login_screen(self):
         self.welcome_frame.pack_forget()
         self.login_frame = ctk.CTkFrame(self)
@@ -80,17 +97,19 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
 
         # Entry for username
-        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username")
+        ctk.CTkLabel(self.login_frame, text='Username').pack()
+        self.username_entry = ctk.CTkEntry(self.login_frame)
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*")  # Password entry
+        ctk.CTkLabel(self.login_frame, text='Password').pack()
+        self.password_entry = ctk.CTkEntry(self.login_frame, show="*")  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
         ctk.CTkButton(self.login_frame, text='Login', command=self.login, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-
+    
     def show_register_screen(self):
         self.welcome_frame.pack_forget()
         self.register_frame = ctk.CTkFrame(self)
@@ -99,70 +118,23 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
 
         # Entry for username
-        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username")
+        ctk.CTkLabel(self.register_frame, text='Username').pack()
+        self.create_username_entry = ctk.CTkEntry(self.register_frame)
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*")  # Password entry
+        ctk.CTkLabel(self.register_frame, text='Password').pack()
+        self.create_password_entry = ctk.CTkEntry(self.register_frame, show="*")  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*")  # Password check
+        ctk.CTkLabel(self.register_frame, text='Re-Type Password').pack()
+        self.create_password_check = ctk.CTkEntry(self.register_frame, show="*")  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
         ctk.CTkButton(self.register_frame, text='Register', command=self.register, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
         ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-
-
-    def back_to_welcome(self):
-        for widget in self.winfo_children():
-            widget.pack_forget()
-        self.create_welcome_screen()
-
-    def show_main_screen(self):
-        for widget in self.winfo_children():
-            widget.pack_forget()
-
-        self.main_frame = ctk.CTkFrame(self)  
-        self.main_frame.pack(fill='both', expand=True)
-
-        self.nav_bar = ctk.CTkFrame(self.main_frame)
-        self.nav_bar.pack(fill='x')
-        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        self.toplevel_window = None
-
-        self.switch_var = ctk.StringVar(value="on")
-        self.switch = ctk.CTkSwitch(self.nav_bar, text="🌙", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
-        self.switch.pack(side="left")
-        
-        self.body_frame = ctk.CTkScrollableFrame(self.main_frame)
-        self.body_frame.pack(fill='both', expand=True, pady=20)
-        ctk.CTkLabel(self.body_frame, text='Main Body Content').pack()
-
-        self.footer_frame = ctk.CTkFrame(self.main_frame)
-        self.footer_frame.pack(fill='x', side='bottom')
-        ctk.CTkLabel(self.footer_frame, text='Footer Content').pack()
-
-        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'right') #initial state is not connected
-        self.show_parameters_popup()
-
-
-    def theme_event(self):
-        print("switch toggled, current value:", self.switch_var.get())
-        if self.switch_var.get() == "on":
-            ctk.set_appearance_mode("dark")
-            self.switch.configure(text="🌙")
-        else: 
-            ctk.set_appearance_mode("light")
-            self.switch.configure(text="☀")       
-
-    def show_parameters_popup(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = ParametersWindow(self)  # create window if its None or destroyed
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
 
     def register(self):
         username = self.create_username_entry.get()
@@ -242,6 +214,69 @@ class App(ctk.CTk):
         user_list = self.get_user_list()
         return any(user.split(":")[0] == username for user in user_list)
 
+    def back_to_welcome(self):
+        for widget in self.winfo_children():
+            widget.pack_forget()
+        self.create_welcome_screen()
+    
+    def optionmenu_callback(self, choice):
+        print("optionmenu dropdown clicked:", choice)
+
+    def show_main_screen(self):
+        for widget in self.winfo_children():
+            widget.pack_forget()
+
+        self.main_frame = ctk.CTkFrame(self)  
+        self.main_frame.pack(fill='both', expand=True)
+
+        self.nav_bar = ctk.CTkFrame(self.main_frame)
+        self.nav_bar.pack(fill='x')
+        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
+        self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAIR","VOO", "VVIR"], command=self.optionmenu_callback, variable=self.optionmenu_var)
+        self.optionmenu.pack(side="right")
+
+        self.toplevel_window = None
+
+        self.switch_var = ctk.StringVar(value="on")
+        self.switch = ctk.CTkSwitch(self.nav_bar, text="🌙", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
+        self.switch.pack(side="left")
+        
+        self.body_frame = ctk.CTkScrollableFrame(self.main_frame)
+        self.body_frame.pack(fill='both', expand=True, pady=20)
+        ctk.CTkLabel(self.body_frame, text='Main Body Content').pack()
+
+
+        self.footer_frame = ctk.CTkFrame(self.main_frame)
+        self.footer_frame.pack(fill='x', side='bottom')
+        
+        ctk.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkLabel(self.footer_frame, text='Fake Name Ltd.').pack(side='right', padx=(0,200))  
+
+        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left') #initial state is not connected
+        #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
+
+    
+
+    def theme_event(self):
+        print("switch toggled, current value:", self.switch_var.get())
+        if self.switch_var.get() == "on":
+            ctk.set_appearance_mode("dark")
+            self.switch.configure(text="🌙")
+        else: 
+            ctk.set_appearance_mode("light")
+            self.switch.configure(text="☀")       
+
+    def show_parameters_popup(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = ParametersWindow(self)  # create window if its None or destroyed
+        else:
+            self.toplevel_window.update_values()  # Update the values in the window
+            self.toplevel_window.focus()  # if window exists focus it
+
+
+
 if __name__ == '__main__':
     app = App()
-    app.mainloop()  
+    app.mainloop()
