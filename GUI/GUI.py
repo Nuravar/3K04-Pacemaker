@@ -1,34 +1,79 @@
 import os
 import customtkinter
+import tkinter
 import hashlib
 import numpy as np
 import matplotlib.pyplot as plt
 
 plt.style.use('./Gui/tmp/rose-pine.mplstyle')
 
-
 class InputFrame(customtkinter.CTkFrame):
-    def __init__(self, master, title):
+    def __init__(self, master, title, from_, to, ranges_and_increments):
         super().__init__(master)
 
-        # Label
+        self.ranges_and_increments = self.process_ranges_and_increments(ranges_and_increments)
         self.label = customtkinter.CTkLabel(self, text=title)
         self.label.pack(side='left', padx=5)
 
-        # Entry
-        self.entry = customtkinter.CTkEntry(self)
-        self.entry.pack(side='left', padx=5)
+        self.value_var = tkinter.DoubleVar()  # Create a DoubleVar
+        self.value_var.set(from_)  # Set its initial value
+
+        self.slider = customtkinter.CTkSlider(self, from_=from_, to=to, command=self.update_slider_value, variable=self.value_var)
+        self.slider.pack(side='left', padx=5)
+
+        self.value_label = customtkinter.CTkLabel(self, textvariable=self.value_var)
+        self.value_label.pack(side='left', padx=5)
+
+    def update_slider_value(self, value):
+        corrected_value = self.variable_increment(value, self.ranges_and_increments)
+        formatted_value = "{:.2f}".format(corrected_value)  # Format the value to two decimal places
+        self.value_var.set(formatted_value)
+
+    def variable_increment(self, value, rangeAndInc):
+        value = int(value)
+        for (start, end, increment) in rangeAndInc:
+            if start <= value <= end:
+                return round((value - start) / increment) * increment + start
+        return value
+
+    def process_ranges_and_increments(self, ranges):
+        # if ranges is just a single value, then create a list of one tuple
+        if isinstance(ranges, (int, float)):
+            return [(0, float('inf'), ranges)]
+        return ranges
 
 class ParametersWindow(customtkinter.CTkToplevel):
-    values = [] #class level variable
+    values = []  # class level variable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.geometry("400x400")
+        self.geometry("600x400")
         self.title("Parameters")
-
+        # Ensure this window always pops up on top
+        self.focus()
         self.overall_frame = customtkinter.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
+
+        # Define unique slider ranges for each of the 17 variables
+        slider_ranges = [
+            (30, 175, [(30, 50, 5), (50, 90, 1), (90, 175, 5)]),  #lower rate limit x 
+            (50, 175, 5), # Upper Rate Limit x
+            (50, 175, 5), # Maximum Sensor Rate x
+            (70, 300, 10), # Fixed AV Delay x
+            (500, 7000, [(500, 3200, 100), (3200, 3500, 300), (3500, 7000, 500)]), # Atrial Amplitude  
+            (50, 1900, [(50,100,50),(100,1900,100)]),  # Atrial Pulse Width x 
+            (250, 10000, [(250,500,250), (500,750,250), (1000,10000,500)]),  # Atrial Sensitivity x 
+            (500, 7000, [(500, 3200, 100), (3200, 3500, 300), (3500, 7000, 500)]),  # Ventricular Amplitude 
+            (50, 1900, [(50,100,50),(100,1900,100)]), # Ventricular Pulse Width x
+            (25000, 1000000, [(250,500,250), (500,750,250), (0,75000,1000,250), (1000,10000,500)]), # Ventricular Sensitivity x 
+            (150, 500, 10), # Absolute Refractory Period x 
+            (150, 500, 10), # Ventricular Refractory Period x 
+            (150, 500, 10), # Post-Ventricular Atrial Refractory Period x 
+            (0, 7, 1), # Activity Threshold x 
+            (10, 50, 10), # Reaction Time x 
+            (1, 16, 1), # Response Factor x
+            (2, 16, 1) # Recovery Time x 
+        ]
 
         titles = [
             "Lower Rate Limit", "Upper Rate Limit", "Maximum Sensor Rate", "Fixed AV Delay",
@@ -39,12 +84,12 @@ class ParametersWindow(customtkinter.CTkToplevel):
         ]
 
         if not ParametersWindow.values:
-            ParametersWindow.values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17']
-        
+            ParametersWindow.values = [val[0] for val in slider_ranges]  # default to start of slider range
+
         self.frames = []
-        for title, value in zip(titles, self.values):
-            frame = InputFrame(self.overall_frame, title)
-            frame.entry.insert(0, value)  # Insert the default value into the entry
+        for (title, value, (from_, to_, increment)) in zip(titles, self.values, slider_ranges):
+            frame = InputFrame(self.overall_frame, title, from_, to_, increment)
+            frame.slider.set(value)  # Set the slider to the default value
             frame.pack(padx=20, pady=20, anchor='w')
             self.frames.append(frame)
 
@@ -54,15 +99,19 @@ class ParametersWindow(customtkinter.CTkToplevel):
 
     def save_options(self):
         for i, frame in enumerate(self.frames):
-            self.values[i] = frame.entry.get()  # Update the values list with the current entry value
-            frame.entry.delete(0, 'end')  # Clear the entry
-            frame.entry.insert(0, self.values[i])  # Insert the updated value back into the entry
+            self.values[i] = frame.slider.get()  # Update the values list with the current slider value
         print(self.values)
 
     def update_values(self):
         for i, frame in enumerate(self.frames):
-            frame.entry.delete(0, 'end')  # Clear the entry
-            frame.entry.insert(0, self.values[i])  # Insert the updated value into the entry
+            frame.slider.set(self.values[i])  # Set the slider to the updated value
+        
+    def variable_increment(value, rangeAndInc):
+        value = int(value)
+        for (start, end, increment) in rangeAndInc:
+            if start <= value <= end:
+                return round((value - start) / increment) * increment + start
+        return value
 
 class App(customtkinter.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
@@ -234,7 +283,7 @@ class App(customtkinter.CTk):
         customtkinter.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
         customtkinter.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
         self.optionmenu_var = customtkinter.StringVar(value="Select Pacing Mode")
-        self.optionmenu = customtkinter.CTkOptionMenu(self.nav_bar, values=["AOO", "AAIR","VOO", "VVIR"], command=self.optionmenu_callback, variable=self.optionmenu_var)
+        self.optionmenu = customtkinter.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI","VOO","VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right")
 
         self.toplevel_window = None
