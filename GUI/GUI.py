@@ -191,7 +191,7 @@ class App(ctk.CTk):
         self.login_frame = ctk.CTkFrame(self)
         self.login_frame.pack(fill='both', expand=True)
 
-        ctk.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
+        ctk.CTkLabel(self.login_frame, text='Login').pack(pady=20)
 
         # Entry for username
         self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username")
@@ -210,7 +210,7 @@ class App(ctk.CTk):
         self.register_frame = ctk.CTkFrame(self)
         self.register_frame.pack(fill='both', expand=True)
 
-        ctk.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
+        ctk.CTkLabel(self.register_frame, text='Create Account').pack(pady=20)
 
         # Entry for username
         self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username")
@@ -365,9 +365,9 @@ class App(ctk.CTk):
         self.footer_frame.pack(fill='x', side='bottom')
         
         ctk.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        ctk.CTkLabel(self.footer_frame, text='Heart Murderers Ltd.').pack(side='right', padx=(0,200))
+        ctk.CTkLabel(self.footer_frame, text='Pacemaker Controller').pack(side='right', padx=(0,200))
         
-        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left') #initial state is not connected
+        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left', padx=5) #initial state is not connected
         #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
 
     
