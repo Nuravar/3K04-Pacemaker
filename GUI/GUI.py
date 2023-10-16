@@ -1,5 +1,5 @@
 import os
-import customtkinter
+import customtkinter as ctk
 import hashlib
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,19 +7,27 @@ import matplotlib.pyplot as plt
 plt.style.use('./Gui/tmp/rose-pine.mplstyle')
 
 
-class InputFrame(customtkinter.CTkFrame):
+class InputFrame(ctk.CTkFrame):
     def __init__(self, master, title):
         super().__init__(master)
 
         # Label
-        self.label = customtkinter.CTkLabel(self, text=title)
+        self.label = ctk.CTkLabel(self, text=title)
         self.label.pack(side='left', padx=5)
 
         # Entry
-        self.entry = customtkinter.CTkEntry(self)
+        self.entry = ctk.CTkEntry(self)
         self.entry.pack(side='left', padx=5)
 
-class ParametersWindow(customtkinter.CTkToplevel):
+class MessageWindow(ctk.CTkToplevel):
+    def __init__(self, title, msg):
+        super().__init__()
+        self.geometry("400x100")
+
+        self.title(title)
+        self.msg = ctk.CTkLabel(self, text=msg).pack(padx=20, pady=20)
+        
+class ParametersWindow(ctk.CTkToplevel):
     values = [] #class level variable
 
     def __init__(self, *args, **kwargs):
@@ -27,7 +35,7 @@ class ParametersWindow(customtkinter.CTkToplevel):
         self.geometry("400x400")
         self.title("Parameters")
 
-        self.overall_frame = customtkinter.CTkScrollableFrame(self)
+        self.overall_frame = ctk.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
 
         titles = [
@@ -49,7 +57,7 @@ class ParametersWindow(customtkinter.CTkToplevel):
             self.frames.append(frame)
 
         # Save Button
-        self.save_button = customtkinter.CTkButton(self, text="Save Options", command=self.save_options, fg_color="#1d3557", hover_color="#457B9D")
+        self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options, fg_color="#1d3557", hover_color="#457B9D")
         self.save_button.pack(padx=20, pady=20)
 
     def save_options(self):
@@ -64,69 +72,69 @@ class ParametersWindow(customtkinter.CTkToplevel):
             frame.entry.delete(0, 'end')  # Clear the entry
             frame.entry.insert(0, self.values[i])  # Insert the updated value into the entry
 
-class App(customtkinter.CTk):
+class App(ctk.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
         super().__init__()
         self.title('Pacemaker')
         self.geometry('800x400')
-        # self.custom_font = customtkinter.CTkFont(family="Calibri", size=14, weight='bold')
+        # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
         self.create_welcome_screen()
         
     def create_welcome_screen(self):
-        self.welcome_frame = customtkinter.CTkFrame(self)
+        self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
 
-        customtkinter.CTkLabel(self.welcome_frame, text='Welcome!').pack(pady=20)
-        customtkinter.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        customtkinter.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        customtkinter.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkLabel(self.welcome_frame, text='Welcome!').pack(pady=20)
+        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
 
     def show_login_screen(self):
         self.welcome_frame.pack_forget()
-        self.login_frame = customtkinter.CTkFrame(self)
+        self.login_frame = ctk.CTkFrame(self)
         self.login_frame.pack(fill='both', expand=True)
 
-        customtkinter.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
+        ctk.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
 
         # Entry for username
-        customtkinter.CTkLabel(self.login_frame, text='Username').pack()
-        self.username_entry = customtkinter.CTkEntry(self.login_frame)
+        ctk.CTkLabel(self.login_frame, text='Username').pack()
+        self.username_entry = ctk.CTkEntry(self.login_frame)
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        customtkinter.CTkLabel(self.login_frame, text='Password').pack()
-        self.password_entry = customtkinter.CTkEntry(self.login_frame, show="*")  # Password entry
+        ctk.CTkLabel(self.login_frame, text='Password').pack()
+        self.password_entry = ctk.CTkEntry(self.login_frame, show="*")  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
-        customtkinter.CTkButton(self.login_frame, text='Login', command=self.login, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        customtkinter.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Login', command=self.login, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
     
     def show_register_screen(self):
         self.welcome_frame.pack_forget()
-        self.register_frame = customtkinter.CTkFrame(self)
+        self.register_frame = ctk.CTkFrame(self)
         self.register_frame.pack(fill='both', expand=True)
 
-        customtkinter.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
+        ctk.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
 
         # Entry for username
-        customtkinter.CTkLabel(self.register_frame, text='Username').pack()
-        self.create_username_entry = customtkinter.CTkEntry(self.register_frame)
+        ctk.CTkLabel(self.register_frame, text='Username').pack()
+        self.create_username_entry = ctk.CTkEntry(self.register_frame)
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        customtkinter.CTkLabel(self.register_frame, text='Password').pack()
-        self.create_password_entry = customtkinter.CTkEntry(self.register_frame, show="*")  # Password entry
+        ctk.CTkLabel(self.register_frame, text='Password').pack()
+        self.create_password_entry = ctk.CTkEntry(self.register_frame, show="*")  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        customtkinter.CTkLabel(self.register_frame, text='Re-Type Password').pack()
-        self.create_password_check = customtkinter.CTkEntry(self.register_frame, show="*")  # Password check
+        ctk.CTkLabel(self.register_frame, text='Re-Type Password').pack()
+        self.create_password_check = ctk.CTkEntry(self.register_frame, show="*")  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
-        customtkinter.CTkButton(self.register_frame, text='Register', command=self.register, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        customtkinter.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.register_frame, text='Register', command=self.register, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
 
     def register(self):
         username = self.create_username_entry.get()
@@ -135,23 +143,20 @@ class App(customtkinter.CTk):
 
         # Check if the number of accounts exceeds 10
         if len(self.get_user_list()) >= 10:
-            error_message = "Error: Maximum number of accounts reached."
-            print(error_message)
-            # self.show_error_message(error_message)
+            error_message = "Maximum number of accounts reached."
+            self.show_message("Accounts Error", error_message)
             return
 
         # Check if the username already exists
         if self.username_exists(username):
-            error_message = f"Error: Username '{username}' already exists. Choose a different username."
-            print(error_message)
-            # self.show_error_message(error_message)
+            error_message = f"Username '{username}' already exists. Choose a different username."
+            self.show_message("Username Error", error_message)
             return
 
         # Check if the entered password matches the password check
         if password != password_check:
-            error_message = "Error: Passwords do not match. Please re-enter your password."
-            print(error_message)
-            # self.show_error_message(error_message)
+            error_message = "Passwords do not match. Please re-enter your password."
+            self.show_message("Password Error", error_message)
             return
 
         # Hash the password before storing it
@@ -161,9 +166,7 @@ class App(customtkinter.CTk):
         with open("user_accounts.txt", "a") as file:
             file.write(f"{username}:{hashed_password}\n")
 
-        success_message = f"Registered: Username - {username}"
-        print(success_message)
-        #self.show_info_message(success_message)
+        print(f"Registered: Username - {username}")
         self.show_main_screen()
 
     def login(self):
@@ -182,22 +185,19 @@ class App(customtkinter.CTk):
         for user in user_list:
             stored_username, stored_hashed_password = user.split(":")
             if username == stored_username and hashed_password == stored_hashed_password:
-                success_message = f"Logged in: Username - {username}"
-                print(success_message)
+                print(f"Logged in: Username - {username}")
                 self.show_main_screen()
                 return
 
         error_message = "Login failed: Invalid username or password."
-        print(error_message)
-        self.show_error_message(error_message)
+        self.show_message("Login Error", error_message)
 
-    def show_error_message(self, message):
-        # Display error message to the user *** NOT DONE ***
-        print(f"Error: {message}")
-
-    def show_info_message(self, message):
-        # Display info message to the user *** NOT DONE ***
-        print(f"Info: {message}")
+    def show_message(self, title, msg):
+        if self.msg_window is None or not self.msg_window.winfo_exists():
+            self.msg_window = MessageWindow(title, msg)  # create window if its None or destroyed
+        else:
+            self.msg_window.focus()  # if window exists focus it
+        print(msg)
 
     def get_user_list(self):
         # Check if the file exists, if not, return an empty list
@@ -226,35 +226,35 @@ class App(customtkinter.CTk):
         for widget in self.winfo_children():
             widget.pack_forget()
 
-        self.main_frame = customtkinter.CTkFrame(self)  
+        self.main_frame = ctk.CTkFrame(self)  
         self.main_frame.pack(fill='both', expand=True)
 
-        self.nav_bar = customtkinter.CTkFrame(self.main_frame)
+        self.nav_bar = ctk.CTkFrame(self.main_frame)
         self.nav_bar.pack(fill='x')
-        customtkinter.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        customtkinter.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        self.optionmenu_var = customtkinter.StringVar(value="Select Pacing Mode")
-        self.optionmenu = customtkinter.CTkOptionMenu(self.nav_bar, values=["AOO", "AAIR","VOO", "VVIR"], command=self.optionmenu_callback, variable=self.optionmenu_var)
+        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
+        self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAIR","VOO", "VVIR"], command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right")
 
         self.toplevel_window = None
 
-        self.switch_var = customtkinter.StringVar(value="on")
-        self.switch = customtkinter.CTkSwitch(self.nav_bar, text="🌙", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
+        self.switch_var = ctk.StringVar(value="on")
+        self.switch = ctk.CTkSwitch(self.nav_bar, text="🌙", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
         self.switch.pack(side="left")
         
-        self.body_frame = customtkinter.CTkScrollableFrame(self.main_frame)
+        self.body_frame = ctk.CTkScrollableFrame(self.main_frame)
         self.body_frame.pack(fill='both', expand=True, pady=20)
-        customtkinter.CTkLabel(self.body_frame, text='Main Body Content').pack()
+        ctk.CTkLabel(self.body_frame, text='Main Body Content').pack()
 
 
-        self.footer_frame = customtkinter.CTkFrame(self.main_frame)
+        self.footer_frame = ctk.CTkFrame(self.main_frame)
         self.footer_frame.pack(fill='x', side='bottom')
         
-        customtkinter.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        customtkinter.CTkLabel(self.footer_frame, text='Fake Name Ltd.').pack(side='right', padx=(0,200))  
+        ctk.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkLabel(self.footer_frame, text='Fake Name Ltd.').pack(side='right', padx=(0,200))  
 
-        self.connection = customtkinter.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left') #initial state is not connected
+        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left') #initial state is not connected
         #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
 
     
@@ -262,10 +262,10 @@ class App(customtkinter.CTk):
     def theme_event(self):
         print("switch toggled, current value:", self.switch_var.get())
         if self.switch_var.get() == "on":
-            customtkinter.set_appearance_mode("dark")
+            ctk.set_appearance_mode("dark")
             self.switch.configure(text="🌙")
         else: 
-            customtkinter.set_appearance_mode("light")
+            ctk.set_appearance_mode("light")
             self.switch.configure(text="☀")       
 
     def show_parameters_popup(self):
@@ -279,4 +279,4 @@ class App(customtkinter.CTk):
 
 if __name__ == '__main__':
     app = App()
-    app.mainloop()  
+    app.mainloop()
