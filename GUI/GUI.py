@@ -98,19 +98,17 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
 
         # Entry for username
-        ctk.CTkLabel(self.login_frame, text='Username').pack()
-        self.username_entry = ctk.CTkEntry(self.login_frame)
+        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username")
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        ctk.CTkLabel(self.login_frame, text='Password').pack()
-        self.password_entry = ctk.CTkEntry(self.login_frame, show="*")  # Password entry
+        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*")  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
         ctk.CTkButton(self.login_frame, text='Login', command=self.login, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-    
+
     def show_register_screen(self):
         self.welcome_frame.pack_forget()
         self.register_frame = ctk.CTkFrame(self)
@@ -119,18 +117,15 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
 
         # Entry for username
-        ctk.CTkLabel(self.register_frame, text='Username').pack()
-        self.create_username_entry = ctk.CTkEntry(self.register_frame)
+        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username")
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        ctk.CTkLabel(self.register_frame, text='Password').pack()
-        self.create_password_entry = ctk.CTkEntry(self.register_frame, show="*")  # Password entry
+        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*")  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        ctk.CTkLabel(self.register_frame, text='Re-Type Password').pack()
-        self.create_password_check = ctk.CTkEntry(self.register_frame, show="*")  # Password check
+        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*")  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
