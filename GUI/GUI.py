@@ -1,10 +1,8 @@
 import os
 import customtkinter as ctk
-import tkinter
 import hashlib
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 class InputFrame(ctk.CTkFrame):
     def __init__(self, master, title, from_, to, ranges_and_increments, unit):
@@ -45,6 +43,14 @@ class InputFrame(ctk.CTkFrame):
             return [(0, float('inf'), ranges)]
         return ranges
 
+class MessageWindow(ctk.CTkToplevel):
+    def __init__(self, title, msg):
+        super().__init__()
+        self.geometry("400x100")
+
+        self.title(title)
+        self.msg = ctk.CTkLabel(self, text=msg).pack(padx=20, pady=20)
+      
 class ParametersWindow(ctk.CTkToplevel):
     DEFAULT_VALUES = [60, 120, 120, 150, 3500, 400, 750,  3500, 400, 250, 250 , 320 , 250 , 4, 30 , 8, 5]
     values = []
@@ -53,7 +59,6 @@ class ParametersWindow(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("600x400")
         self.title("Parameters")
-        # Ensure this window always pops up on top
         self.focus()
         self.overall_frame = ctk.CTkScrollableFrame(self)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
@@ -133,6 +138,7 @@ class App(ctk.CTk):
         self.title('Pacemaker')
         self.geometry('800x400')
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
+        self.msg_window = None
         self.create_welcome_screen()
         
     def create_welcome_screen(self):
@@ -152,19 +158,17 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.login_frame, text='Login Screen').pack(pady=20)
 
         # Entry for username
-        ctk.CTkLabel(self.login_frame, text='Username').pack()
-        self.username_entry = ctk.CTkEntry(self.login_frame)
+        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username")
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        ctk.CTkLabel(self.login_frame, text='Password').pack()
-        self.password_entry = ctk.CTkEntry(self.login_frame, show="*")  # Password entry
+        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*")  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
         ctk.CTkButton(self.login_frame, text='Login', command=self.login, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-    
+
     def show_register_screen(self):
         self.welcome_frame.pack_forget()
         self.register_frame = ctk.CTkFrame(self)
@@ -173,18 +177,15 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.register_frame, text='Create Account Screen').pack(pady=20)
 
         # Entry for username
-        ctk.CTkLabel(self.register_frame, text='Username').pack()
-        self.create_username_entry = ctk.CTkEntry(self.register_frame)
+        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username")
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        ctk.CTkLabel(self.register_frame, text='Password').pack()
-        self.create_password_entry = ctk.CTkEntry(self.register_frame, show="*")  # Password entry
+        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*")  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        ctk.CTkLabel(self.register_frame, text='Re-Type Password').pack()
-        self.create_password_check = ctk.CTkEntry(self.register_frame, show="*")  # Password check
+        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*")  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
@@ -198,23 +199,20 @@ class App(ctk.CTk):
 
         # Check if the number of accounts exceeds 10
         if len(self.get_user_list()) >= 10:
-            error_message = "Error: Maximum number of accounts reached."
-            print(error_message)
-            # self.show_error_message(error_message)
+            error_message = "Maximum number of accounts reached."
+            self.show_message("Accounts Error", error_message)
             return
 
         # Check if the username already exists
         if self.username_exists(username):
-            error_message = f"Error: Username '{username}' already exists. Choose a different username."
-            print(error_message)
-            # self.show_error_message(error_message)
+            error_message = f"Username '{username}' already exists. Choose a different username."
+            self.show_message("Username Error", error_message)
             return
 
         # Check if the entered password matches the password check
         if password != password_check:
-            error_message = "Error: Passwords do not match. Please re-enter your password."
-            print(error_message)
-            # self.show_error_message(error_message)
+            error_message = "Passwords do not match. Please re-enter your password."
+            self.show_message("Password Error", error_message)
             return
 
         # Hash the password before storing it
@@ -224,9 +222,7 @@ class App(ctk.CTk):
         with open("user_accounts.txt", "a") as file:
             file.write(f"{username}:{hashed_password}\n")
 
-        success_message = f"Registered: Username - {username}"
-        print(success_message)
-        #self.show_info_message(success_message)
+        print(f"Registered: Username - {username}")
         self.show_main_screen()
 
     def login(self):
@@ -245,22 +241,19 @@ class App(ctk.CTk):
         for user in user_list:
             stored_username, stored_hashed_password = user.split(":")
             if username == stored_username and hashed_password == stored_hashed_password:
-                success_message = f"Logged in: Username - {username}"
-                print(success_message)
+                print(f"Logged in: Username - {username}")
                 self.show_main_screen()
                 return
 
         error_message = "Login failed: Invalid username or password."
-        print(error_message)
-        self.show_error_message(error_message)
+        self.show_message("Login Error", error_message)
 
-    def show_error_message(self, message):
-        # Display error message to the user *** NOT DONE ***
-        print(f"Error: {message}")
-
-    def show_info_message(self, message):
-        # Display info message to the user *** NOT DONE ***
-        print(f"Info: {message}")
+    def show_message(self, title, msg):
+        if self.msg_window is None or not self.msg_window.winfo_exists():
+            self.msg_window = MessageWindow(title, msg)  # create window if its None or destroyed
+        else:
+            self.msg_window.focus()  # if window exists focus it
+        print(msg)
 
     def get_user_list(self):
         # Check if the file exists, if not, return an empty list
@@ -315,8 +308,8 @@ class App(ctk.CTk):
         self.footer_frame.pack(fill='x', side='bottom')
         
         ctk.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        ctk.CTkLabel(self.footer_frame, text='Heart Murderers Ltd.').pack(side='right', padx=(0,200))  
-
+        ctk.CTkLabel(self.footer_frame, text='Heart Murderers Ltd.').pack(side='right', padx=(0,200))
+        
         self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left') #initial state is not connected
         #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
 
@@ -342,4 +335,4 @@ class App(ctk.CTk):
 
 if __name__ == '__main__':
     app = App()
-    app.mainloop()  
+    app.mainloop()
