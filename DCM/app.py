@@ -4,7 +4,8 @@ import hashlib
 from message_window import MessageWindow
 from parameters_window import ParametersWindow
 
-# ... (Copy the App class code from the original GUI.py)
+ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
+
 class App(ctk.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
         super().__init__()
@@ -14,15 +15,17 @@ class App(ctk.CTk):
         self.msg_window = None
         self.current_username = None  # Initialize the current_username variable
         self.create_welcome_screen()
+
+
         
     def create_welcome_screen(self):
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
 
         ctk.CTkLabel(self.welcome_frame, text='PACE++').pack(pady=20)
-        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen).pack(pady=10)
+        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10)
+        ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen).pack(pady=10)
 
     def show_login_screen(self):
         self.welcome_frame.pack_forget()
@@ -40,8 +43,8 @@ class App(ctk.CTk):
         self.password_entry.pack(pady=10)
 
         # Login Button
-        ctk.CTkButton(self.login_frame, text='Login', command=self.login, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Login', command=self.login).pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
     def show_register_screen(self):
         self.welcome_frame.pack_forget()
@@ -63,8 +66,8 @@ class App(ctk.CTk):
         self.create_password_check.pack(pady=10)
 
         # Register Button
-        ctk.CTkButton(self.register_frame, text='Register', command=self.register, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
-        ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(pady=10)
+        ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
+        ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
     def register(self):
         username = self.create_username_entry.get()
@@ -182,13 +185,13 @@ class App(ctk.CTk):
 
         self.nav_bar = ctk.CTkFrame(self.main_frame)
         self.nav_bar.pack(fill='x')
-        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup).pack(side='right')
         self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
         self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI","VOO","VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right")
-        ctk.CTkButton(self.nav_bar, text='⏸ Stop', fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
-        ctk.CTkButton(self.nav_bar, text='▶ Run', fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='⏸ Stop').pack(side='right')
+        ctk.CTkButton(self.nav_bar, text='▶ Run').pack(side='right')
 
         self.toplevel_window = None
 
@@ -204,10 +207,10 @@ class App(ctk.CTk):
         self.footer_frame = ctk.CTkFrame(self.main_frame)
         self.footer_frame.pack(fill='x', side='bottom')
         
-        ctk.CTkButton(self.footer_frame, text='Print Report', command=None, fg_color="#1d3557", hover_color="#457B9D").pack(side='right')
+        ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right')
         ctk.CTkLabel(self.footer_frame, text='Pacemaker Controller').pack(side='right', padx=(0,200))
         
-        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#E63946", justify="right").pack(side = 'left', padx=5) #initial state is not connected
+        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection").pack(side = 'left', padx=5) #initial state is not connected
         #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
 
     
