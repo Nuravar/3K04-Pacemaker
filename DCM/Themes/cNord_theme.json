@@ -30,15 +30,15 @@
         "corner_radius": 6,
         "border_width": 3,
         "fg_color": ["#ECEFF4", "#3B4252"],
-        "border_color": ["#5E81AC", "#4C566A"],
+        "border_color": ["#A1B6CF", "#4C566A"],
         "text_color": ["#2E3440", "#ECEFF4"],
-        "placeholder_text_color": ["#4C566A", "#5E81AC"]
+        "placeholder_text_color": ["#4C566A", "#C1C3C7"]
     },
     "CTkCheckBox": {
         "corner_radius": 6,
         "border_width": 3,
         "fg_color": ["#5E81AC", "#2E3440"],
-        "border_color": ["#434C5E", "#D8DEE9"],
+        "border_color": ["#6B7A96", "#D8DEE9"],
         "hover_color": ["#4C566A", "#2E3440"],
         "checkmark_color": ["#D8DEE9", "#E5E9F0"],
         "text_color": ["#2E3440", "#ECEFF4"],

@@ -4,6 +4,7 @@ import hashlib
 from PIL import Image
 from message_window import MessageWindow
 from parameters_window import ParametersWindow
+from datetime import datetime
 
 
 ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
@@ -19,7 +20,16 @@ class App(ctk.CTk):
         self.current_username = None  # Initialize the current_username variable
         self.create_welcome_screen()
 
+    def get_current_time(self):
+        # Returns the current system time as a formatted string
+        return datetime.now().strftime('%H:%M')
 
+    def update_time(self, label):
+        current_time = self.get_current_time()
+        label.configure(text=current_time)
+
+        # Schedule the method to run again after 1000ms (1 second)
+        self.after(1000, lambda: self.update_time(label))  # Pass the label argument here
         
     def create_welcome_screen(self):
         self.welcome_frame = ctk.CTkFrame(self)
@@ -27,6 +37,17 @@ class App(ctk.CTk):
 
         self.top_frame = ctk.CTkFrame(self.welcome_frame)
         self.top_frame.pack(fill='x', pady=20, padx=20)
+
+        battery = ctk.CTkImage(light_image=Image.open("DCM\Themes\Battery_light.png"),
+                                dark_image=Image.open("DCM\Themes\Battery_dark.png"),
+                                size=(30, 30))
+
+        self.battery_label = ctk.CTkLabel(self.top_frame, image=battery, text="")  # display image with a CTkLabel 
+        self.battery_label.pack(side="left", padx=(65,10), pady=5)
+
+        self.time_label = ctk.CTkLabel(self.top_frame, text=self.get_current_time())
+        self.time_label.pack(side = "left", padx = 10, pady=10)
+        self.update_time(self.time_label)
 
         self.switch_var = ctk.StringVar(value="on")
         self.switch = ctk.CTkSwitch(self.top_frame, text ="", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
