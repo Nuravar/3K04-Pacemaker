@@ -7,6 +7,7 @@ from parameters_window import ParametersWindow
 
 
 ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
+ctk.set_appearance_mode("light")
 
 class App(ctk.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
@@ -24,15 +25,31 @@ class App(ctk.CTk):
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
 
-        logo_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\logo.png"),
-                                dark_image=Image.open("DCM\Themes\dark_logo.png"),
-                                size=(70*5, 30*5))
+        self.top_frame = ctk.CTkFrame(self.welcome_frame)
+        self.top_frame.pack(fill='x', pady=20, padx=20)
 
-        self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")  # display image with a CTkLabel 
-        self.logo_label.pack(pady = (70,20))
-        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen).pack(pady=10)
-        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10)
-        ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen).pack(pady=10)
+        self.switch_var = ctk.StringVar(value="on")
+        self.switch = ctk.CTkSwitch(self.top_frame, text ="", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
+        self.switch.pack(side="right", pady = 10, padx=10)
+
+        logo_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\logo.png"),
+                                  dark_image=Image.open("DCM\Themes\dark_logo.png"),
+                                  size=(70*5, 30*5))
+
+        self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
+        self.logo_label.pack(pady=(50, 20))
+
+        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen).pack(pady=10, padx=(10,0))
+        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10,0))
+        ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen).pack(pady=10, padx=(10,0))
+        
+        waves_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\Wave_light.png"),
+                               dark_image=Image.open("DCM\Themes\Wave.png"),
+                               size=(70*30, 30*15))
+
+        self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
+        self.waves_label.pack(pady=(70,0))
+
 
     def show_login_screen(self):
         self.welcome_frame.pack_forget()
@@ -210,7 +227,7 @@ class App(ctk.CTk):
                                 size=(70, 30))
 
         self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")  # display image with a CTkLabel 
-        self.image_label.pack(side="left", padx=10, pady=10)
+        self.image_label.pack(side="left", padx=(65,10), pady=5)
         
         self.toplevel_window = None
 
@@ -235,10 +252,10 @@ class App(ctk.CTk):
     def theme_event(self):
         print("switch toggled, current value:", self.switch_var.get())
         if self.switch_var.get() == "on":
-            ctk.set_appearance_mode("dark")
+            ctk.set_appearance_mode("light")
             self.switch.configure(text="")
         else: 
-            ctk.set_appearance_mode("light")
+            ctk.set_appearance_mode("dark")
             self.switch.configure(text="")       
 
     def show_parameters_popup(self):
