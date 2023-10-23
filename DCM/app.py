@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import os
 import hashlib
+from message_window import MessageWindow
+from parameters_window import ParametersWindow
 
 # ... (Copy the App class code from the original GUI.py)
 class App(ctk.CTk):
@@ -69,6 +71,8 @@ class App(ctk.CTk):
         password = self.create_password_entry.get()
         password_check = self.create_password_check.get()
 
+        print(not password and not password_check)
+
         # Check if the number of accounts exceeds 10
         if len(self.get_user_list()) >= 10:
             error_message = "Maximum number of accounts reached."
@@ -82,8 +86,8 @@ class App(ctk.CTk):
             return
 
         # Check if the entered password matches the password check
-        if password != password_check:
-            error_message = "Passwords do not match. Please re-enter your password."
+        if password != password_check or not password and not password_check:
+            error_message = "Passwords do not match or are empty.\nPlease re-enter your password."
             self.show_message("Password Error", error_message)
             return
 
@@ -92,7 +96,7 @@ class App(ctk.CTk):
 
         # Save the username and hashed password to the file
         with open("user_accounts.txt", "a") as file:
-            file.write(f"{username}:{hashed_password}:{','.join(map(str, ParametersWindow.DEFAULT_VALUES))}\n")
+            file.write(f"{username}:{hashed_password}:{','.join(map(str, [str(value) for value in ParametersWindow.DEFAULT_VALUES]))}\n")
 
         print(f"Registered: Username - {username}")
 

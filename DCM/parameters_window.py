@@ -1,7 +1,9 @@
+import os
 import customtkinter as ctk
+from input_frame import InputFrame
 
 class ParametersWindow(ctk.CTkToplevel):
-    # This window allows users to adjust pacemaker parameters with sliders.
+    # This window allows users to adjust pacemaker parameters with sliders
     DEFAULT_VALUES = [60, 120, 120, 150, 3500, 400, 750,  3500, 400, 250, 250 , 320 , 250 , 4, 30 , 8, 5]
     values = []
 
