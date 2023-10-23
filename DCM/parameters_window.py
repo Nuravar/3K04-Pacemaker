@@ -65,11 +65,11 @@ class ParametersWindow(ctk.CTkToplevel):
             self.frames.append(frame)
         # Buttons to save changes or reset to default
         # Save Button
-        self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options, fg_color="#1d3557", hover_color="#457B9D")
+        self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options)
         self.save_button.pack(side='left', padx=20, pady=20)
 
         # Reset to Default Button
-        self.reset_button = ctk.CTkButton(self, text="Reset to Default", command=self.reset_to_default, fg_color="#1d3557", hover_color="#457B9D")
+        self.reset_button = ctk.CTkButton(self, text="Reset to Default", command=self.reset_to_default)
         self.reset_button.pack(side='right', padx=20, pady=20)
 
     def get_user_list(self):

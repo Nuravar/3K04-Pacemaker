@@ -1,8 +1,10 @@
 import customtkinter as ctk
 import os
 import hashlib
+from PIL import Image
 from message_window import MessageWindow
 from parameters_window import ParametersWindow
+
 
 ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
 
@@ -10,7 +12,7 @@ class App(ctk.CTk):
     def __init__(self): #initializes, for all tkinter code, you find replace app with self
         super().__init__()
         self.title('Pacemaker')
-        self.geometry('800x400')
+        self.geometry('1200x800')
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
         self.msg_window = None
         self.current_username = None  # Initialize the current_username variable
@@ -22,7 +24,12 @@ class App(ctk.CTk):
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
 
-        ctk.CTkLabel(self.welcome_frame, text='PACE++').pack(pady=20)
+        logo_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\logo.png"),
+                                dark_image=Image.open("DCM\Themes\dark_logo.png"),
+                                size=(70*5, 30*5))
+
+        self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")  # display image with a CTkLabel 
+        self.logo_label.pack(pady = (70,20))
         ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen).pack(pady=10)
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10)
         ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen).pack(pady=10)
@@ -184,20 +191,30 @@ class App(ctk.CTk):
         self.main_frame.pack(fill='both', expand=True)
 
         self.nav_bar = ctk.CTkFrame(self.main_frame)
-        self.nav_bar.pack(fill='x')
-        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right')
-        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup).pack(side='right')
-        self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
-        self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI","VOO","VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
-        self.optionmenu.pack(side="right")
-        ctk.CTkButton(self.nav_bar, text='⏸ Stop').pack(side='right')
-        ctk.CTkButton(self.nav_bar, text='▶ Run').pack(side='right')
-
-        self.toplevel_window = None
+        self.nav_bar.pack(fill='x', padx=10, pady=10)
 
         self.switch_var = ctk.StringVar(value="on")
-        self.switch = ctk.CTkSwitch(self.nav_bar, text="🌙", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
-        self.switch.pack(side="left")
+        self.switch = ctk.CTkSwitch(self.nav_bar, text="", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
+        self.switch.pack(side="right", pady = 10, padx=10)
+
+        ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right', padx=10)
+        ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup).pack(side='right', padx=10)
+        self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
+        self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI","VOO","VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
+        self.optionmenu.pack(side="right", padx=10)
+        ctk.CTkButton(self.nav_bar, text='⏸ Stop').pack(side='right', padx=10)
+        ctk.CTkButton(self.nav_bar, text='▶ Run').pack(side='right', padx=10)
+
+        my_image = ctk.CTkImage(light_image=Image.open("DCM\Themes\logo.png"),
+                                dark_image=Image.open("DCM\Themes\dark_logo.png"),
+                                size=(70, 30))
+
+        self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")  # display image with a CTkLabel 
+        self.image_label.pack(side="left", padx=10, pady=10)
+        
+        self.toplevel_window = None
+
+        
         
         self.body_frame = ctk.CTkScrollableFrame(self.main_frame)
         self.body_frame.pack(fill='both', expand=True, pady=20)
@@ -205,12 +222,12 @@ class App(ctk.CTk):
 
 
         self.footer_frame = ctk.CTkFrame(self.main_frame)
-        self.footer_frame.pack(fill='x', side='bottom')
+        self.footer_frame.pack(fill='x', side='bottom', pady =10, padx = 10)
         
-        ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right')
+        ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right', pady =10, padx = 10)
         ctk.CTkLabel(self.footer_frame, text='Pacemaker Controller').pack(side='right', padx=(0,200))
         
-        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection").pack(side = 'left', padx=5) #initial state is not connected
+        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A").pack(side = 'left', padx=10) #initial state is not connected
         #self.show_parameters_popup() # makes the paramater popup appear when the main screen is launched
 
     
@@ -219,10 +236,10 @@ class App(ctk.CTk):
         print("switch toggled, current value:", self.switch_var.get())
         if self.switch_var.get() == "on":
             ctk.set_appearance_mode("dark")
-            self.switch.configure(text="🌙")
+            self.switch.configure(text="")
         else: 
             ctk.set_appearance_mode("light")
-            self.switch.configure(text="☀")       
+            self.switch.configure(text="")       
 
     def show_parameters_popup(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
