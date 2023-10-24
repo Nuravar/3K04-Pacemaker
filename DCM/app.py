@@ -290,6 +290,7 @@ class App(ctk.CTk):
             self.switch.configure(text="☀")
             self.switch_var.set("light") 
 
+
     def show_parameters_popup(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = ParametersWindow(self)  # create window if its None or destroyed
