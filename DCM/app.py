@@ -49,9 +49,9 @@ class App(ctk.CTk):
         self.time_label.pack(side = "left", padx = 10, pady=10)
         self.update_time(self.time_label)
 
-        self.switch_var = ctk.StringVar(value="on")
-        self.switch = ctk.CTkSwitch(self.top_frame, text ="", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
-        self.switch.pack(side="right", pady = 10, padx=10)
+        self.switch_var = ctk.StringVar(value="light")
+        self.switch = ctk.CTkButton(self.top_frame, text="☀", command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
+        self.switch.pack(side="right", pady=10, padx=10)
 
         logo_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\logo.png"),
                                   dark_image=Image.open("DCM\Themes\dark_logo.png"),
@@ -66,7 +66,7 @@ class App(ctk.CTk):
         
         waves_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\Wave_light.png"),
                                dark_image=Image.open("DCM\Themes\Wave.png"),
-                               size=(70*30, 30*15))
+                               size=(70*17.5, 30*10))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
         self.waves_label.pack(pady=(70,0))
@@ -231,9 +231,9 @@ class App(ctk.CTk):
         self.nav_bar = ctk.CTkFrame(self.main_frame)
         self.nav_bar.pack(fill='x', padx=10, pady=10)
 
-        self.switch_var = ctk.StringVar(value="on")
-        self.switch = ctk.CTkSwitch(self.nav_bar, text="", command=self.theme_event, variable=self.switch_var, onvalue="on", offvalue="off")
-        self.switch.pack(side="right", pady = 10, padx=10)
+        self.switch_var = ctk.StringVar(value="light")
+        self.switch = ctk.CTkButton(self.nav_bar, text="☀", command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
+        self.switch.pack(side="right", pady=10, padx=10)
 
         ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right', padx=10)
         ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup).pack(side='right', padx=10)
@@ -270,14 +270,25 @@ class App(ctk.CTk):
 
     
 
+    # def theme_event(self):
+    #     print("switch toggled, current value:", self.switch_var.get())
+    #     if self.switch_var.get() == "on":
+    #         ctk.set_appearance_mode("light")
+    #         self.switch.configure(text="")
+    #     else: 
+    #         ctk.set_appearance_mode("dark")
+    #         self.switch.configure(text="")      
+
     def theme_event(self):
-        print("switch toggled, current value:", self.switch_var.get())
-        if self.switch_var.get() == "on":
-            ctk.set_appearance_mode("light")
-            self.switch.configure(text="")
-        else: 
+        print("Button clicked, current value:", self.switch_var.get())
+        if self.switch_var.get() == "light":
             ctk.set_appearance_mode("dark")
-            self.switch.configure(text="")       
+            self.switch.configure(text="☾")
+            self.switch_var.set("dark")
+        else: 
+            ctk.set_appearance_mode("light")
+            self.switch.configure(text="☀")
+            self.switch_var.set("light") 
 
     def show_parameters_popup(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
