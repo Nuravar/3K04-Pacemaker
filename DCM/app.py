@@ -66,7 +66,7 @@ class App(ctk.CTk):
         
         waves_title = ctk.CTkImage(light_image=Image.open("DCM\Themes\Wave_light.png"),
                                dark_image=Image.open("DCM\Themes\Wave.png"),
-                               size=(70*17.5, 30*10))
+                               size=(70*23, 30*10))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
         self.waves_label.pack(pady=(70,0))
@@ -248,7 +248,7 @@ class App(ctk.CTk):
                                 size=(70, 30))
 
         self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")  # display image with a CTkLabel 
-        self.image_label.pack(side="left", padx=(65,10), pady=5)
+        self.image_label.pack(side="left", padx=(10,10), pady=5)
         
         self.toplevel_window = None
 
