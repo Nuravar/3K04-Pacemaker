@@ -121,7 +121,7 @@ class App(ctk.CTk):
         self.register_frame = ctk.CTkFrame(self)
         self.register_frame.pack(fill='both', expand=True)
 
-        ctk.CTkLabel(self.register_frame, text='Create Account', font=("Arial", 55, "bold")).pack(pady=(80,20))
+        ctk.CTkLabel(self.register_frame, text='Register', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
         # Entry for username
         self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username", height=35, width=160)
@@ -206,7 +206,6 @@ class App(ctk.CTk):
         user_list = self.get_user_list(type)
         for user_entry in user_list:
             stored_username, stored_hashed_password, saved_parameters = user_entry.split(":")
-            print(stored_username)
             if username == stored_username and hashed_password == stored_hashed_password:
                 print(f"Logged in: Username - {username}")
 
@@ -288,8 +287,11 @@ class App(ctk.CTk):
         self.deletion_frame = ctk.CTkFrame(self)
         self.deletion_frame.pack(fill='both', expand=True)  
 
+        userList = self.get_user_list("user")
         ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin).pack(pady=10)
 
+    def checkbox_event(self):
+        print("checkbox toggled, current value:", self.check_var.get())
 
     def optionmenu_callback(self, choice):
         print("optionmenu dropdown clicked:", choice)
