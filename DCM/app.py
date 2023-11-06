@@ -82,7 +82,7 @@ class App(ctk.CTk):
 
         ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
-        ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen).pack(pady=10, padx=(10, 0))
+        ctk.CTkButton(self.welcome_frame, text='Continue as Admin', command=self.create_admin_screen, text_color="#047bda", fg_color="transparent", border_width=0).pack(pady=10, padx=(10, 0))
 
         waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
                                    dark_image=Image.open("DCM/Themes/Wave.png"),
@@ -107,7 +107,7 @@ class App(ctk.CTk):
         self.password_entry.pack(pady=10)
 
         # Login Button
-        ctk.CTkButton(self.login_frame, text='Login', command=self.login).pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Login', command=self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
     def show_register_screen(self):
@@ -173,21 +173,28 @@ class App(ctk.CTk):
         # Continue with the main screen display
         self.show_main_screen()
 
-    def login(self):
+    def login(self, type):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
         # Hash the entered password for comparison
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
+        if (type == "admin"):
+            print("in admin")
+            filename = "admin_accounts.txt"
+        else:
+            filename = "user_accounts.txt"
+
         # Check if the file exists, if not, create it
-        if not os.path.exists("user_accounts.txt"):
-            open("user_accounts.txt", "w").close()
+        if not os.path.exists(filename):
+            open(filename, "w").close()
 
         # Check if the provided username and hashed password match any record in the file
-        user_list = self.get_user_list()
+        user_list = self.get_user_list(type)
         for user_entry in user_list:
             stored_username, stored_hashed_password, saved_parameters = user_entry.split(":")
+            print(stored_username)
             if username == stored_username and hashed_password == stored_hashed_password:
                 print(f"Logged in: Username - {username}")
 
@@ -195,8 +202,10 @@ class App(ctk.CTk):
                 self.current_username = username
 
                 # Continue with the rest of the login process
-                self.show_main_screen()
-
+                if (type == "admin"):
+                    self.show_deletion_screen()
+                else: 
+                    self.show_main_screen()
                 return
 
         error_message = "Login failed: Invalid username or password."
@@ -209,13 +218,18 @@ class App(ctk.CTk):
             self.msg_window.focus()  # if window exists focus it
         print(msg)
 
-    def get_user_list(self):
+    def get_user_list(self, type):
         # Check if the file exists, if not, return an empty list
-        if not os.path.exists("user_accounts.txt"):
+        if (type == "admin"):
+            filename = "admin_accounts.txt"
+        else: 
+            filename = "user_accounts.txt"
+
+        if not os.path.exists(filename):
             return []
 
         try:
-            with open("user_accounts.txt", "r") as file:
+            with open(filename, "r") as file:
                 return [line.strip() for line in file.readlines()]
         except FileNotFoundError:
             return []
@@ -229,6 +243,33 @@ class App(ctk.CTk):
             widget.pack_forget()
         self.pacing_mode_selected = None  # Reset the flag
         self.create_welcome_screen()
+
+    def create_admin_screen(self):
+        self.welcome_frame.pack_forget()
+        self.admin_frame = ctk.CTkFrame(self)
+        self.admin_frame.pack(fill='both', expand=True)  
+
+        self.username_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Admin Username")
+        self.username_entry.pack(pady=10)
+
+        # Entry for password
+        self.password_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Password", show="*")  # Password entry
+        self.password_entry.pack(pady=10)
+        ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
+        ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
+
+    def back_to_admin(self):
+        for widget in self.winfo_children():
+            widget.pack_forget()
+        self.pacing_mode_selected = None  # Reset the flag
+        self.create_admin_screen()
+
+    def show_deletion_screen(self):
+        self.admin_frame.pack_forget()
+        self.deletion_frame = ctk.CTkFrame(self)
+        self.deletion_frame.pack(fill='both', expand=True)  
+
+        ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin).pack(pady=10)
 
 
     def optionmenu_callback(self, choice):
@@ -252,8 +293,8 @@ class App(ctk.CTk):
         self.nav_bar = ctk.CTkFrame(self.main_frame)
         self.nav_bar.pack(fill='x', padx=10, pady=10)
 
-        self.switch_var = ctk.StringVar(value="light")
-        self.switch = ctk.CTkButton(self.nav_bar, text="☀", command=self.theme_event, width=30, height=30)
+        self.switch_var = ctk.StringVar(value=ctk.get_appearance_mode())
+        self.switch = ctk.CTkButton(self.nav_bar, text=self.update_theme(), command=self.theme_event, width=30, height=30)
         self.switch.pack(side="right", pady=10, padx=10)
 
         ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right', padx=10)
