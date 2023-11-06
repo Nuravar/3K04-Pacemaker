@@ -22,7 +22,7 @@ class App(ctk.CTk):
         self.current_username = None  # Initialize the current_username variable
         self.pacing_mode_selected = None  # Flag to track if pacing mode has been selected
         self.create_welcome_screen()
-
+        self.minsize(1200,800)
 
     def get_current_size(self):
         self.HEIGHT = App.winfo_screenheight(self)
@@ -86,52 +86,64 @@ class App(ctk.CTk):
 
         waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
                                    dark_image=Image.open("DCM/Themes/Wave.png"),
-                                   size=(70 * 23, 30 * 10))
+                                   size=(70 * 27, 33 * 17))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
-        self.waves_label.pack(pady=(70, 0))
+        self.waves_label.pack(pady=(40, 0))
 
     def show_login_screen(self):
         self.welcome_frame.pack_forget()
         self.login_frame = ctk.CTkFrame(self)
         self.login_frame.pack(fill='both', expand=True)
 
-        ctk.CTkLabel(self.login_frame, text='Login').pack(pady=20)
+        ctk.CTkLabel(self.login_frame, text='Login', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
         # Entry for username
-        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username")
+        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username", height=35, width=160)
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*")  # Password entry
+        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*", height=35, width=160)  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
         ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
+        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+                                  size=(70 * 27, 33 * 17))
+        self.logo_label = ctk.CTkLabel(self.login_frame, image=bg_image, text="")
+        self.logo_label.pack(pady=(70, 0))
+
     def show_register_screen(self):
         self.welcome_frame.pack_forget()
         self.register_frame = ctk.CTkFrame(self)
         self.register_frame.pack(fill='both', expand=True)
 
-        ctk.CTkLabel(self.register_frame, text='Create Account').pack(pady=20)
+        ctk.CTkLabel(self.register_frame, text='Create Account', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
         # Entry for username
-        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username")
+        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username", height=35, width=160)
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*")  # Password entry
+        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*", height=35, width=160)  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*")  # Password check
+        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*", height=35, width=160)  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
         ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
         ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
+
+        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+                                  size=(70 * 27, 33 * 17))
+        self.logo_label = ctk.CTkLabel(self.register_frame, image=bg_image, text="")
+        self.logo_label.pack(pady=(70, 0))
 
     def register(self):
         username = self.create_username_entry.get()
@@ -248,6 +260,7 @@ class App(ctk.CTk):
         self.welcome_frame.pack_forget()
         self.admin_frame = ctk.CTkFrame(self)
         self.admin_frame.pack(fill='both', expand=True)  
+        ctk.CTkLabel(self.admin_frame, text='Admin Login', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
         self.username_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Admin Username")
         self.username_entry.pack(pady=10)
@@ -257,6 +270,12 @@ class App(ctk.CTk):
         self.password_entry.pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
+
+        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+                                  size=(70 * 27, 33 * 17))
+        self.logo_label = ctk.CTkLabel(self.admin_frame, image=bg_image, text="")
+        self.logo_label.pack(pady=(70, 0))
 
     def back_to_admin(self):
         for widget in self.winfo_children():
