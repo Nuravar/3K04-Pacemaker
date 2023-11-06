@@ -7,13 +7,13 @@ class InputFrame(ctk.CTkFrame):
         super().__init__(master)
         # Create and pack the label showing the title
         self.ranges_and_increments = self.process_ranges_and_increments(ranges_and_increments)
-        self.label = ctk.CTkLabel(self, text=title)
+        self.label = ctk.CTkLabel(self, text=title, font=("Arial", 16, "bold"))
         self.label.pack(side='left', padx=5)
         # Set up variable for holding the slider's value
         self.value_var = ctk.DoubleVar()  # Create a DoubleVar
         self.value_var.set(from_)  # Set its initial value
         # Create and pack the slider
-        self.slider = ctk.CTkSlider(self, from_=from_, to=to, command=self.update_slider_value, variable=self.value_var)
+        self.slider = ctk.CTkSlider(self, from_=from_, to=to, command=self.update_slider_value, variable=self.value_var, width=550)
         self.slider.pack(side='left', padx=5)
         # Label that shows the current value of the slider
         self.value_label = ctk.CTkLabel(self, textvariable=self.value_var)

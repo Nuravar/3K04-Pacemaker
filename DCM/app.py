@@ -80,8 +80,8 @@ class App(ctk.CTk):
         self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
         self.logo_label.pack(pady=(50, 20))
 
-        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen).pack(pady=10, padx=(10, 0))
-        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
+        ctk.CTkButton(self.welcome_frame, text='Login', command=self.show_login_screen, width=180, height=40, font=("Arial", 20)).pack(pady=10, padx=(10, 0))
+        ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen, width=150, height=40, font=("Arial", 20)).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Continue as Admin', command=self.create_admin_screen, text_color="#047bda", fg_color="transparent", border_width=0).pack(pady=10, padx=(10, 0))
 
         waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
@@ -107,8 +107,8 @@ class App(ctk.CTk):
         self.password_entry.pack(pady=10)
 
         # Login Button
-        ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
-        ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users"), width=150, height=40, font=("Arial", 20)).pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome, width=150, height=40, font=("Arial", 20)).pack(pady=10)
 
         bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
                                   dark_image=Image.open("DCM/Themes/wave2_dark.png"),
@@ -136,8 +136,8 @@ class App(ctk.CTk):
         self.create_password_check.pack(pady=10)
 
         # Register Button
-        ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
-        ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
+        ctk.CTkButton(self.register_frame, text='Register', command=self.register, width=150, height=40, font=("Arial", 15)).pack(pady=10)
+        ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome, width=150, height=40, font=("Arial", 15)).pack(pady=10)
 
         bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
                                   dark_image=Image.open("DCM/Themes/wave2_dark.png"),
@@ -153,7 +153,7 @@ class App(ctk.CTk):
         print(not password and not password_check)
 
         # Check if the number of accounts exceeds 10
-        if len(self.get_user_list()) >= 10:
+        if len(self.get_user_list("")) >= 10:
             error_message = "Maximum number of accounts reached."
             self.show_message("Accounts Error", error_message)
             return
@@ -246,7 +246,7 @@ class App(ctk.CTk):
             return []
 
     def username_exists(self, username):
-        user_list = self.get_user_list()
+        user_list = self.get_user_list("")
         return any(user.split(":")[0] == username for user in user_list)
 
     def back_to_welcome(self):
@@ -267,8 +267,8 @@ class App(ctk.CTk):
         # Entry for password
         self.password_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Password", show="*")  # Password entry
         self.password_entry.pack(pady=10)
-        ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
-        ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
+        ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin"), width=150, height=40, font=("Arial", 20)).pack(pady=10)
+        ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome, width=150, height=40, font=("Arial", 20)).pack(pady=10)
 
         bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
                                   dark_image=Image.open("DCM/Themes/wave2_dark.png"),
@@ -288,7 +288,7 @@ class App(ctk.CTk):
         self.deletion_frame.pack(fill='both', expand=True)  
 
         userList = self.get_user_list("user")
-        ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin).pack(pady=10)
+        ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin, width=150, height=40, font=("Arial", 20)).pack(pady=10)
 
     def checkbox_event(self):
         print("checkbox toggled, current value:", self.check_var.get())
