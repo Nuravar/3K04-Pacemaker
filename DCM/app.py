@@ -6,8 +6,9 @@ from message_window import MessageWindow
 from parameters_window import ParametersWindow
 from datetime import datetime
 
-ctk.set_default_color_theme("3K04-Pacemaker/DCM/Themes/cNord_theme.json")
+ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
 ctk.set_appearance_mode("system")
+
 
 class App(ctk.CTk):
     current_mode = "light"
@@ -16,6 +17,8 @@ class App(ctk.CTk):
         super().__init__()
         self.title('Pacemaker')
         self.geometry('1200x800')
+        self.HEIGHT = App.winfo_screenheight(self)
+        self.WIDTH = App.winfo_screenwidth(self)
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
         self.msg_window = None
         self.current_username = None  # Initialize the current_username variable
@@ -25,6 +28,13 @@ class App(ctk.CTk):
 
         # Create the initial switch button
         self.create_theme_button()
+
+    def get_current_size(self):
+        self.HEIGHT = App.winfo_screenheight(self)
+        self.WIDTH = App.winfo_screenwidth(self)
+        print(self.WIDTH,"x", self.HEIGHT)
+        return self.WIDTH, self.HEIGHT
+
 
     def get_current_time(self):
         # Returns the current system time as a formatted string
@@ -42,16 +52,18 @@ class App(ctk.CTk):
             self.switch = ctk.CTkButton(self.top_frame, text="☀", command=self.theme_event, width=30, height=30)
         else:
             self.switch = ctk.CTkButton(self.top_frame, text="☾", command=self.theme_event, width=30, height=30)
-
+    
     def create_welcome_screen(self):
+        width, height = self.get_current_size() #utilize this to scale each element as a percentage of size
+
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
 
         self.top_frame = ctk.CTkFrame(self.welcome_frame)
         self.top_frame.pack(fill='x', pady=20, padx=20)
 
-        battery = ctk.CTkImage(light_image=Image.open("3K04-Pacemaker/DCM/Themes/Battery_light.png"),
-                                dark_image=Image.open("3K04-Pacemaker/DCM/Themes/Battery_dark.png"),
+        battery = ctk.CTkImage(light_image=Image.open("DCM/Themes/Battery_light.png"),
+                                dark_image=Image.open("DCM/Themes/Battery_dark.png"),
                                 size=(30, 30))
 
         self.battery_label = ctk.CTkLabel(self.top_frame, image=battery, text="")  # display image with a CTkLabel
@@ -65,8 +77,8 @@ class App(ctk.CTk):
         self.switch = ctk.CTkButton(self.top_frame, text="☀", command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
         self.switch.pack(side="right", pady=10, padx=10)
 
-        logo_title = ctk.CTkImage(light_image=Image.open("3K04-Pacemaker/DCM/Themes/logo.png"),
-                                  dark_image=Image.open("3K04-Pacemaker/DCM/Themes/dark_logo.png"),
+        logo_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
+                                  dark_image=Image.open("DCM/Themes/dark_logo.png"),
                                   size=(70 * 5, 30 * 5))
 
         self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
@@ -76,8 +88,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Continue as Guest', command=self.show_main_screen).pack(pady=10, padx=(10, 0))
 
-        waves_title = ctk.CTkImage(light_image=Image.open("3K04-Pacemaker/DCM/Themes/Wave_light.png"),
-                                   dark_image=Image.open("3K04-Pacemaker/DCM/Themes/Wave.png"),
+        waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
+                                   dark_image=Image.open("DCM/Themes/Wave.png"),
                                    size=(70 * 23, 30 * 10))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
@@ -268,8 +280,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.nav_bar, text='⏸ Stop').pack(side='right', padx=10)
         ctk.CTkButton(self.nav_bar, text='▶ Run').pack(side='right', padx=10)
 
-        my_image = ctk.CTkImage(light_image=Image.open("3K04-Pacemaker/DCM/Themes/logo.png"),
-                                dark_image=Image.open("3K04-Pacemaker/DCM/Themes/dark_logo.png"),
+        my_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
+                                dark_image=Image.open("DCM/Themes/dark_logo.png"),
                                 size=(70, 30))
 
         self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")
