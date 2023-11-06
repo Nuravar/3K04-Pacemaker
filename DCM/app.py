@@ -107,7 +107,7 @@ class App(ctk.CTk):
         self.password_entry.pack(pady=10)
 
         # Login Button
-        ctk.CTkButton(self.login_frame, text='Login', command=self.login("users")).pack(pady=10)
+        ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
     def show_register_screen(self):
