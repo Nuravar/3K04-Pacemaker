@@ -6,7 +6,7 @@ from message_window import MessageWindow
 from parameters_window import ParametersWindow
 from datetime import datetime
 
-ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
+ctk.set_default_color_theme("DCM/Themes/cNord_theme.json")
 ctk.set_appearance_mode("system")
 
 
