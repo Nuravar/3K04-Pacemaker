@@ -11,8 +11,6 @@ ctk.set_appearance_mode("system")
 
 
 class App(ctk.CTk):
-    current_mode = "light"
-
     def __init__(self): # initializes, for all tkinter code, you find replace app with self
         super().__init__()
         self.title('Pacemaker')
@@ -23,11 +21,8 @@ class App(ctk.CTk):
         self.msg_window = None
         self.current_username = None  # Initialize the current_username variable
         self.pacing_mode_selected = None  # Flag to track if pacing mode has been selected
-        
         self.create_welcome_screen()
 
-        # Create the initial switch button
-        self.create_theme_button()
 
     def get_current_size(self):
         self.HEIGHT = App.winfo_screenheight(self)
@@ -47,15 +42,16 @@ class App(ctk.CTk):
         # Schedule the method to run again after 1000ms (1 second)
         self.after(1000, lambda: self.update_time(label))  # Pass the label argument here
 
-    def create_theme_button(self):
-        if App.current_mode == "light":
-            self.switch = ctk.CTkButton(self.top_frame, text="☀", command=self.theme_event, width=30, height=30)
+ 
+    def update_theme(self):
+        if (ctk.get_appearance_mode() == "Dark"):
+            return "☾"
         else:
-            self.switch = ctk.CTkButton(self.top_frame, text="☾", command=self.theme_event, width=30, height=30)
+            return "☀"
     
     def create_welcome_screen(self):
-        width, height = self.get_current_size() #utilize this to scale each element as a percentage of size
-
+        width, height = self.get_current_size() #utilize this to scale each element as a percentage of size DOES NOT WORK
+        self.update_theme()
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
 
@@ -73,8 +69,8 @@ class App(ctk.CTk):
         self.time_label.pack(side="left", padx=10, pady=10)
         self.update_time(self.time_label)
 
-        self.switch_var = ctk.StringVar(value="light")
-        self.switch = ctk.CTkButton(self.top_frame, text="☀", command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
+        self.switch_var = ctk.StringVar(value=ctk.get_appearance_mode())
+        self.switch = ctk.CTkButton(self.top_frame, text=self.update_theme(), command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
         self.switch.pack(side="right", pady=10, padx=10)
 
         logo_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
@@ -302,17 +298,15 @@ class App(ctk.CTk):
         self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A").pack(side='left', padx=10)
 
     def theme_event(self):
-        print("Button clicked, current value:", self.switch_var.get())
-        if self.switch_var.get() == "light":
+        print("Button clicked, current value:", ctk.get_appearance_mode())
+        if ctk.get_appearance_mode() == "Light":
             ctk.set_appearance_mode("dark")
             self.switch.configure(text="☾")
             self.switch_var.set("dark")
-            App.current_mode = "dark"  # Update the class variable
         else:
             ctk.set_appearance_mode("light")
             self.switch.configure(text="☀")
             self.switch_var.set("light")
-            App.current_mode = "light"  # Update the class variable
 
     def show_parameters_popup(self):
         if not self.pacing_mode_selected:
