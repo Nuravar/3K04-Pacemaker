@@ -10,11 +10,11 @@ class ParametersWindow(ctk.CTkToplevel):
     def __init__(self, app, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.app = app
-        self.geometry("600x400")
+        self.geometry("1200x600")
         self.title("Parameters")
         self.focus() # Put the frame on top
         # Create a scrollable frame
-        self.overall_frame = ctk.CTkScrollableFrame(self)
+        self.overall_frame = ctk.CTkScrollableFrame(self, height=400)
         self.overall_frame.pack(padx=20, pady=20, fill='both', expand=False)
         
         self.values = []  # Initialize the values list
@@ -65,11 +65,11 @@ class ParametersWindow(ctk.CTkToplevel):
             self.frames.append(frame)
         # Buttons to save changes or reset to default
         # Save Button
-        self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options)
+        self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options, width=150, height=40, font=("Arial", 20))
         self.save_button.pack(side='left', padx=20, pady=20)
 
         # Reset to Default Button
-        self.reset_button = ctk.CTkButton(self, text="Reset to Default", command=self.reset_to_default)
+        self.reset_button = ctk.CTkButton(self, text="Reset to Default", command=self.reset_to_default, width=150, height=40, font=("Arial", 20))
         self.reset_button.pack(side='right', padx=20, pady=20)
 
     def get_user_list(self):

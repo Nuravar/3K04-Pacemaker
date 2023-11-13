@@ -6,3 +6,5 @@ user_accounts.txt
 
 # Ignore all files __pycache__
 */__pycache__/
+
+tempCodeRunnerFile.py
