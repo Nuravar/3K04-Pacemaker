@@ -310,9 +310,31 @@ class App(ctk.CTk):
         ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin, width=150, height=40, font=("Arial", 20)).pack(pady=10)
 
     def delete_users(self):
-        for i, check_var in enumerate(self.check_vars):
-            if check_var.get() == "on":
-                print(f"Checkbox at index {i} is checked.")
+        # Determine the indices to be deleted
+        indices_to_delete = [i for i, check_var in enumerate(self.check_vars) if check_var.get() == "on"]
+
+        if not indices_to_delete:
+            print("No users selected for deletion.")
+            return
+
+        # Read the contents of the file
+        with open("user_accounts.txt", "r") as file:
+            lines = file.readlines()
+
+        # Remove the selected lines
+        updated_lines = [line for i, line in enumerate(lines) if i not in indices_to_delete]
+
+        # Rewrite the file without the deleted lines
+        with open("user_accounts.txt", "w") as file:
+            file.writelines(updated_lines)
+
+        # Update the checkbox list and UI
+        for index in sorted(indices_to_delete, reverse=True):
+            self.checkboxList[index].destroy()  # Remove the checkbox widget
+            del self.checkboxList[index]  # Remove the reference from the list
+            del self.check_vars[index]  # Remove the associated StringVar
+
+        print("Selected users have been deleted.")
         
 
 
