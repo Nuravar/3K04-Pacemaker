@@ -99,11 +99,11 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.login_frame, text='Login', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
         # Entry for username
-        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username", height=35, width=160)
+        self.username_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Username", height=45, width=160, font=("Arial", 15))
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*", height=35, width=160)  # Password entry
+        self.password_entry = ctk.CTkEntry(self.login_frame, placeholder_text="Password", show="*",  height=45, width=160, font=("Arial", 15))  # Password entry
         self.password_entry.pack(pady=10)
 
         # Login Button
@@ -124,15 +124,15 @@ class App(ctk.CTk):
         ctk.CTkLabel(self.register_frame, text='Register', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
         # Entry for username
-        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username", height=35, width=160)
+        self.create_username_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Username", height=45, width=160, font=("Arial", 15))
         self.create_username_entry.pack(pady=10)
 
         # Entry for password
-        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*", height=35, width=160)  # Password entry
+        self.create_password_entry = ctk.CTkEntry(self.register_frame, placeholder_text="Password", show="*", height=45, width=160, font=("Arial", 15))  # Password entry
         self.create_password_entry.pack(pady=10)
 
         # Entry for password re-entry
-        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*", height=35, width=160)  # Password check
+        self.create_password_check = ctk.CTkEntry(self.register_frame, placeholder_text="Re-Type Password", show="*", height=45, width=160, font=("Arial", 15))  # Password check
         self.create_password_check.pack(pady=10)
 
         # Register Button
@@ -261,11 +261,11 @@ class App(ctk.CTk):
         self.admin_frame.pack(fill='both', expand=True)  
         ctk.CTkLabel(self.admin_frame, text='Admin Login', font=("Arial", 55, "bold")).pack(pady=(80,20))
 
-        self.username_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Admin Username")
+        self.username_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Admin Username",  height=45, width=160, font=("Arial", 15))
         self.username_entry.pack(pady=10)
 
         # Entry for password
-        self.password_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Password", show="*")  # Password entry
+        self.password_entry = ctk.CTkEntry(self.admin_frame, placeholder_text="Password", show="*",  height=45, width=160, font=("Arial", 15))  # Password entry
         self.password_entry.pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin"), width=150, height=40, font=("Arial", 20)).pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome, width=150, height=40, font=("Arial", 20)).pack(pady=10)
@@ -282,13 +282,39 @@ class App(ctk.CTk):
         self.pacing_mode_selected = None  # Reset the flag
         self.create_admin_screen()
 
+    def deletion_checkbox_event(self, username, check_var):
+        print(f"{username} checkbox toggled, current value: {check_var.get()}")
+
     def show_deletion_screen(self):
         self.admin_frame.pack_forget()
-        self.deletion_frame = ctk.CTkFrame(self)
-        self.deletion_frame.pack(fill='both', expand=True)  
+        self.deletion_frame = ctk.CTkFrame(self, width=200, height=200)
+        self.deletion_frame.pack(fill='both', expand=True)
 
         userList = self.get_user_list("user")
+        username = []
+        self.checkboxList = []
+        self.check_vars = []  # List to store the StringVars for each checkbox
+
+        for i, item in enumerate(userList):
+            username.append(item.split(':')[0])
+            check_var = ctk.StringVar(value="off")  # Individual check variable for each checkbox
+            self.check_vars.append(check_var)
+
+            checkbox = ctk.CTkCheckBox(self.deletion_frame, text=username[i],
+                                       command=lambda i=i, check_var=check_var: self.deletion_checkbox_event(username[i], check_var),
+                                       variable=check_var, onvalue="on", offvalue="off")
+            checkbox.pack(pady=10)
+            self.checkboxList.append(checkbox)
+
+        ctk.CTkButton(self.deletion_frame, text='Delete', command=self.delete_users, width=150, height=40, font=("Arial", 20)).pack(pady=10)
         ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin, width=150, height=40, font=("Arial", 20)).pack(pady=10)
+
+    def delete_users(self):
+        for i, check_var in enumerate(self.check_vars):
+            if check_var.get() == "on":
+                print(f"Checkbox at index {i} is checked.")
+        
+
 
     def checkbox_event(self):
         print("checkbox toggled, current value:", self.check_var.get())
