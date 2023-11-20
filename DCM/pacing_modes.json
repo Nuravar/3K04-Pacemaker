@@ -16,15 +16,15 @@
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             }
         ]
     },
@@ -45,21 +45,21 @@
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             },
             {
                 "title": "Atrial Sensitivity",
-                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
-                "units": "µV",
-                "default_value": 750
+                "slider_range": [0,5000,100],
+                "units": "mV",
+                "default_value": 100
             },
             {
                 "title": "Absolute Refractory Period",
@@ -104,15 +104,15 @@
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             }
         ]
     },
@@ -133,21 +133,21 @@
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             },
             {
                 "title": "Ventricular Sensitivity",
-                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
-                "units": "µV",
-                "default_value": 250
+                "slider_range": [0,5000,100],
+                "units": "mV",
+                "default_value": 100
             },
             {
                 "title": "Ventricular Refractory Period",
@@ -192,15 +192,15 @@
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             },
             {
                 "title": "Activity Threshold",
@@ -251,21 +251,21 @@
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             },
             {
                 "title": "Atrial Sensitivity",
-                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
-                "units": "µV",
-                "default_value": 750
+                "slider_range": [0,5000,100],
+                "units": "mV",
+                "default_value": 100
             },
             {
                 "title": "Absolute Refractory Period",
@@ -340,15 +340,15 @@
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             },
             {
                 "title": "Activity Threshold",
@@ -399,21 +399,21 @@
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [0, 5000, [[0,5000,100]]],
+                "slider_range": [0, 5000, 100],
                 "units": "mV",
                 "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
-                "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
-                "units": "µs",
-                "default_value": 4000
+                "slider_range": [1, 30, 1],
+                "units": "ms",
+                "default_value": 1
             },
             {
                 "title": "Ventricular Sensitivity",
-                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
-                "units": "µV",
-                "default_value": 250
+                "slider_range": [0,5000,100],
+                "units": "mV",
+                "default_value": 100
             },
             {
                 "title": "Ventricular Refractory Period",
