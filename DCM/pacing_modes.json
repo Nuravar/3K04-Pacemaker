@@ -18,13 +18,13 @@
                 "title": "Atrial Amplitude",
                 "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
                 "units": "mV",
-                "default_value": 0
+                "default_value": 3500
             },
             {
                 "title": "Atrial Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             }
         ]
     },
@@ -35,43 +35,43 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Atrial Amplitude",
                 "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "units": "mV",
+                "default_value": 3500
             },
             {
                 "title": "Atrial Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             },
             {
                 "title": "Atrial Sensitivity",
-                "slider_range": [250, 10000, [[250, 500, 250], [500, 750, 250], [1000, 10000, 500]]],
+                "slider_range": [250, 10000, [[250, 750, 250], [1000, 10000, 500]]],
                 "units": "µV",
-                "default_value": 0
+                "default_value": 750
             },
             {
                 "title": "Absolute Refractory Period",
                 "slider_range": [150, 500, 10],
                 "units": "ms",
-                "default_value": 0
+                "default_value": 250
             },
             {
                 "title": "Post-Ventricular Atrial Refractory Period",
                 "slider_range": [150, 500, 10],
                 "units": "ms",
-                "default_value": 0
+                "default_value":250
             },
             {
                 "title": "Hysteresis",
