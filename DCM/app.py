@@ -5,8 +5,11 @@ from PIL import Image
 from message_window import MessageWindow
 from parameters_window import ParametersWindow
 from datetime import datetime
+from encryption import generate_encryption_key, encrypt_data, decrypt_data
+from base64 import urlsafe_b64encode
+import json
 
-ctk.set_default_color_theme("DCM/Themes/cNord_theme.json")
+ctk.set_default_color_theme("../DCM/Themes/cNord_theme.json")
 ctk.set_appearance_mode("system")
 
 
@@ -17,10 +20,19 @@ class App(ctk.CTk):
         self.geometry('1200x800')
         self.HEIGHT = App.winfo_screenheight(self)
         self.WIDTH = App.winfo_screenwidth(self)
+        
+        # Retrieve or generate the encryption key
+        key_from_env = os.environ.get("ENCRYPTION_KEY")
+        if key_from_env:
+            self.encryption_key = key_from_env.encode()
+        else:
+            self.encryption_key = generate_encryption_key()
+
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
         self.msg_window = None
         self.current_username = None  # Initialize the current_username variable
         self.pacing_mode_selected = None  # Flag to track if pacing mode has been selected
+        self.toplevel_window = None
         self.create_welcome_screen()
         self.minsize(1200,800)
 
@@ -58,8 +70,8 @@ class App(ctk.CTk):
         self.top_frame = ctk.CTkFrame(self.welcome_frame)
         self.top_frame.pack(fill='x', pady=20, padx=20)
 
-        battery = ctk.CTkImage(light_image=Image.open("DCM/Themes/Battery_light.png"),
-                                dark_image=Image.open("DCM/Themes/Battery_dark.png"),
+        battery = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Battery_light.png"),
+                                dark_image=Image.open("../DCM/Themes/Battery_dark.png"),
                                 size=(30, 30))
 
         self.battery_label = ctk.CTkLabel(self.top_frame, image=battery, text="")  # display image with a CTkLabel
@@ -73,8 +85,8 @@ class App(ctk.CTk):
         self.switch = ctk.CTkButton(self.top_frame, text=self.update_theme(), command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
         self.switch.pack(side="right", pady=10, padx=10)
 
-        logo_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
-                                  dark_image=Image.open("DCM/Themes/dark_logo.png"),
+        logo_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/logo.png"),
+                                  dark_image=Image.open("../DCM/Themes/dark_logo.png"),
                                   size=(70 * 5, 30 * 5))
 
         self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
@@ -84,8 +96,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Continue as Admin', command=self.create_admin_screen, text_color="#047bda", fg_color="transparent", border_width=0).pack(pady=10, padx=(10, 0))
 
-        waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
-                                   dark_image=Image.open("DCM/Themes/Wave.png"),
+        waves_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Wave_light.png"),
+                                   dark_image=Image.open("../DCM/Themes/Wave.png"),
                                    size=(70 * 27, 33 * 17))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
@@ -110,8 +122,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.login_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -139,8 +151,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
         ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.register_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -150,10 +162,8 @@ class App(ctk.CTk):
         password = self.create_password_entry.get()
         password_check = self.create_password_check.get()
 
-        print(not password and not password_check)
-
         # Check if the number of accounts exceeds 10
-        if len(self.get_user_list()) >= 10:
+        if len(self.get_user_list("")) >= 10:
             error_message = "Maximum number of accounts reached."
             self.show_message("Accounts Error", error_message)
             return
@@ -173,9 +183,42 @@ class App(ctk.CTk):
         # Hash the password before storing it
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-        # Save the username and hashed password to the file
-        with open("user_accounts.txt", "a") as file:
-            file.write(f"{username}:{hashed_password}:{','.join(map(str, [str(value) for value in ParametersWindow.DEFAULT_VALUES]))}\n")
+        # Generate a new encryption key
+        ###encryption_key = generate_encryption_key()
+
+        # Ensure the encryption key is properly encoded
+        ###encoded_encryption_key = urlsafe_b64encode(encryption_key).rstrip(b'=')
+
+        # Use encryption to store the hashed password securely
+        ###encrypted_password = encrypt_data({"password": hashed_password}, encoded_encryption_key)
+
+        # Create the user entry in the desired JSON format
+        user_entry = {
+            "Username": username,
+            "Password": hashed_password, ### change back to encrypted_password
+            "Saved Parameters": [
+                {
+                    "AOO": [1, 2, 3, 4, 5],
+                    "VOO": [1, 2, 3, 4],
+                    "AAI": [1, 2, 3],
+                    "VVI": [1, 2]
+                }
+            ]
+        }
+
+        # Load existing data or create an empty dictionary
+        try:
+            with open("user_accounts.json", "r") as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = {"Users": []}
+
+        # Add the new user entry to the Users list
+        data["Users"].append(user_entry)
+
+        # Save the updated data to the file
+        with open("user_accounts.json", "w") as file:
+            json.dump(data, file, indent=4)
 
         print(f"Registered: Username - {username}")
 
@@ -185,39 +228,55 @@ class App(ctk.CTk):
         # Continue with the main screen display
         self.show_main_screen()
 
-    def login(self, type):
+    def login(self, account_type):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
         # Hash the entered password for comparison
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-        if (type == "admin"):
-            print("in admin")
+        if account_type == "admin":
             filename = "admin_accounts.txt"
         else:
-            filename = "user_accounts.txt"
+            filename = "user_accounts.json"
 
-        # Check if the file exists, if not, create it
+        # Check if the file exists
         if not os.path.exists(filename):
-            open(filename, "w").close()
+            error_message = f"Login failed: {account_type.capitalize()} account file not found."
+            self.show_message("Login Error", error_message)
+            return
 
-        # Check if the provided username and hashed password match any record in the file
-        user_list = self.get_user_list(type)
-        for user_entry in user_list:
-            stored_username, stored_hashed_password, saved_parameters = user_entry.split(":")
-            if username == stored_username and hashed_password == stored_hashed_password:
-                print(f"Logged in: Username - {username}")
+        # Read user accounts from the file
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+        except json.JSONDecodeError:
+            error_message = f"Login failed: Error decoding {account_type.capitalize()} account file."
+            self.show_message("Login Error", error_message)
+            return
 
-                # Set the current_username variable
-                self.current_username = username
+        # Check if the provided username and password match any record in the file
+        for user_entry in data.get("Users", []):
+            stored_username = user_entry["Username"]
+            stored_password = user_entry["Password"]
 
-                # Continue with the rest of the login process
-                if (type == "admin"):
-                    self.show_deletion_screen()
-                else: 
-                    self.show_main_screen()
-                return
+            if username == stored_username:
+                # Decrypt the stored password
+                ###decrypted_password = decrypt_data(stored_password)
+
+                # Compare the entered password with the decrypted stored password
+                if hashed_password == stored_password: ###change back to decrypted_password
+                    print(f"Logged in: Username - {username}")
+
+                    # Set the current_username variable
+                    self.current_username = username
+
+                    # Continue with the rest of the login process
+                    if account_type == "admin":
+                        self.show_deletion_screen()
+                    else:
+                        self.show_main_screen()
+                    return
 
         error_message = "Login failed: Invalid username or password."
         self.show_message("Login Error", error_message)
@@ -234,20 +293,28 @@ class App(ctk.CTk):
         if (type == "admin"):
             filename = "admin_accounts.txt"
         else: 
-            filename = "user_accounts.txt"
+            filename = "user_accounts.json"
 
         if not os.path.exists(filename):
             return []
 
         try:
             with open(filename, "r") as file:
-                return [line.strip() for line in file.readlines()]
+                data = json.load(file)
+                return data.get("Users", [])
         except FileNotFoundError:
             return []
 
     def username_exists(self, username):
-        user_list = self.get_user_list()
-        return any(user.split(":")[0] == username for user in user_list)
+        user_list = self.get_user_list("")
+
+        for user_data in user_list:
+            stored_username = user_data.get("Username")
+            print(stored_username, username)
+            if stored_username and stored_username == username:
+                return True
+
+        return False
 
     def back_to_welcome(self):
         for widget in self.winfo_children():
@@ -270,8 +337,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.admin_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -300,9 +367,22 @@ class App(ctk.CTk):
         # Update the "⚙ Options" button state based on the pacing mode selection
         if self.pacing_mode_selected:
             self.options_button.configure(state='normal')
+            self.run_pacing.configure(state='normal')
+            self.stop_pacing.configure(state='normal')
         else:
             self.options_button.configure(state='disabled')
+            self.run_pacing.configure(state='disabled')
+            self.stop_pacing.configure(state='disabled')
 
+    def pacing_mode_callback(self, *args):
+        pacing_mode = self.pacing_mode.get()
+        self.pacing_mode_selected = pacing_mode != "Select Pacing Mode"
+
+        if self.toplevel_window is not None and self.toplevel_window.winfo_exists():
+            self.toplevel_window.destroy()
+
+        if self.pacing_mode_selected:
+            self.toplevel_window = ParametersWindow(self, pacing_mode)
 
     def show_main_screen(self):
         for widget in self.winfo_children():
@@ -319,31 +399,36 @@ class App(ctk.CTk):
         self.switch.pack(side="right", pady=10, padx=10)
 
         ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right', padx=10)
-        
 
-        # Create the "⚙ Options" button initially disabled
-        print(self.pacing_mode_selected)
-        if self.pacing_mode_selected is not None:
-            print("HERE")
-            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='normal')
-            self.options_button.pack(side='right', padx=10)
-        else:
-            print("THERE")
-            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='disabled')
-            self.options_button.pack(side='right', padx=10)
+        self.pacing_mode = ctk.StringVar()
+        self.pacing_mode.trace("w", self.pacing_mode_callback)
+        self.pacing_mode.set("Select Pacing Mode")
 
         self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
         self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI", "VOO", "VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right", padx=10)
-        ctk.CTkButton(self.nav_bar, text='⏸ Stop').pack(side='right', padx=10)
-        ctk.CTkButton(self.nav_bar, text='▶ Run').pack(side='right', padx=10)
 
-        my_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
-                                dark_image=Image.open("DCM/Themes/dark_logo.png"),
-                                size=(70, 30))
+        # Create the "⚙ Options" button initially disabled
+        print(self.pacing_mode_selected)
+        if self.pacing_mode_selected:
+            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='normal')
+            self.options_button.pack(side='right', padx=10)
 
-        self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")
-        self.image_label.pack(side="left", padx=(10, 10), pady=5)
+            self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='normal')
+            self.stop_pacing.pack(side='right', padx=10)
+            
+            self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='normal')
+            self.run_pacing.pack(side='right', padx=10)
+        else:
+            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='disabled')
+            self.options_button.pack(side='right', padx=10)
+            self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='disabled')
+            self.stop_pacing.pack(side='right', padx=10)
+            self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='disabled')
+            self.run_pacing.pack(side='right', padx=10)
+
+        # self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")
+        # self.image_label.pack(side="left", padx=(10, 10), pady=5)
 
         self.toplevel_window = None
 
