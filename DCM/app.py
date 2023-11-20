@@ -31,7 +31,7 @@ class App(ctk.CTk):
         # self.custom_font = ctk.CTkFont(family="Calibri", size=14, weight='bold')
         self.msg_window = None
         self.current_username = None  # Initialize the current_username variable
-        self.pacing_mode_selected = None  # Flag to track if pacing mode has been selected
+        self.is_pacing_mode_selected = None  # Flag to track if pacing mode has been selected
         self.toplevel_window = None
         self.create_welcome_screen()
         self.minsize(1200,800)
@@ -198,10 +198,10 @@ class App(ctk.CTk):
             "Password": hashed_password, ### change back to encrypted_password
             "Saved Parameters": [
                 {
-                    "AOO": [1, 2, 3, 4, 5],
-                    "VOO": [1, 2, 3, 4],
-                    "AAI": [1, 2, 3],
-                    "VVI": [1, 2]
+                    "AOO": [],
+                    "VOO": [],
+                    "AAI": [],
+                    "VVI": []
                 }
             ]
         }
@@ -317,7 +317,7 @@ class App(ctk.CTk):
     def back_to_welcome(self):
         for widget in self.winfo_children():
             widget.pack_forget()
-        self.pacing_mode_selected = None  # Reset the flag
+        self.is_pacing_mode_selected = None  # Reset the flag
         self.create_welcome_screen()
 
     def create_admin_screen(self):
@@ -344,7 +344,7 @@ class App(ctk.CTk):
     def back_to_admin(self):
         for widget in self.winfo_children():
             widget.pack_forget()
-        self.pacing_mode_selected = None  # Reset the flag
+        self.is_pacing_mode_selected = None  # Reset the flag
         self.create_admin_screen()
 
 
@@ -409,10 +409,11 @@ class App(ctk.CTk):
 
     def optionmenu_callback(self, choice):
         print("optionmenu dropdown clicked:", choice)
-        self.pacing_mode_selected = choice != "Select Pacing Mode"
+        print()
+        self.is_pacing_mode_selected = choice != "Select Pacing Mode"
 
         # Update the "⚙ Options" button state based on the pacing mode selection
-        if self.pacing_mode_selected:
+        if self.is_pacing_mode_selected:
             self.options_button.configure(state='normal')
             self.run_pacing.configure(state='normal')
             self.stop_pacing.configure(state='normal')
@@ -420,16 +421,16 @@ class App(ctk.CTk):
             self.options_button.configure(state='disabled')
             self.run_pacing.configure(state='disabled')
             self.stop_pacing.configure(state='disabled')
-
+ 
     def pacing_mode_callback(self, *args):
         pacing_mode = self.pacing_mode.get()
-        self.pacing_mode_selected = pacing_mode != "Select Pacing Mode"
+        self.is_pacing_mode_selected = pacing_mode != "Select Pacing Mode"
 
         if self.toplevel_window is not None and self.toplevel_window.winfo_exists():
             self.toplevel_window.destroy()
 
-        if self.pacing_mode_selected:
-            self.toplevel_window = ParametersWindow(self, pacing_mode)
+        if self.is_pacing_mode_selected:
+            self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
 
     def show_main_screen(self):
         for widget in self.winfo_children():
@@ -447,35 +448,37 @@ class App(ctk.CTk):
 
         ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right', padx=10)
 
+        # Read values from pacing_modes.json
+        with open("pacing_modes.json", "r") as file:
+            pacing_modes = json.load(file)
+
         self.pacing_mode = ctk.StringVar()
         self.pacing_mode.trace("w", self.pacing_mode_callback)
         self.pacing_mode.set("Select Pacing Mode")
 
         self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
-        self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=["AOO", "AAI", "VOO", "VVI"], command=self.optionmenu_callback, variable=self.optionmenu_var)
+        self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=list(pacing_modes.keys()), command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right", padx=10)
 
         # Create the "⚙ Options" button initially disabled
-        print(self.pacing_mode_selected)
-        if self.pacing_mode_selected:
+        if self.is_pacing_mode_selected:
             self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='normal')
             self.options_button.pack(side='right', padx=10)
 
             self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='normal')
             self.stop_pacing.pack(side='right', padx=10)
-            
+
             self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='normal')
             self.run_pacing.pack(side='right', padx=10)
         else:
             self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='disabled')
             self.options_button.pack(side='right', padx=10)
+
             self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='disabled')
             self.stop_pacing.pack(side='right', padx=10)
+
             self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='disabled')
             self.run_pacing.pack(side='right', padx=10)
-
-        # self.image_label = ctk.CTkLabel(self.nav_bar, image=my_image, text="")
-        # self.image_label.pack(side="left", padx=(10, 10), pady=5)
 
         self.toplevel_window = None
 
@@ -503,11 +506,11 @@ class App(ctk.CTk):
             self.switch_var.set("light")
 
     def show_parameters_popup(self):
-        if not self.pacing_mode_selected:
+        if not self.is_pacing_mode_selected:
             return  # Do not show the Parameters Window if pacing mode hasn't been selected
 
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = ParametersWindow(self)
+            self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
         else:
             self.toplevel_window.update_values()
             self.toplevel_window.focus()
