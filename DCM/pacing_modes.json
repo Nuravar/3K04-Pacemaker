@@ -16,9 +16,9 @@
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
+                "slider_range": [0, 5000, [[0,5000,100]]],
                 "units": "mV",
-                "default_value": 3500
+                "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
@@ -45,9 +45,9 @@
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
+                "slider_range": [0, 5000, [[0,5000,100]]],
                 "units": "mV",
-                "default_value": 3500
+                "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
@@ -57,7 +57,7 @@
             },
             {
                 "title": "Atrial Sensitivity",
-                "slider_range": [250, 10000, [[250, 750, 250], [1000, 10000, 500]]],
+                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
                 "units": "µV",
                 "default_value": 750
             },
@@ -75,14 +75,14 @@
             },
             {
                 "title": "Hysteresis",
-                "slider_range": [],
-                "units": "",
+                "slider_range": [0, 175, [[0,30,30],[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
+                "units": "ppm",
                 "default_value": 0
             },
             {
                 "title": "Rate Smoothing", 
-                "slider_range": [],
-                "units": "",
+                "slider_range": [0,25,[[0,21,3],[21,25,4]]],
+                "units": "%",
                 "default_value": 0
             }
         ]
@@ -94,25 +94,25 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "slider_range": [0, 5000, [[0,5000,100]]],
+                "units": "mV",
+                "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             }
         ]
     },
@@ -123,48 +123,48 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "slider_range": [0, 5000, [[0,5000,100]]],
+                "units": "mV",
+                "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             },
             {
                 "title": "Ventricular Sensitivity",
-                "slider_range": [25000, 1000000, [[250, 500, 250], [500, 750, 250], [0, 75000, 1000, 250], [1000, 10000, 500]]],
+                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
                 "units": "µV",
-                "default_value": 0
+                "default_value": 250
             },
             {
                 "title": "Ventricular Refractory Period",
                 "slider_range": [150, 500, 10],
                 "units": "ms",
-                "default_value": 0
+                "default_value": 320
             },
             {
                 "title": "Hysteresis",
-                "slider_range": [],
-                "units": "",
+                "slider_range": [0, 175, [[0,30,30],[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
+                "units": "ppm",
                 "default_value": 0
             },
             {
-                "title": "Rate Smoothing",
-                "slider_range": [],
-                "units": "",
+                "title": "Rate Smoothing", 
+                "slider_range": [0,25,[[0,21,3],[21,25,4]]],
+                "units": "%",
                 "default_value": 0
             }
         ]
@@ -176,55 +176,55 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Maximum Sensor Rate",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "slider_range": [0, 5000, [[0,5000,100]]],
+                "units": "mV",
+                "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             },
             {
                 "title": "Activity Threshold",
                 "slider_range": [0, 7, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 4
             },
             {
                 "title": "Reaction Time",
                 "slider_range": [10, 50, 10],
                 "units": "sec",
-                "default_value": 0
+                "default_value": 30
             },
             {
                 "title": "Response Factor",
                 "slider_range": [1, 16, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 8
             },
             {
                 "title": "Recovery Time",
                 "slider_range": [2, 16, 1],
                 "units": "min",
-                "default_value": 0
+                "default_value": 5
             }
         ]
     },
@@ -235,85 +235,85 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Maximum Sensor Rate",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Atrial Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "slider_range": [0, 5000, [[0,5000,100]]],
+                "units": "mV",
+                "default_value": 5000
             },
             {
                 "title": "Atrial Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             },
             {
                 "title": "Atrial Sensitivity",
-                "slider_range": [250, 10000, [[250, 500, 250], [500, 750, 250], [1000, 10000, 500]]],
+                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
                 "units": "µV",
-                "default_value": 0
+                "default_value": 750
             },
             {
                 "title": "Absolute Refractory Period",
                 "slider_range": [150, 500, 10],
                 "units": "ms",
-                "default_value": 0
+                "default_value": 250
             },
             {
                 "title": "Post-Ventricular Atrial Refractory Period",
                 "slider_range": [150, 500, 10],
                 "units": "ms",
-                "default_value": 0
+                "default_value": 250
             },
             {
                 "title": "Hysteresis",
-                "slider_range": [],
-                "units": "",
+                "slider_range": [0, 175, [[0,30,30],[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
+                "units": "ppm",
                 "default_value": 0
             },
             {
-                "title": "Rate Smoothing",
-                "slider_range": [],
-                "units": "",
+                "title": "Rate Smoothing", 
+                "slider_range": [0,25,[[0,21,3],[21,25,4]]],
+                "units": "%",
                 "default_value": 0
             },
             {
                 "title": "Activity Threshold",
                 "slider_range": [0, 7, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 4
             },
             {
                 "title": "Reaction Time",
                 "slider_range": [10, 50, 10],
                 "units": "sec",
-                "default_value": 0
+                "default_value": 30
             },
             {
                 "title": "Response Factor",
                 "slider_range": [1, 16, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 8
             },
             {
                 "title": "Recovery Time",
                 "slider_range": [2, 16, 1],
                 "units": "min",
-                "default_value": 0
+                "default_value": 5
             }
         ]
     },
@@ -324,55 +324,55 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Maximum Sensor Rate",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "slider_range": [0, 5000, [[0,5000,100]]],
+                "units": "mV",
+                "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             },
             {
                 "title": "Activity Threshold",
                 "slider_range": [0, 7, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 4
             },
             {
                 "title": "Reaction Time",
                 "slider_range": [10, 50, 10],
                 "units": "sec",
-                "default_value": 0
+                "default_value": 30
             },
             {
                 "title": "Response Factor",
                 "slider_range": [1, 16, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 8
             },
             {
                 "title": "Recovery Time",
                 "slider_range": [2, 16, 1],
                 "units": "min",
-                "default_value": 0
+                "default_value": 5
             }
         ]
     },
@@ -383,79 +383,79 @@
                 "title": "Lower Rate Limit",
                 "slider_range": [30, 175, [[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 60
             },
             {
                 "title": "Upper Rate Limit",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Maximum Sensor Rate",
                 "slider_range": [50, 175, 5],
                 "units": "ppm",
-                "default_value": 0
+                "default_value": 120
             },
             {
                 "title": "Ventricular Amplitude",
-                "slider_range": [500, 7000, [[500, 3200, 100], [3200, 3500, 300], [3500, 7000, 500]]],
-                "units": "µV",
-                "default_value": 0
+                "slider_range": [0, 5000, [[0,5000,100]]],
+                "units": "mV",
+                "default_value": 5000
             },
             {
                 "title": "Ventricular Pulse Width",
                 "slider_range": [50, 1900, [[50, 100, 50], [100, 1900, 100]]],
                 "units": "µs",
-                "default_value": 0
+                "default_value": 4000
             },
             {
                 "title": "Ventricular Sensitivity",
-                "slider_range": [25000, 1000000, [[250, 500, 250], [500, 750, 250], [0, 75000, 1000, 250], [1000, 10000, 500]]],
+                "slider_range": [250, 10000, [[250, 1000, 250], [1000, 10000, 500]]],
                 "units": "µV",
-                "default_value": 0
+                "default_value": 250
             },
             {
                 "title": "Ventricular Refractory Period",
                 "slider_range": [150, 500, 10],
                 "units": "ms",
-                "default_value": 0
+                "default_value": 320
             },
             {
                 "title": "Hysteresis",
-                "slider_range": [],
-                "units": "",
+                "slider_range": [0, 175, [[0,30,30],[30, 50, 5], [50, 90, 1], [90, 175, 5]]],
+                "units": "ppm",
                 "default_value": 0
             },
             {
-                "title": "Rate Smoothing",
-                "slider_range": [],
-                "units": "",
+                "title": "Rate Smoothing", 
+                "slider_range": [0,25,[[0,21,3],[21,25,4]]],
+                "units": "%",
                 "default_value": 0
             },
             {
                 "title": "Activity Threshold",
                 "slider_range": [0, 7, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 4
             },
             {
                 "title": "Reaction Time",
                 "slider_range": [10, 50, 10],
                 "units": "sec",
-                "default_value": 0
+                "default_value": 30
             },
             {
                 "title": "Response Factor",
                 "slider_range": [1, 16, 1],
                 "units": "",
-                "default_value": 0
+                "default_value": 8
             },
             {
                 "title": "Recovery Time",
                 "slider_range": [2, 16, 1],
                 "units": "min",
-                "default_value": 0
+                "default_value": 5
             }
         ]
     }
