@@ -9,7 +9,7 @@ from encryption import generate_encryption_key, encrypt_data, decrypt_data
 from base64 import urlsafe_b64encode
 import json
 
-ctk.set_default_color_theme("../DCM/Themes/cNord_theme.json")
+ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
 ctk.set_appearance_mode("system")
 
 
@@ -70,8 +70,8 @@ class App(ctk.CTk):
         self.top_frame = ctk.CTkFrame(self.welcome_frame)
         self.top_frame.pack(fill='x', pady=20, padx=20)
 
-        battery = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Battery_light.png"),
-                                dark_image=Image.open("../DCM/Themes/Battery_dark.png"),
+        battery = ctk.CTkImage(light_image=Image.open("DCM/Themes/Battery_light.png"),
+                                dark_image=Image.open("DCM/Themes/Battery_dark.png"),
                                 size=(30, 30))
 
         self.battery_label = ctk.CTkLabel(self.top_frame, image=battery, text="")  # display image with a CTkLabel
@@ -85,8 +85,8 @@ class App(ctk.CTk):
         self.switch = ctk.CTkButton(self.top_frame, text=self.update_theme(), command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
         self.switch.pack(side="right", pady=10, padx=10)
 
-        logo_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/logo.png"),
-                                  dark_image=Image.open("../DCM/Themes/dark_logo.png"),
+        logo_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
+                                  dark_image=Image.open("DCM/Themes/dark_logo.png"),
                                   size=(70 * 5, 30 * 5))
 
         self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
@@ -96,8 +96,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Continue as Admin', command=self.create_admin_screen, text_color="#047bda", fg_color="transparent", border_width=0).pack(pady=10, padx=(10, 0))
 
-        waves_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Wave_light.png"),
-                                   dark_image=Image.open("../DCM/Themes/Wave.png"),
+        waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
+                                   dark_image=Image.open("DCM/Themes/Wave.png"),
                                    size=(70 * 27, 33 * 17))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
@@ -122,8 +122,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.login_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -151,8 +151,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
         ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.register_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -163,7 +163,7 @@ class App(ctk.CTk):
         password_check = self.create_password_check.get()
 
         # Check if the number of accounts exceeds 10
-        if len(self.get_user_list("")) >= 10:
+        if len(self.get_user_list()) >= 10:
             error_message = "Maximum number of accounts reached."
             self.show_message("Accounts Error", error_message)
             return
@@ -235,10 +235,11 @@ class App(ctk.CTk):
         # Hash the entered password for comparison
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
+        filename = "user_accounts.json"
         if account_type == "admin":
-            filename = "admin_accounts.txt"
+            usertype = "Admin"
         else:
-            filename = "user_accounts.json"
+            usertype = "Users"
 
         # Check if the file exists
         if not os.path.exists(filename):
@@ -256,7 +257,7 @@ class App(ctk.CTk):
             return
 
         # Check if the provided username and password match any record in the file
-        for user_entry in data.get("Users", []):
+        for user_entry in data.get(usertype, []):
             stored_username = user_entry["Username"]
             stored_password = user_entry["Password"]
 
@@ -288,12 +289,9 @@ class App(ctk.CTk):
             self.msg_window.focus()  # if window exists focus it
         print(msg)
 
-    def get_user_list(self, type):
+    def get_user_list(self):
         # Check if the file exists, if not, return an empty list
-        if (type == "admin"):
-            filename = "admin_accounts.txt"
-        else: 
-            filename = "user_accounts.json"
+        filename = "user_accounts.json"
 
         if not os.path.exists(filename):
             return []
@@ -306,7 +304,7 @@ class App(ctk.CTk):
             return []
 
     def username_exists(self, username):
-        user_list = self.get_user_list("")
+        user_list = self.get_user_list()
 
         for user_data in user_list:
             stored_username = user_data.get("Username")
@@ -337,8 +335,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.admin_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -349,13 +347,62 @@ class App(ctk.CTk):
         self.pacing_mode_selected = None  # Reset the flag
         self.create_admin_screen()
 
+
+    def deletion_checkbox_event(self, username, check_var):
+        print(f"{username} checkbox toggled, current value: {check_var.get()}")
+
     def show_deletion_screen(self):
         self.admin_frame.pack_forget()
-        self.deletion_frame = ctk.CTkFrame(self)
-        self.deletion_frame.pack(fill='both', expand=True)  
+        self.deletion_frame = ctk.CTkFrame(self, width=200, height=200)
+        self.deletion_frame.pack(fill='both', expand=True)
 
-        userList = self.get_user_list("user")
-        ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin).pack(pady=10)
+        userList = self.get_user_list()
+        username = [user['Username'] for user in userList]
+        self.checkboxList = []
+        self.check_vars = []  # List to store the StringVars for each checkbox
+
+        for i, item in enumerate(userList):
+            check_var = ctk.StringVar(value="off")  # Individual check variable for each checkbox
+            self.check_vars.append(check_var)
+
+            checkbox = ctk.CTkCheckBox(self.deletion_frame, text=username[i],
+                                       command=lambda i=i, check_var=check_var: self.deletion_checkbox_event(username[i], check_var),
+                                       variable=check_var, onvalue="on", offvalue="off")
+            checkbox.pack(pady=10)
+            self.checkboxList.append(checkbox)
+
+        ctk.CTkButton(self.deletion_frame, text='Delete', command=self.delete_users, width=150, height=40, font=("Arial", 20)).pack(pady=10)
+        ctk.CTkButton(self.deletion_frame, text='Back', command=self.back_to_admin, width=150, height=40, font=("Arial", 20)).pack(pady=10)
+
+    def delete_users(self):
+        indices_to_delete = [i for i, check_var in enumerate(self.check_vars) if check_var.get() == "on"] # Determine the indices to be deleted
+
+        if not indices_to_delete: # if there are no users
+            print("No users selected for deletion.")
+            return
+
+        with open("user_accounts.json", "r") as file:  # Read the contents of the file
+            data = json.load(file)
+
+        updated_users = [user for i, user in enumerate(data["Users"]) if i not in indices_to_delete] # Remove the selected lines
+        data["Users"] = updated_users # update the json for not having the selected users
+       
+        with open("user_accounts.json", "w") as file:
+            json.dump(data, file, indent=4)
+
+        # Update the checkbox list and UI
+        for index in sorted(indices_to_delete, reverse=True):
+            self.checkboxList[index].destroy()  # Remove the checkbox widget
+            del self.checkboxList[index]  # Remove the reference from the list
+            del self.check_vars[index]  # Remove the associated StringVar
+
+        print("Selected users have been deleted.")
+        
+
+
+
+
+
 
     def checkbox_event(self):
         print("checkbox toggled, current value:", self.check_var.get())
