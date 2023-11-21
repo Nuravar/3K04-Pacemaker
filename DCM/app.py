@@ -9,7 +9,7 @@ from encryption import generate_encryption_key, encrypt_data, decrypt_data
 from base64 import urlsafe_b64encode
 import json
 
-ctk.set_default_color_theme("DCM\Themes\cNord_theme.json")
+ctk.set_default_color_theme("../DCM/Themes/cNord_theme.json")
 ctk.set_appearance_mode("system")
 
 
@@ -62,7 +62,6 @@ class App(ctk.CTk):
             return "☀"
     
     def create_welcome_screen(self):
-        width, height = self.get_current_size() #utilize this to scale each element as a percentage of size DOES NOT WORK
         self.update_theme()
         self.welcome_frame = ctk.CTkFrame(self)
         self.welcome_frame.pack(fill='both', expand=True)
@@ -70,8 +69,8 @@ class App(ctk.CTk):
         self.top_frame = ctk.CTkFrame(self.welcome_frame)
         self.top_frame.pack(fill='x', pady=20, padx=20)
 
-        battery = ctk.CTkImage(light_image=Image.open("DCM/Themes/Battery_light.png"),
-                                dark_image=Image.open("DCM/Themes/Battery_dark.png"),
+        battery = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Battery_light.png"),
+                                dark_image=Image.open("../DCM/Themes/Battery_dark.png"),
                                 size=(30, 30))
 
         self.battery_label = ctk.CTkLabel(self.top_frame, image=battery, text="")  # display image with a CTkLabel
@@ -85,8 +84,8 @@ class App(ctk.CTk):
         self.switch = ctk.CTkButton(self.top_frame, text=self.update_theme(), command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
         self.switch.pack(side="right", pady=10, padx=10)
 
-        logo_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/logo.png"),
-                                  dark_image=Image.open("DCM/Themes/dark_logo.png"),
+        logo_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/logo.png"),
+                                  dark_image=Image.open("../DCM/Themes/dark_logo.png"),
                                   size=(70 * 5, 30 * 5))
 
         self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
@@ -96,8 +95,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Continue as Admin', command=self.create_admin_screen, text_color="#047bda", fg_color="transparent", border_width=0).pack(pady=10, padx=(10, 0))
 
-        waves_title = ctk.CTkImage(light_image=Image.open("DCM/Themes/Wave_light.png"),
-                                   dark_image=Image.open("DCM/Themes/Wave.png"),
+        waves_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Wave_light.png"),
+                                   dark_image=Image.open("../DCM/Themes/Wave.png"),
                                    size=(70 * 27, 33 * 17))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
@@ -122,8 +121,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.login_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -151,8 +150,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
         ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.register_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -183,27 +182,21 @@ class App(ctk.CTk):
         # Hash the password before storing it
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-        # Generate a new encryption key
-        ###encryption_key = generate_encryption_key()
+        # Load pacing modes from the pacing_modes.json file
+        with open("pacing_modes.json", "r") as file:
+            pacing_data = json.load(file)
 
-        # Ensure the encryption key is properly encoded
-        ###encoded_encryption_key = urlsafe_b64encode(encryption_key).rstrip(b'=')
+        # Extract pacing modes from the loaded data
+        pacing_modes = list(pacing_data.keys())
 
-        # Use encryption to store the hashed password securely
-        ###encrypted_password = encrypt_data({"password": hashed_password}, encoded_encryption_key)
+        # Initialize the "Saved Parameters" dictionary with empty lists for each pacing mode
+        saved_parameters = {mode: {} for mode in pacing_modes}
 
         # Create the user entry in the desired JSON format
         user_entry = {
             "Username": username,
-            "Password": hashed_password, ### change back to encrypted_password
-            "Saved Parameters": [
-                {
-                    "AOO": [],
-                    "VOO": [],
-                    "AAI": [],
-                    "VVI": []
-                }
-            ]
+            "Password": hashed_password,
+            "Saved Parameters": saved_parameters
         }
 
         # Load existing data or create an empty dictionary
@@ -227,6 +220,7 @@ class App(ctk.CTk):
 
         # Continue with the main screen display
         self.show_main_screen()
+
 
     def login(self, account_type):
         username = self.username_entry.get()
@@ -335,8 +329,8 @@ class App(ctk.CTk):
         ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("DCM/Themes/wave2_dark.png"),
+        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
+                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.admin_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
