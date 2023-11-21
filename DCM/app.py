@@ -309,9 +309,16 @@ class App(ctk.CTk):
         return False
 
     def back_to_welcome(self):
+        # Check if the toplevel_window is a ParametersWindow
+        if isinstance(self.toplevel_window, ParametersWindow):
+            # Call the destroy method to close the ParametersWindow
+            self.toplevel_window.destroy()
+        
         for widget in self.winfo_children():
             widget.pack_forget()
+
         self.is_pacing_mode_selected = None  # Reset the flag
+
         self.create_welcome_screen()
 
     def create_admin_screen(self):
@@ -403,7 +410,12 @@ class App(ctk.CTk):
 
     def optionmenu_callback(self, choice):
         print("optionmenu dropdown clicked:", choice)
-        print()
+        
+        # Check if the toplevel_window is a ParametersWindow
+        if isinstance(self.toplevel_window, ParametersWindow):
+            # Destroy the ParametersWindow
+            self.toplevel_window.destroy()
+        
         self.is_pacing_mode_selected = choice != "Select Pacing Mode"
 
         # Update the "⚙ Options" button state based on the pacing mode selection
@@ -503,11 +515,20 @@ class App(ctk.CTk):
         if not self.is_pacing_mode_selected:
             return  # Do not show the Parameters Window if pacing mode hasn't been selected
 
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
-        else:
-            self.toplevel_window.update_values()
+        selected_pacing_mode = self.optionmenu_var.get()
+
+        # Check if the toplevel_window is a ParametersWindow for the selected pacing mode
+        if isinstance(self.toplevel_window, ParametersWindow) and self.toplevel_window.pacing_mode == selected_pacing_mode:
+            # Focus on the existing ParametersWindow
             self.toplevel_window.focus()
+        else:
+            # Destroy the existing ParametersWindow if it exists
+            if isinstance(self.toplevel_window, ParametersWindow):
+                self.toplevel_window.destroy()
+
+            # Create a new ParametersWindow for the selected pacing mode
+            self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
+
 
 if __name__ == '__main__':
     app = App()
