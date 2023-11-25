@@ -8,8 +8,16 @@ from datetime import datetime
 from encryption import generate_encryption_key, encrypt_data, decrypt_data
 from base64 import urlsafe_b64encode
 import json
+import platform
 
-ctk.set_default_color_theme("../DCM/Themes/cNord_theme.json")
+
+if platform.system() == "Darwin": # if user is MacOS
+    FILE_PATH_PREFIX = "../DCM"
+else: # if user is Windows
+    FILE_PATH_PREFIX = "DCM"
+
+cNord_theme_path = os.path.join(FILE_PATH_PREFIX,"Themes", "cNord_theme.json")
+ctk.set_default_color_theme(cNord_theme_path)
 ctk.set_appearance_mode("system")
 
 
@@ -69,8 +77,11 @@ class App(ctk.CTk):
         self.top_frame = ctk.CTkFrame(self.welcome_frame)
         self.top_frame.pack(fill='x', pady=20, padx=20)
 
-        battery = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Battery_light.png"),
-                                dark_image=Image.open("../DCM/Themes/Battery_dark.png"),
+        battery_light_path = os.path.join(FILE_PATH_PREFIX,"Themes", "Battery_light.png")
+        battery_dark_path = os.path.join(FILE_PATH_PREFIX,"Themes", "Battery_dark.png")
+
+        battery = ctk.CTkImage(light_image=Image.open(battery_light_path),
+                                dark_image=Image.open(battery_dark_path),
                                 size=(30, 30))
 
         self.battery_label = ctk.CTkLabel(self.top_frame, image=battery, text="")  # display image with a CTkLabel
@@ -84,8 +95,11 @@ class App(ctk.CTk):
         self.switch = ctk.CTkButton(self.top_frame, text=self.update_theme(), command=self.theme_event, width=30, height=30)  # 40x40 is just an example size, adjust accordingly
         self.switch.pack(side="right", pady=10, padx=10)
 
-        logo_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/logo.png"),
-                                  dark_image=Image.open("../DCM/Themes/dark_logo.png"),
+        logo_light_path = os.path.join(FILE_PATH_PREFIX,"Themes", "logo.png")
+        logo_dark_path = os.path.join(FILE_PATH_PREFIX,"Themes", "dark_logo.png")
+
+        logo_title = ctk.CTkImage(light_image=Image.open(logo_light_path),
+                                  dark_image=Image.open(logo_dark_path),
                                   size=(70 * 5, 30 * 5))
 
         self.logo_label = ctk.CTkLabel(self.welcome_frame, image=logo_title, text="")
@@ -95,8 +109,10 @@ class App(ctk.CTk):
         ctk.CTkButton(self.welcome_frame, text='Create an Account', command=self.show_register_screen).pack(pady=10, padx=(10, 0))
         ctk.CTkButton(self.welcome_frame, text='Continue as Admin', command=self.create_admin_screen, text_color="#047bda", fg_color="transparent", border_width=0).pack(pady=10, padx=(10, 0))
 
-        waves_title = ctk.CTkImage(light_image=Image.open("../DCM/Themes/Wave_light.png"),
-                                   dark_image=Image.open("../DCM/Themes/Wave.png"),
+        wave_light_path = os.path.join(FILE_PATH_PREFIX,"Themes", "Wave_light.png")
+        wave_dark_path = os.path.join(FILE_PATH_PREFIX,"Themes", "Wave.png")
+        waves_title = ctk.CTkImage(light_image=Image.open(wave_light_path),
+                                   dark_image=Image.open(wave_dark_path),
                                    size=(70 * 27, 33 * 17))
 
         self.waves_label = ctk.CTkLabel(self.welcome_frame, image=waves_title, text="")
@@ -120,9 +136,11 @@ class App(ctk.CTk):
         # Login Button
         ctk.CTkButton(self.login_frame, text='Login', command=lambda:self.login("users")).pack(pady=10)
         ctk.CTkButton(self.login_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
-
-        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
+        
+        bg_light_path = os.path.join(FILE_PATH_PREFIX,"Themes", "wave2_light.png")
+        bg_dark_path = os.path.join(FILE_PATH_PREFIX,"Themes", "wave2_dark.png")
+        bg_image = ctk.CTkImage(light_image=Image.open(bg_light_path),
+                                  dark_image=Image.open(bg_dark_path),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.login_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -150,8 +168,10 @@ class App(ctk.CTk):
         ctk.CTkButton(self.register_frame, text='Register', command=self.register).pack(pady=10)
         ctk.CTkButton(self.register_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
 
-        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
+        bg_light_path = os.path.join(FILE_PATH_PREFIX,"Themes", "wave2_light.png")
+        bg_dark_path = os.path.join(FILE_PATH_PREFIX,"Themes", "wave2_dark.png")
+        bg_image = ctk.CTkImage(light_image=Image.open(bg_light_path),
+                                  dark_image=Image.open(bg_dark_path),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.register_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -181,9 +201,12 @@ class App(ctk.CTk):
 
         # Hash the password before storing it
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "pacing_modes.json")
 
         # Load pacing modes from the pacing_modes.json file
-        with open("pacing_modes.json", "r") as file:
+        with open(file_path, "r") as file:
             pacing_data = json.load(file)
 
         # Extract pacing modes from the loaded data
@@ -199,9 +222,11 @@ class App(ctk.CTk):
             "Saved Parameters": saved_parameters
         }
 
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        user_file_path = os.path.join(script_dir, "user_accounts.json")
         # Load existing data or create an empty dictionary
         try:
-            with open("user_accounts.json", "r") as file:
+            with open(user_file_path, "r") as file:
                 data = json.load(file)
         except FileNotFoundError:
             data = {"Users": []}
@@ -210,7 +235,7 @@ class App(ctk.CTk):
         data["Users"].append(user_entry)
 
         # Save the updated data to the file
-        with open("user_accounts.json", "w") as file:
+        with open(user_file_path, "w") as file:
             json.dump(data, file, indent=4)
 
         print(f"Registered: Username - {username}")
@@ -222,6 +247,64 @@ class App(ctk.CTk):
         self.show_main_screen()
 
 
+    # def login(self, account_type):
+    #     username = self.username_entry.get()
+    #     password = self.password_entry.get()
+
+    #     # Hash the entered password for comparison
+    #     hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+    #     filename = "user_accounts.json"
+    #     if account_type == "admin":
+    #         print("usertype set to admin")
+    #         usertype = "Admin"
+    #     else:
+    #         usertype = "Users"
+
+    #     # Check if the file exists
+    #     if not os.path.exists(filename):
+    #         error_message = f"Login failed: {account_type.capitalize()} account file not found."
+    #         self.show_message("Login Error", error_message)
+    #         return
+
+    #     script_dir = os.path.dirname(os.path.abspath(__file__))
+    #     user_file_path = os.path.join(script_dir, "user_accounts.json")
+    #     # Read user accounts from the file
+    #     try:
+    #         with open(user_file_path, "r") as file:    
+    #             data = json.load(file)
+    #     except json.JSONDecodeError:
+    #         error_message = f"Login failed: Error decoding {account_type.capitalize()} account file."
+    #         self.show_message("Login Error", error_message)
+    #         return
+
+    #     # Check if the provided username and password match any record in the file
+    #     for user_entry in data.get(usertype, []):
+    #         stored_username = user_entry["Username"]
+    #         stored_password = user_entry["Password"]
+    #         print(stored_username,stored_password)
+    #         if username == stored_username:
+    #             # Decrypt the stored password
+    #             ###decrypted_password = decrypt_data(stored_password)
+
+    #             # Compare the entered password with the decrypted stored password
+    #             if hashed_password == stored_password: ###change back to decrypted_password
+    #                 print(f"Logged in: Username - {username}")
+
+    #                 # Set the current_username variable
+    #                 self.current_username = username
+
+    #                 # Continue with the rest of the login process
+    #                 if account_type == "admin":
+    #                     print("went to deletion")
+    #                     self.show_deletion_screen()
+    #                 else:
+    #                     self.show_main_screen()
+    #                 return
+
+    #     error_message = "Login failed: Invalid username or password."
+    #     self.show_message("Login Error", error_message)
+
     def login(self, account_type):
         username = self.username_entry.get()
         password = self.password_entry.get()
@@ -229,56 +312,49 @@ class App(ctk.CTk):
         # Hash the entered password for comparison
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-        filename = "user_accounts.json"
-        if account_type == "admin":
-            usertype = "Admin"
-        else:
-            usertype = "Users"
+        # Set the correct file path for user_accounts.json
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        user_file_path = os.path.join(script_dir, "user_accounts.json")
 
         # Check if the file exists
-        if not os.path.exists(filename):
+        if not os.path.exists(user_file_path):
             error_message = f"Login failed: {account_type.capitalize()} account file not found."
             self.show_message("Login Error", error_message)
             return
 
         # Read user accounts from the file
         try:
-            with open(filename, "r") as file:
+            with open(user_file_path, "r") as file:
                 data = json.load(file)
         except json.JSONDecodeError:
             error_message = f"Login failed: Error decoding {account_type.capitalize()} account file."
             self.show_message("Login Error", error_message)
             return
+        except FileNotFoundError:
+            error_message = "Login failed: User accounts file not found."
+            self.show_message("Login Error", error_message)
+            return
+
+        # Set user type
+        usertype = "Admin" if account_type == "admin" else "Users"
 
         # Check if the provided username and password match any record in the file
         for user_entry in data.get(usertype, []):
-            stored_username = user_entry["Username"]
-            stored_password = user_entry["Password"]
-
-            if username == stored_username:
-                # Decrypt the stored password
-                ###decrypted_password = decrypt_data(stored_password)
-
-                # Compare the entered password with the decrypted stored password
-                if hashed_password == stored_password: ###change back to decrypted_password
-                    print(f"Logged in: Username - {username}")
-
-                    # Set the current_username variable
-                    self.current_username = username
-
-                    # Continue with the rest of the login process
-                    if account_type == "admin":
-                        self.show_deletion_screen()
-                    else:
-                        self.show_main_screen()
-                    return
+            if username == user_entry.get("Username") and hashed_password == user_entry.get("Password"):
+                self.current_username = username
+                # Continue with the rest of the login process
+                if account_type == "admin":
+                    self.show_deletion_screen()
+                else:
+                    self.show_main_screen()
+                return
 
         error_message = "Login failed: Invalid username or password."
         self.show_message("Login Error", error_message)
 
     def show_message(self, title, msg):
         if self.msg_window is None or not self.msg_window.winfo_exists():
-            self.msg_window = MessageWindow(title, msg)  # create window if its None or destroyed
+            self.msg_window = MessageWindow(title, msg)  # create window    if its None or destroyed
         else:
             self.msg_window.focus()  # if window exists focus it
         print(msg)
@@ -289,9 +365,12 @@ class App(ctk.CTk):
 
         if not os.path.exists(filename):
             return []
-
+        
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        user_file_path = os.path.join(script_dir, "user_accounts.json")
+        
         try:
-            with open(filename, "r") as file:
+            with open(user_file_path, "r") as file:
                 data = json.load(file)
                 return data.get("Users", [])
         except FileNotFoundError:
@@ -335,9 +414,10 @@ class App(ctk.CTk):
         self.password_entry.pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Login', command=lambda:self.login("admin")).pack(pady=10)
         ctk.CTkButton(self.admin_frame, text='Back', command=self.back_to_welcome).pack(pady=10)
-
-        bg_image = ctk.CTkImage(light_image=Image.open("../DCM/Themes/wave2_light.png"),
-                                  dark_image=Image.open("../DCM/Themes/wave2_dark.png"),
+        bg_light_path = os.path.join(FILE_PATH_PREFIX,"Themes", "wave2_light.png")
+        bg_dark_path = os.path.join(FILE_PATH_PREFIX,"Themes", "wave2_dark.png")
+        bg_image = ctk.CTkImage(light_image=Image.open(bg_light_path),
+                                  dark_image=Image.open(bg_dark_path),
                                   size=(70 * 27, 33 * 17))
         self.logo_label = ctk.CTkLabel(self.admin_frame, image=bg_image, text="")
         self.logo_label.pack(pady=(70, 0))
@@ -381,14 +461,17 @@ class App(ctk.CTk):
         if not indices_to_delete: # if there are no users
             print("No users selected for deletion.")
             return
+        
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        user_file_path = os.path.join(script_dir, "user_accounts.json")
 
-        with open("user_accounts.json", "r") as file:  # Read the contents of the file
+        with open(user_file_path, "r") as file:  # Read the contents of the file
             data = json.load(file)
 
         updated_users = [user for i, user in enumerate(data["Users"]) if i not in indices_to_delete] # Remove the selected lines
         data["Users"] = updated_users # update the json for not having the selected users
        
-        with open("user_accounts.json", "w") as file:
+        with open(user_file_path, "w") as file:
             json.dump(data, file, indent=4)
 
         # Update the checkbox list and UI
@@ -453,9 +536,12 @@ class App(ctk.CTk):
         self.switch.pack(side="right", pady=10, padx=10)
 
         ctk.CTkButton(self.nav_bar, text='Sign Out', command=self.back_to_welcome).pack(side='right', padx=10)
+        
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "pacing_modes.json")
 
         # Read values from pacing_modes.json
-        with open("pacing_modes.json", "r") as file:
+        with open(file_path, "r") as file:
             pacing_modes = json.load(file)
 
         self.pacing_mode = ctk.StringVar()

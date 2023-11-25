@@ -30,8 +30,10 @@ class ParametersWindow(ctk.CTkToplevel):
         pacing_mode_value = pacing_mode.get()
         print("pacing_mode_value", pacing_mode_value)
 
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "pacing_modes.json")
         # Load parameters from the pacing_modes.json file
-        with open("pacing_modes.json", "r") as file:
+        with open(file_path, "r") as file:
             pacing_data = json.load(file)
             parameters_info = pacing_data.get(pacing_mode_value, {})
             parameters = parameters_info.get("Parameters", [])
@@ -70,9 +72,11 @@ class ParametersWindow(ctk.CTkToplevel):
 
     def are_saved_values_available(self, pacing_mode_value):
         # Check if there are saved values for the current pacing mode
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "user_accounts.json")
         current_user = self.app.current_username
         if current_user:
-            with open("user_accounts.json", "r") as file:
+            with open(file_path, "r") as file:
                 user_data = json.load(file)
                 for user in user_data["Users"]:
                     if user["Username"] == current_user:
@@ -83,9 +87,11 @@ class ParametersWindow(ctk.CTkToplevel):
 
     def get_saved_value(self, parameter_title, pacing_mode_value):
         # Get the saved value from user_accounts.json
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "user_accounts.json")
         current_user = self.app.current_username
         if current_user:
-            with open("user_accounts.json", "r") as file:
+            with open(file_path, "r") as file:
                 user_data = json.load(file)
                 for user in user_data["Users"]:
                     if user["Username"] == current_user:
@@ -101,6 +107,8 @@ class ParametersWindow(ctk.CTkToplevel):
 
     def save_options(self):
         # Check if a user is logged in
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "user_accounts.json")
         current_user = self.app.current_username
         if current_user:
             # Get the selected pacing mode
@@ -114,14 +122,14 @@ class ParametersWindow(ctk.CTkToplevel):
                 saved_parameters[title] = value
 
             # Update the saved parameters in user_accounts.json
-            with open("user_accounts.json", "r") as file:
+            with open(file_path, "r") as file:
                 user_data = json.load(file)
 
             for user in user_data["Users"]:
                 if user["Username"] == current_user:
                     user["Saved Parameters"][pacing_mode_value] = saved_parameters
 
-            with open("user_accounts.json", "w") as file:
+            with open(file_path, "w") as file:
                 json.dump(user_data, file, indent=2)
 
             print("Options saved successfully.")
@@ -130,25 +138,28 @@ class ParametersWindow(ctk.CTkToplevel):
 
     def reset_to_default(self):
         # Check if a user is logged in
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        user_file_path = os.path.join(script_dir, "user_accounts.json")
+        file_path = os.path.join(script_dir, "pacing_modes.json")
         current_user = self.app.current_username
         if current_user:
             # Get the selected pacing mode
             pacing_mode_value = self.pacing_mode.get()
 
             # Load default values for the selected pacing mode from pacing_modes.json
-            with open("pacing_modes.json", "r") as file:
+            with open(file_path, "r") as file:
                 pacing_data = json.load(file)
                 default_values = pacing_data.get(pacing_mode_value, {}).get("Default Values", {})
 
             # Update the saved parameters in user_accounts.json to the default values
-            with open("user_accounts.json", "r") as file:
+            with open(user_file_path, "r") as file:
                 user_data = json.load(file)
 
             for user in user_data["Users"]:
                 if user["Username"] == current_user:
                     user["Saved Parameters"][pacing_mode_value] = default_values
 
-            with open("user_accounts.json", "w") as file:
+            with open(user_file_path, "w") as file:
                 json.dump(user_data, file, indent=2)
 
             # Reload parameters with updated default values
