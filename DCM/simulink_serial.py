@@ -32,7 +32,7 @@ def receiveSerial(port):
         VSensitivity = (unpacked_data[10])/10
         ARP = (unpacked_data[11])*10
         VRP = (unpacked_data[12])*10
-        APulseWidth = (unpacked_data[13])*10
+        ActivityThreshold = (unpacked_data[13])*10
         ReactionTime = unpacked_data[14]
         ResponseFactor = unpacked_data[15]
         RecoveryTime = unpacked_data[16]
@@ -46,6 +46,7 @@ def receiveSerial(port):
 
     finally:
         com.close()
+        return [Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime]
 
 
 def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
