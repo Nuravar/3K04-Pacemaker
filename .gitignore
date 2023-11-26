@@ -2,7 +2,9 @@
 .env
 
 # Ignore user accounts log file
-user_accounts.txt
+user_accounts.json
 
 # Ignore all files __pycache__
 */__pycache__/
+
+tempCodeRunnerFile.py
