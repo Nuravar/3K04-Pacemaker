@@ -9,13 +9,12 @@ from encryption import generate_encryption_key, encrypt_data, decrypt_data
 from base64 import urlsafe_b64encode
 import json
 import platform
-
-
+from simulink_serial import *
 if platform.system() == "Darwin": # if user is MacOS
     FILE_PATH_PREFIX = "../DCM"
 else: # if user is Windows
     FILE_PATH_PREFIX = "DCM"
-
+PORT_NAME = 'COM3'
 cNord_theme_path = os.path.join(FILE_PATH_PREFIX,"Themes", "cNord_theme.json")
 ctk.set_default_color_theme(cNord_theme_path)
 ctk.set_appearance_mode("system")
@@ -481,12 +480,6 @@ class App(ctk.CTk):
             del self.check_vars[index]  # Remove the associated StringVar
 
         print("Selected users have been deleted.")
-        
-
-
-
-
-
 
     def checkbox_event(self):
         print("checkbox toggled, current value:", self.check_var.get())
@@ -574,17 +567,36 @@ class App(ctk.CTk):
 
         self.toplevel_window = None
 
-        self.body_frame = ctk.CTkScrollableFrame(self.main_frame)
+
+        # MAIN BODY CONTENT
+        self.body_frame = ctk.CTkTabview(self.main_frame)
         self.body_frame.pack(fill='both', expand=True, pady=20)
-        ctk.CTkLabel(self.body_frame, text='Main Body Content').pack()
+        self.body_frame.add("Atrial")
+        self.body_frame.tab("Atrial").configure(border_color= "red", border_width=1.5)
+        self.body_frame.add("Ventricular")
+        self.body_frame.tab("Ventricular").configure(border_color= "blue", border_width=1.5)
+        self.body_frame.add("Both")
+        self.body_frame.tab("Both").configure(border_color= "purple", border_width=1.5)
+        # ATRIAL CONTENT
+        ctk.CTkLabel(self.body_frame.tab("Atrial"), text='Atrial ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+        
+        # VENTRICLE CONTENT
+        ctk.CTkLabel(self.body_frame.tab("Ventricular"), text='Ventricular ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+        # BOTH CONTENT
+        ctk.CTkLabel(self.body_frame.tab("Both"), text='ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+
+        # MAIN BODY CONTENT END
+
 
         self.footer_frame = ctk.CTkFrame(self.main_frame)
         self.footer_frame.pack(fill='x', side='bottom', pady=10, padx=10)
 
         ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right', pady=10, padx=10)
         ctk.CTkLabel(self.footer_frame, text='Pacemaker Controller').pack(side='right', padx=(0, 200))
-
-        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A").pack(side='left', padx=10)
+        
+        self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A")
+        self.connection.pack(side='left', padx=10)
+        self.verify_connection(PORT_NAME)
 
     def theme_event(self):
         print("Button clicked, current value:", ctk.get_appearance_mode())
@@ -615,6 +627,13 @@ class App(ctk.CTk):
             # Create a new ParametersWindow for the selected pacing mode
             self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
 
+    def verify_connection(self, port_name):
+        try:
+            with serial.Serial(port_name, baudrate=9600, timeout=1) as ser:
+                print("Connected to the device on port", port_name)
+                self.connection.configure(text=f"Connected To Port {port_name}", text_color="#1cac78")
+        except serial.SerialException as e:
+            print(f"Failed to connect on {port_name}: {e}")
 
 if __name__ == '__main__':
     app = App()

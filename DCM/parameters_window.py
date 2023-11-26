@@ -2,6 +2,9 @@ import os
 import customtkinter as ctk
 from input_frame import InputFrame
 import json
+from simulink_serial import *
+
+
 
 class ParametersWindow(ctk.CTkToplevel):
     def __init__(self, app, pacing_mode):
@@ -120,7 +123,7 @@ class ParametersWindow(ctk.CTkToplevel):
                 title = frame.label.cget("text")  # Use label to access the title
                 value = frame.slider.get()
                 saved_parameters[title] = value
-
+            print(saved_parameters)
             # Update the saved parameters in user_accounts.json
             with open(file_path, "r") as file:
                 user_data = json.load(file)
@@ -133,6 +136,10 @@ class ParametersWindow(ctk.CTkToplevel):
                 json.dump(user_data, file, indent=2)
 
             print("Options saved successfully.")
+
+            #send packets to the pacemaker
+            
+            
         else:
             print("No user logged in.")
 
@@ -167,3 +174,122 @@ class ParametersWindow(ctk.CTkToplevel):
             print("Reset to default values successfully.")
         else:
             print("No user logged in.")
+
+
+
+
+def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    user_file_path = os.path.join(script_dir, "user_accounts.json")
+    file_path = os.path.join(script_dir, "pacing_modes.json")
+    send_list = [22, 86, 0, 60, 120, 120, 150, 0.5, 3.5, 0.4, 0.4, 0.75, 2.5, 250, 320, 320, 10, 30, 8, 1]
+    port = 'COM3'
+     #send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
+    if pacing_mode_value == "AOO" and type == "save":
+        send_list[2] = 0  # !!!!!!!!!!!!change depending on mode, I do not know which number is which mode
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[9] = saved_parameters['Atrial Pulse Width']
+        send(*send_list, port)
+    elif pacing_mode_value == "AAI" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[9] = saved_parameters['Atrial Pulse Width']
+        send_list[11] = saved_parameters['Atrial Sensitivity']
+        send_list[13] = saved_parameters['Absolute Refractory Period']
+        send_list[15] = saved_parameters['Post-Ventricular Atrial Refractory Period']
+        send(*send_list, port)
+    elif pacing_mode_value == "VOO" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[10] = saved_parameters['Ventricular Pulse Width']
+        send(*send_list, port)
+    elif pacing_mode_value == "VVI" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[10] = saved_parameters['Ventricular Pulse Width']
+        send_list[12] = saved_parameters['Ventricular Sensitivity']
+        send_list[14] = saved_parameters['Ventricular Refractory Period']
+        send(*send_list, port)
+    elif pacing_mode_value == "AOOR" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[5] = saved_parameters['Maximum Sensor Rate']
+        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[9] = saved_parameters['Atrial Pulse Width']
+        send_list[16] = saved_parameters['Activity Threshold']
+        send_list[17] = saved_parameters['Reaction Time']
+        send_list[18] = saved_parameters['Response Factor']
+        send_list[19] = saved_parameters['Recovery Time']
+        send(*send_list, port)
+    elif pacing_mode_value == "AAIR" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[5] = saved_parameters['Maximum Sensor Rate']
+        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[9] = saved_parameters['Atrial Pulse Width']
+        send_list[11] = saved_parameters['Atrial Sensitivity']
+        send_list[13] = saved_parameters['Absolute Refractory Period']
+        send_list[15] = saved_parameters['Post-Ventricular Atrial Refractory Period']
+        send_list[16] = saved_parameters['Activity Threshold']
+        send_list[17] = saved_parameters['Reaction Time']
+        send_list[18] = saved_parameters['Response Factor']
+        send_list[19] = saved_parameters['Recovery Time']
+        send(*send_list, port)
+    elif pacing_mode_value == "VOOR" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[5] = saved_parameters['Maximum Sensor Rate']
+        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[10] = saved_parameters['Ventricular Pulse Width']
+        send_list[16] = saved_parameters['Activity Threshold']
+        send_list[17] = saved_parameters['Reaction Time']
+        send_list[18] = saved_parameters['Response Factor']
+        send_list[19] = saved_parameters['Recovery Time']
+        send(*send_list, port)
+    elif pacing_mode_value == "VVIR" and type == "save":
+        send_list[2] = 0
+        send_list[3] = saved_parameters['Lower Rate Limit']
+        send_list[4] = saved_parameters['Upper Rate Limit']
+        send_list[5] = saved_parameters['Maximum Sensor Rate']
+        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[10] = saved_parameters['Ventricular Pulse Width']
+        send_list[12] = saved_parameters['Ventricular Sensitivity']
+        send_list[14] = saved_parameters['Ventricular Refractory Period']
+        send_list[16] = saved_parameters['Activity Threshold']
+        send_list[17] = saved_parameters['Reaction Time']
+        send_list[18] = saved_parameters['Response Factor']
+        send_list[19] = saved_parameters['Recovery Time']
+        send(*send_list, port)
+    else:
+       send(*send_list, port)
+
+
+
+def recieve_Pacemaker(self):
+    port = 'COM3'
+    values = [0, 60, 120, 120, 150, 3.5, 3.5, 0.4, 0.4, 0.75, 2.5, 250, 320, 320, 10, 30, 8, 1]
+    return send(22, 34, *values, port)
+
+def send_Data_checked(self, pacing_mode_value, saved_parameters): #weird method of implementation, recursively check if the correct byte is sent until the correct one is sent could result in an infinte loop. 
+    values = [0, 60, 120, 120, 150, 3.5, 3.5, 0.4, 0.4, 0.75, 2.5, 250, 320, 320, 10, 30, 8, 1]
+    send_Pacemaker("save", pacing_mode_value, saved_parameters)
+    checker = recieve_Pacemaker(self)
+    if values == checker: #need to change simulink serial
+        print("sent packets verified")
+    else:
+        send_Pacemaker("default", pacing_mode_value, saved_parameters)
+        print("Invalid bytes sent")
+        send_Data_checked(pacing_mode_value, saved_parameters)
+
+    
