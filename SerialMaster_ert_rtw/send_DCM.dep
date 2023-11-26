@@ -7,6 +7,7 @@ send_DCM.o: \
  C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_digitalIO.h \
  C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_SVD.h \
  C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_PWM.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_AnalogIn.h \
  C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_SCI.h \
  C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_I2C.h \
  C:/Users/Vram2/OneDrive/Documents/3K04-Pacemaker/SerialMaster_ert_rtw/SerialMaster.h \
@@ -18,6 +19,7 @@ C:/Users/Vram2/OneDrive/Documents/3K04-Pacemaker/SerialMaster_ert_rtw/send_DCM_p
 C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_digitalIO.h:
 C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_SVD.h:
 C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_PWM.h:
+C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_AnalogIn.h:
 C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_SCI.h:
 C:/ProgramData/MATLAB/SupportPackages/R2023b/toolbox/target/supportpackages/freedomk64f/include/MW_I2C.h:
 C:/Users/Vram2/OneDrive/Documents/3K04-Pacemaker/SerialMaster_ert_rtw/SerialMaster.h:

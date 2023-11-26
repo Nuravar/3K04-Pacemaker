@@ -9,7 +9,7 @@
  *
  * Model version                  : 1.29
  * Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
- * C/C++ source code generated on : Sun Nov 26 03:53:18 2023
+ * C/C++ source code generated on : Sun Nov 26 16:21:28 2023
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -24,6 +24,7 @@
 #include "rtwtypes.h"
 #include "MW_digitalIO.h"
 #include "MW_PWM.h"
+#include "MW_AnalogIn.h"
 #include "MW_SCI.h"
 #include "MW_I2C.h"
 #endif                                 /* SerialMaster_COMMON_INCLUDES_ */

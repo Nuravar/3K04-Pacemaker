@@ -9,7 +9,7 @@
  *
  * Model version                  : 1.29
  * Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
- * C/C++ source code generated on : Sun Nov 26 03:53:18 2023
+ * C/C++ source code generated on : Sun Nov 26 16:21:28 2023
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -167,6 +167,28 @@ struct tag_RYgVoAXTz61tXGMaBAGv7F
 typedef struct tag_RYgVoAXTz61tXGMaBAGv7F freedomk64f_PWMOutput_SerialM_T;
 
 #endif                             /* typedef_freedomk64f_PWMOutput_SerialM_T */
+
+#ifndef struct_tag_s1eQZAg8cMgwN6kxxyzYvC
+#define struct_tag_s1eQZAg8cMgwN6kxxyzYvC
+
+struct tag_s1eQZAg8cMgwN6kxxyzYvC
+{
+  boolean_T matlabCodegenIsDeleted;
+  int32_T isInitialized;
+  boolean_T isSetupComplete;
+  b_freedomk64f_Hardware_Serial_T Hw;
+  MW_Handle_Type MW_ANALOGIN_HANDLE;
+  real_T SampleTime;
+};
+
+#endif                                 /* struct_tag_s1eQZAg8cMgwN6kxxyzYvC */
+
+#ifndef typedef_freedomk64f_AnalogInput_Seria_T
+#define typedef_freedomk64f_AnalogInput_Seria_T
+
+typedef struct tag_s1eQZAg8cMgwN6kxxyzYvC freedomk64f_AnalogInput_Seria_T;
+
+#endif                             /* typedef_freedomk64f_AnalogInput_Seria_T */
 
 #ifndef struct_tag_q6HQSF2nXq6EjCNj0vbuLD
 #define struct_tag_q6HQSF2nXq6EjCNj0vbuLD

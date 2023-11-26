@@ -6,6 +6,8 @@ import serial
 import struct
 import time
 import threading
+
+
 def receiveSerial(port):
     
     st = struct.Struct('<BBBBBBBBBBBBBBBBBB')
@@ -15,9 +17,8 @@ def receiveSerial(port):
     try:
         com = serial.Serial(port, baudrate=115200)
         received_data = com.read(st.size)
-        unpacked_data = st.unpack(received_data)     
+        unpacked_data = st.unpack(received_data)
 
-        #DCM VALUES:
         Mode = unpacked_data[0]
         LRL = unpacked_data[1]
         URL = unpacked_data[2]
@@ -25,19 +26,18 @@ def receiveSerial(port):
         AVDelay = unpacked_data[4]
         AAmp = (unpacked_data[5])/10
         VAmp = (unpacked_data[6])/10
-        APulseWidth = (unpacked_data[7])/100
-        VPulseWidth = (unpacked_data[8])/100
-        ASensitivity = (unpacked_data[9])/20
-        VSensitivity = (unpacked_data[10])/20
+        APulseWidth = (unpacked_data[7])
+        VPulseWidth = (unpacked_data[8])
+        ASensitivity = (unpacked_data[9])/10
+        VSensitivity = (unpacked_data[10])/10
         ARP = (unpacked_data[11])*10
         VRP = (unpacked_data[12])*10
-        PVARP = (unpacked_data[13])*10
-        ActivityThreshold = unpacked_data[14]
-        ReactionTime = unpacked_data[15]
-        ResponseFactor = unpacked_data[16]
-        RecoveryTime = unpacked_data[17]
+        APulseWidth = (unpacked_data[13])*10
+        ReactionTime = unpacked_data[14]
+        ResponseFactor = unpacked_data[15]
+        RecoveryTime = unpacked_data[16]
 
-        print [Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime]
+        print(Mode,LRL,URL,MSR)
 
         
 
@@ -62,10 +62,10 @@ def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWi
     AVDelay = int(AVDelay/10)
     AAmp = int(10*AAmp)
     VAmp = int(10*VAmp)
-    APulseWidth = int(100*APulseWidth)
-    VPulseWidth = int(100*VPulseWidth)
-    ASensitivity = int(20*ASensitivity)
-    VSensitivity = int(20*VSensitivity)
+    APulseWidth = int(APulseWidth)
+    VPulseWidth = int(VPulseWidth)
+    ASensitivity = int(10*ASensitivity)
+    VSensitivity = int(10*VSensitivity)
     ARP = int(ARP/10)
     VRP = int(VRP/10)
     PVARP = int(PVARP/10)
@@ -104,12 +104,25 @@ def egramPull(port):
     unpacked_data = streceive.unpack(received_data)
 
     print(unpacked_data[0],unpacked_data[1],unpacked_data[2],unpacked_data[3],unpacked_data[4],unpacked_data[5],unpacked_data[6],unpacked_data[7],unpacked_data[8])
-
+    
     com.close()
     return unpacked_data
 
+      
 
 
+
+
+
+#def main():
+    #send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
+    # Send: 85      Receive: 34      egramPull: 56
+    #send(22, 34, 0, 60, 120, 120, 150, 3.5, 3.5, 0.4, 0.4, 0.75, 2.5, 250, 320, 320, 10, 30, 8, 1, 'COM4')
+    #send(22, 85, 4, 60, 60, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1, 'COM4')
+
+    #while 1:
+    #    egramPull('COM4')
+    #    time.sleep(0.01)
 
 
 
@@ -165,7 +178,6 @@ def egramPull(port):
 
 # main()
 
-
 class SerialApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -188,6 +200,7 @@ class SerialApp(tk.Tk):
         self.xdata, self.ydata1, self.ydata2 = [], [], []
         self.start_time = None
         self.running = False
+        self.max_length = 50  # Define the maximum length of the data arrays
 
         # Add buttons
         self.start_button = ttk.Button(self, text="Start", command=self.start)
@@ -200,6 +213,11 @@ class SerialApp(tk.Tk):
         if not self.running:
             self.running = True
             self.start_time = time.time()
+
+            # Clear existing data on start
+            self.xdata.clear()
+            self.ydata1.clear()
+            self.ydata2.clear()
             self.update_plot()
 
     def stop(self):
@@ -210,13 +228,19 @@ class SerialApp(tk.Tk):
             # Calculate elapsed time
             current_time = time.time() - self.start_time
 
-            # Pull data from egram
+            # Pull data from egram (replace with your data fetching logic)
             egram_data = egramPull('COM3')
 
             # Append new data for both lines
             self.xdata.append(current_time)
             self.ydata1.append(egram_data[0])  # First data point
             self.ydata2.append(egram_data[1])  # Second data point
+
+            # Keep only the latest data points within the fixed time interval
+            if len(self.xdata) > self.max_length:
+                self.xdata.pop(0)
+                self.ydata1.pop(0)
+                self.ydata2.pop(0)
 
             # Update the line data
             self.line1.set_xdata(self.xdata)
@@ -238,3 +262,5 @@ class SerialApp(tk.Tk):
 if __name__ == "__main__":
     app = SerialApp()
     app.mainloop()
+
+

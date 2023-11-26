@@ -9,7 +9,7 @@
  *
  * Model version                  : 1.29
  * Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
- * C/C++ source code generated on : Sun Nov 26 03:53:18 2023
+ * C/C++ source code generated on : Sun Nov 26 16:21:28 2023
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -24,6 +24,7 @@
 #include "rtwtypes.h"
 #include "MW_digitalIO.h"
 #include "MW_PWM.h"
+#include "MW_AnalogIn.h"
 #include "MW_SCI.h"
 #include "MW_I2C.h"
 #endif                                 /* SerialMaster_COMMON_INCLUDES_ */
@@ -102,14 +103,14 @@ typedef struct {
 typedef struct {
   dsp_simulink_MovingAverage_Se_T obj; /* '<S4>/ ' */
   freedomk64f_fxos8700_SerialMa_T obj_k;/* '<S4>/FXOS8700 6-Axes Sensor1' */
-  freedomk64f_DigitalRead_Seria_T obj_b;/* '<S2>/Digital Read5' */
-  freedomk64f_DigitalRead_Seria_T obj_h;/* '<S2>/Digital Read4' */
-  freedomk64f_DigitalRead_Seria_T obj_bt;/* '<S2>/Digital Read1' */
+  freedomk64f_AnalogInput_Seria_T obj_j;/* '<S2>/VentSignalIn' */
+  freedomk64f_AnalogInput_Seria_T obj_i;/* '<S2>/AtrSignalIn' */
+  freedomk64f_DigitalRead_Seria_T obj_b;/* '<S2>/Digital Read1' */
   freedomk64f_DigitalRead_Seria_T obj_c;/* '<S2>/Digital Read' */
   freedomk64f_SCIRead_SerialMas_T obj_k3;/* '<S2>/Serial Receive1' */
   freedomk64f_DigitalWrite_Seri_T obj_e;/* '<S2>/Digital Write' */
   freedomk64f_DigitalWrite_Seri_T obj_kk;/* '<S1>/Digital Write9' */
-  freedomk64f_DigitalWrite_Seri_T obj_hc;/* '<S1>/Digital Write8' */
+  freedomk64f_DigitalWrite_Seri_T obj_h;/* '<S1>/Digital Write8' */
   freedomk64f_DigitalWrite_Seri_T obj_d;/* '<S1>/Digital Write7' */
   freedomk64f_DigitalWrite_Seri_T obj_hx;/* '<S1>/Digital Write6' */
   freedomk64f_DigitalWrite_Seri_T obj_g;/* '<S1>/Digital Write5' */
@@ -157,20 +158,20 @@ typedef struct {
 
 /* Parameters (default storage) */
 struct P_SerialMaster_T_ {
+  real_T AtrSignalIn_SampleTime;       /* Expression: SampleTime
+                                        * Referenced by: '<S2>/AtrSignalIn'
+                                        */
   real_T DigitalRead_SampleTime;       /* Expression: SampleTime
                                         * Referenced by: '<S2>/Digital Read'
                                         */
   real_T DigitalRead1_SampleTime;      /* Expression: SampleTime
                                         * Referenced by: '<S2>/Digital Read1'
                                         */
-  real_T DigitalRead4_SampleTime;      /* Expression: SampleTime
-                                        * Referenced by: '<S2>/Digital Read4'
-                                        */
-  real_T DigitalRead5_SampleTime;      /* Expression: SampleTime
-                                        * Referenced by: '<S2>/Digital Read5'
-                                        */
   real_T SerialReceive1_SampleTime;    /* Expression: -1
                                         * Referenced by: '<S2>/Serial Receive1'
+                                        */
+  real_T VentSignalIn_SampleTime;      /* Expression: SampleTime
+                                        * Referenced by: '<S2>/VentSignalIn'
                                         */
   real_T Constant_Value;               /* Expression: 1
                                         * Referenced by: '<S5>/Constant'

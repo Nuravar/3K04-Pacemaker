@@ -9,7 +9,7 @@
  *
  * Model version                  : 1.29
  * Simulink Coder version         : 23.2 (R2023b) 01-Aug-2023
- * C/C++ source code generated on : Sun Nov 26 03:53:18 2023
+ * C/C++ source code generated on : Sun Nov 26 16:21:28 2023
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -405,7 +405,7 @@ void SerialMaster_step(void)
   uint8_T status;
   boolean_T DigitalRead;
   boolean_T DigitalRead1;
-  boolean_T rtb_DigitalRead4_0;
+  boolean_T tmp;
 
   /* MATLABSystem: '<S2>/Digital Read' */
   if (SerialMaster_DW.obj_c.SampleTime != SerialMaster_P.DigitalRead_SampleTime)
@@ -417,13 +417,13 @@ void SerialMaster_step(void)
   DigitalRead = MW_digitalIO_read(SerialMaster_DW.obj_c.MW_DIGITALIO_HANDLE);
 
   /* MATLABSystem: '<S2>/Digital Read1' */
-  if (SerialMaster_DW.obj_bt.SampleTime !=
-      SerialMaster_P.DigitalRead1_SampleTime) {
-    SerialMaster_DW.obj_bt.SampleTime = SerialMaster_P.DigitalRead1_SampleTime;
+  if (SerialMaster_DW.obj_b.SampleTime != SerialMaster_P.DigitalRead1_SampleTime)
+  {
+    SerialMaster_DW.obj_b.SampleTime = SerialMaster_P.DigitalRead1_SampleTime;
   }
 
   /* MATLABSystem: '<S2>/Digital Read1' */
-  DigitalRead1 = MW_digitalIO_read(SerialMaster_DW.obj_bt.MW_DIGITALIO_HANDLE);
+  DigitalRead1 = MW_digitalIO_read(SerialMaster_DW.obj_b.MW_DIGITALIO_HANDLE);
 
   /* MATLABSystem: '<S2>/Serial Receive1' */
   if (SerialMaster_DW.obj_k3.SampleTime !=
@@ -436,36 +436,39 @@ void SerialMaster_step(void)
   memcpy((void *)&SerialMaster_B.RxData[0], (void *)
          &SerialMaster_B.RxDataLocChar[0], (size_t)20 * sizeof(uint8_T));
 
-  /* MATLABSystem: '<S2>/Digital Read4' */
-  if (SerialMaster_DW.obj_h.SampleTime != SerialMaster_P.DigitalRead4_SampleTime)
+  /* MATLABSystem: '<S2>/AtrSignalIn' */
+  if (SerialMaster_DW.obj_i.SampleTime != SerialMaster_P.AtrSignalIn_SampleTime)
   {
-    SerialMaster_DW.obj_h.SampleTime = SerialMaster_P.DigitalRead4_SampleTime;
+    SerialMaster_DW.obj_i.SampleTime = SerialMaster_P.AtrSignalIn_SampleTime;
   }
 
-  rtb_DigitalRead4_0 = MW_digitalIO_read
-    (SerialMaster_DW.obj_h.MW_DIGITALIO_HANDLE);
+  MW_AnalogIn_Start(SerialMaster_DW.obj_i.MW_ANALOGIN_HANDLE);
+  MW_AnalogInSingle_ReadResult(SerialMaster_DW.obj_i.MW_ANALOGIN_HANDLE,
+    &SerialMaster_B.Multiply3, 7);
 
   /* Gain: '<S2>/Gain' incorporates:
    *  DataTypeConversion: '<S2>/Data Type Conversion3'
-   *  MATLABSystem: '<S2>/Digital Read4'
+   *  MATLABSystem: '<S2>/AtrSignalIn'
    */
-  SerialMaster_B.Gain = SerialMaster_P.Gain_Gain * (real32_T)rtb_DigitalRead4_0;
+  SerialMaster_B.Gain = SerialMaster_P.Gain_Gain * (real32_T)
+    SerialMaster_B.Multiply3;
 
-  /* MATLABSystem: '<S2>/Digital Read5' */
-  if (SerialMaster_DW.obj_b.SampleTime != SerialMaster_P.DigitalRead5_SampleTime)
+  /* MATLABSystem: '<S2>/VentSignalIn' */
+  if (SerialMaster_DW.obj_j.SampleTime != SerialMaster_P.VentSignalIn_SampleTime)
   {
-    SerialMaster_DW.obj_b.SampleTime = SerialMaster_P.DigitalRead5_SampleTime;
+    SerialMaster_DW.obj_j.SampleTime = SerialMaster_P.VentSignalIn_SampleTime;
   }
 
-  rtb_DigitalRead4_0 = MW_digitalIO_read
-    (SerialMaster_DW.obj_b.MW_DIGITALIO_HANDLE);
+  MW_AnalogIn_Start(SerialMaster_DW.obj_j.MW_ANALOGIN_HANDLE);
+  MW_AnalogInSingle_ReadResult(SerialMaster_DW.obj_j.MW_ANALOGIN_HANDLE,
+    &SerialMaster_B.Multiply3, 7);
 
   /* Gain: '<S2>/Gain1' incorporates:
    *  DataTypeConversion: '<S2>/Data Type Conversion2'
-   *  MATLABSystem: '<S2>/Digital Read5'
+   *  MATLABSystem: '<S2>/VentSignalIn'
    */
   SerialMaster_B.Gain1 = SerialMaster_P.Gain1_Gain * (real32_T)
-    rtb_DigitalRead4_0;
+    SerialMaster_B.Multiply3;
 
   /* Chart: '<S2>/Chart2' incorporates:
    *  MATLABSystem: '<S2>/Serial Receive1'
@@ -791,8 +794,8 @@ void SerialMaster_step(void)
    *  RelationalOperator: '<S2>/GreaterThan'
    *  UnitDelay: '<S4>/Unit Delay'
    */
-  rtb_DigitalRead4_0 = !(SerialMaster_B.Mode >= SerialMaster_P.onoff_Value);
-  if (rtb_DigitalRead4_0) {
+  tmp = !(SerialMaster_B.Mode >= SerialMaster_P.onoff_Value);
+  if (tmp) {
     SerialMaster_B.rtb_FXOS87006AxesSensor1_idx_0 = 0.0;
   } else {
     SerialMaster_B.rtb_FXOS87006AxesSensor1_idx_0 =
@@ -808,7 +811,7 @@ void SerialMaster_step(void)
     SerialMaster_DW.UnitDelay_DSTATE = SerialMaster_B.LRL;
   } else if (SerialMaster_DW.UnitDelay_DSTATE > SerialMaster_B.MSR) {
     SerialMaster_DW.UnitDelay_DSTATE = SerialMaster_B.MSR;
-  } else if (rtb_DigitalRead4_0) {
+  } else if (tmp) {
     SerialMaster_DW.UnitDelay_DSTATE = SerialMaster_B.LRL;
   }
 
@@ -1006,7 +1009,7 @@ void SerialMaster_step(void)
                      SerialMaster_B.D7_Z_VENT_CTRL != 0.0);
 
   /* MATLABSystem: '<S1>/Digital Write8' */
-  MW_digitalIO_write(SerialMaster_DW.obj_hc.MW_DIGITALIO_HANDLE,
+  MW_digitalIO_write(SerialMaster_DW.obj_h.MW_DIGITALIO_HANDLE,
                      SerialMaster_B.D8_ATR_PACE_CTRL != 0.0);
 
   /* MATLABSystem: '<S1>/Digital Write9' */
@@ -1062,11 +1065,11 @@ void SerialMaster_initialize(void)
     SerialMaster_DW.obj_c.isSetupComplete = true;
 
     /* Start for MATLABSystem: '<S2>/Digital Read1' */
-    SerialMaster_DW.obj_bt.matlabCodegenIsDeleted = false;
-    SerialMaster_DW.obj_bt.SampleTime = SerialMaster_P.DigitalRead1_SampleTime;
-    SerialMaster_DW.obj_bt.isInitialized = 1;
-    SerialMaster_DW.obj_bt.MW_DIGITALIO_HANDLE = MW_digitalIO_open(1U, 0);
-    SerialMaster_DW.obj_bt.isSetupComplete = true;
+    SerialMaster_DW.obj_b.matlabCodegenIsDeleted = false;
+    SerialMaster_DW.obj_b.SampleTime = SerialMaster_P.DigitalRead1_SampleTime;
+    SerialMaster_DW.obj_b.isInitialized = 1;
+    SerialMaster_DW.obj_b.MW_DIGITALIO_HANDLE = MW_digitalIO_open(1U, 0);
+    SerialMaster_DW.obj_b.isSetupComplete = true;
 
     /* Start for MATLABSystem: '<S2>/Serial Receive1' */
     SerialMaster_DW.obj_k3.isInitialized = 0;
@@ -1074,19 +1077,23 @@ void SerialMaster_initialize(void)
     SerialMaster_DW.obj_k3.SampleTime = SerialMaster_P.SerialReceive1_SampleTime;
     SerialMaster_SystemCore_setup_d(&SerialMaster_DW.obj_k3);
 
-    /* Start for MATLABSystem: '<S2>/Digital Read4' */
-    SerialMaster_DW.obj_h.matlabCodegenIsDeleted = false;
-    SerialMaster_DW.obj_h.SampleTime = SerialMaster_P.DigitalRead4_SampleTime;
-    SerialMaster_DW.obj_h.isInitialized = 1;
-    SerialMaster_DW.obj_h.MW_DIGITALIO_HANDLE = MW_digitalIO_open(16U, 0);
-    SerialMaster_DW.obj_h.isSetupComplete = true;
+    /* Start for MATLABSystem: '<S2>/AtrSignalIn' */
+    SerialMaster_DW.obj_i.matlabCodegenIsDeleted = false;
+    SerialMaster_DW.obj_i.SampleTime = SerialMaster_P.AtrSignalIn_SampleTime;
+    SerialMaster_DW.obj_i.isInitialized = 1;
+    SerialMaster_DW.obj_i.MW_ANALOGIN_HANDLE = MW_AnalogInSingle_Open(16U);
+    MW_AnalogIn_SetTriggerSource(SerialMaster_DW.obj_i.MW_ANALOGIN_HANDLE,
+      MW_ANALOGIN_SOFTWARE_TRIGGER, 0U);
+    SerialMaster_DW.obj_i.isSetupComplete = true;
 
-    /* Start for MATLABSystem: '<S2>/Digital Read5' */
-    SerialMaster_DW.obj_b.matlabCodegenIsDeleted = false;
-    SerialMaster_DW.obj_b.SampleTime = SerialMaster_P.DigitalRead5_SampleTime;
-    SerialMaster_DW.obj_b.isInitialized = 1;
-    SerialMaster_DW.obj_b.MW_DIGITALIO_HANDLE = MW_digitalIO_open(17U, 0);
-    SerialMaster_DW.obj_b.isSetupComplete = true;
+    /* Start for MATLABSystem: '<S2>/VentSignalIn' */
+    SerialMaster_DW.obj_j.matlabCodegenIsDeleted = false;
+    SerialMaster_DW.obj_j.SampleTime = SerialMaster_P.VentSignalIn_SampleTime;
+    SerialMaster_DW.obj_j.isInitialized = 1;
+    SerialMaster_DW.obj_j.MW_ANALOGIN_HANDLE = MW_AnalogInSingle_Open(17U);
+    MW_AnalogIn_SetTriggerSource(SerialMaster_DW.obj_j.MW_ANALOGIN_HANDLE,
+      MW_ANALOGIN_SOFTWARE_TRIGGER, 0U);
+    SerialMaster_DW.obj_j.isSetupComplete = true;
 
     /* Start for MATLABSystem: '<S4>/FXOS8700 6-Axes Sensor1' */
     SerialMaster_DW.obj_k.isInitialized = 0;
@@ -1158,10 +1165,10 @@ void SerialMaster_initialize(void)
     SerialMaster_DW.obj_d.isSetupComplete = true;
 
     /* Start for MATLABSystem: '<S1>/Digital Write8' */
-    SerialMaster_DW.obj_hc.matlabCodegenIsDeleted = false;
-    SerialMaster_DW.obj_hc.isInitialized = 1;
-    SerialMaster_DW.obj_hc.MW_DIGITALIO_HANDLE = MW_digitalIO_open(8U, 1);
-    SerialMaster_DW.obj_hc.isSetupComplete = true;
+    SerialMaster_DW.obj_h.matlabCodegenIsDeleted = false;
+    SerialMaster_DW.obj_h.isInitialized = 1;
+    SerialMaster_DW.obj_h.MW_DIGITALIO_HANDLE = MW_digitalIO_open(8U, 1);
+    SerialMaster_DW.obj_h.isSetupComplete = true;
 
     /* Start for MATLABSystem: '<S1>/Digital Write9' */
     SerialMaster_DW.obj_kk.matlabCodegenIsDeleted = false;
@@ -1219,11 +1226,11 @@ void SerialMaster_terminate(void)
   /* End of Terminate for MATLABSystem: '<S2>/Digital Read' */
 
   /* Terminate for MATLABSystem: '<S2>/Digital Read1' */
-  if (!SerialMaster_DW.obj_bt.matlabCodegenIsDeleted) {
-    SerialMaster_DW.obj_bt.matlabCodegenIsDeleted = true;
-    if ((SerialMaster_DW.obj_bt.isInitialized == 1) &&
-        SerialMaster_DW.obj_bt.isSetupComplete) {
-      MW_digitalIO_close(SerialMaster_DW.obj_bt.MW_DIGITALIO_HANDLE);
+  if (!SerialMaster_DW.obj_b.matlabCodegenIsDeleted) {
+    SerialMaster_DW.obj_b.matlabCodegenIsDeleted = true;
+    if ((SerialMaster_DW.obj_b.isInitialized == 1) &&
+        SerialMaster_DW.obj_b.isSetupComplete) {
+      MW_digitalIO_close(SerialMaster_DW.obj_b.MW_DIGITALIO_HANDLE);
     }
   }
 
@@ -1240,27 +1247,29 @@ void SerialMaster_terminate(void)
 
   /* End of Terminate for MATLABSystem: '<S2>/Serial Receive1' */
 
-  /* Terminate for MATLABSystem: '<S2>/Digital Read4' */
-  if (!SerialMaster_DW.obj_h.matlabCodegenIsDeleted) {
-    SerialMaster_DW.obj_h.matlabCodegenIsDeleted = true;
-    if ((SerialMaster_DW.obj_h.isInitialized == 1) &&
-        SerialMaster_DW.obj_h.isSetupComplete) {
-      MW_digitalIO_close(SerialMaster_DW.obj_h.MW_DIGITALIO_HANDLE);
+  /* Terminate for MATLABSystem: '<S2>/AtrSignalIn' */
+  if (!SerialMaster_DW.obj_i.matlabCodegenIsDeleted) {
+    SerialMaster_DW.obj_i.matlabCodegenIsDeleted = true;
+    if ((SerialMaster_DW.obj_i.isInitialized == 1) &&
+        SerialMaster_DW.obj_i.isSetupComplete) {
+      MW_AnalogIn_Stop(SerialMaster_DW.obj_i.MW_ANALOGIN_HANDLE);
+      MW_AnalogIn_Close(SerialMaster_DW.obj_i.MW_ANALOGIN_HANDLE);
     }
   }
 
-  /* End of Terminate for MATLABSystem: '<S2>/Digital Read4' */
+  /* End of Terminate for MATLABSystem: '<S2>/AtrSignalIn' */
 
-  /* Terminate for MATLABSystem: '<S2>/Digital Read5' */
-  if (!SerialMaster_DW.obj_b.matlabCodegenIsDeleted) {
-    SerialMaster_DW.obj_b.matlabCodegenIsDeleted = true;
-    if ((SerialMaster_DW.obj_b.isInitialized == 1) &&
-        SerialMaster_DW.obj_b.isSetupComplete) {
-      MW_digitalIO_close(SerialMaster_DW.obj_b.MW_DIGITALIO_HANDLE);
+  /* Terminate for MATLABSystem: '<S2>/VentSignalIn' */
+  if (!SerialMaster_DW.obj_j.matlabCodegenIsDeleted) {
+    SerialMaster_DW.obj_j.matlabCodegenIsDeleted = true;
+    if ((SerialMaster_DW.obj_j.isInitialized == 1) &&
+        SerialMaster_DW.obj_j.isSetupComplete) {
+      MW_AnalogIn_Stop(SerialMaster_DW.obj_j.MW_ANALOGIN_HANDLE);
+      MW_AnalogIn_Close(SerialMaster_DW.obj_j.MW_ANALOGIN_HANDLE);
     }
   }
 
-  /* End of Terminate for MATLABSystem: '<S2>/Digital Read5' */
+  /* End of Terminate for MATLABSystem: '<S2>/VentSignalIn' */
 
   /* Terminate for S-Function (sfun_private_function_caller) generated from: '<S2>/COM_OUT ' incorporates:
    *  SubSystem: '<S2>/COM_OUT '
@@ -1375,11 +1384,11 @@ void SerialMaster_terminate(void)
   /* End of Terminate for MATLABSystem: '<S1>/Digital Write7' */
 
   /* Terminate for MATLABSystem: '<S1>/Digital Write8' */
-  if (!SerialMaster_DW.obj_hc.matlabCodegenIsDeleted) {
-    SerialMaster_DW.obj_hc.matlabCodegenIsDeleted = true;
-    if ((SerialMaster_DW.obj_hc.isInitialized == 1) &&
-        SerialMaster_DW.obj_hc.isSetupComplete) {
-      MW_digitalIO_close(SerialMaster_DW.obj_hc.MW_DIGITALIO_HANDLE);
+  if (!SerialMaster_DW.obj_h.matlabCodegenIsDeleted) {
+    SerialMaster_DW.obj_h.matlabCodegenIsDeleted = true;
+    if ((SerialMaster_DW.obj_h.isInitialized == 1) &&
+        SerialMaster_DW.obj_h.isSetupComplete) {
+      MW_digitalIO_close(SerialMaster_DW.obj_h.MW_DIGITALIO_HANDLE);
     }
   }
 
