@@ -609,7 +609,11 @@ class App(ctk.CTk):
         serial_id = self.serial_app.serial_id  # Ensure this is defined in your class
         self.serial_app_frame.save_graphs()  
         self.serial_app_frame.plot_surface_electrogram()
-        parmaeters = send()
+        values = [0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 4, 30, 8, 5]
+        port = self.serial_app.serial_port
+        array = send(22, 34, values[0], values[1], values[2], values[3],values[4], values[5],values[6], values[7],values[8], values[9],values[10], values[11],values[12], values[13],values[14], values[15], values[16], values[17], port)
+        current_mode = self.optionmenu_var.get()
+        
         # HTML content
         html_content = f"""
         <!DOCTYPE html>
@@ -652,10 +656,11 @@ class App(ctk.CTk):
             <p class="report-header">Version: PACE++ V2.16.3</p>
             <p class="report-header">Serial Number: {serial_id}</p>
 
+            
             <h2>Table of Contents</h2>
             <ul>
-                <li>Bradycardia Parameters Report</li>
-                <li>Temporary Parameters Report</li>
+                <li>Bradycardia Parameters </li>
+                <li>Resulted Figurest</li>
                 <li>Threshold Test Results</li>
                 <li>Measured Data</li>
                 <li>Trending Results</li>
@@ -665,6 +670,111 @@ class App(ctk.CTk):
                 <li>Marker Legend Report</li>
                 <li>Session Net Change Report</li>
             </ul>
+
+
+            <h2>Bradycardia Parameters</h2>
+            <table class="tg" style="undefined;table-layout: fixed; width: 582px">
+            <colgroup>
+            <col style="width: 250.2px">
+            <col style="width: 180.2px">
+            <col style="width: 151.2px">
+            </colgroup>
+            <thead>
+            <tr>
+                <th class="tg-ev0v">Parameter Name</th>
+                <th class="tg-zci2">Value</th>
+                <th class="tg-zci2">Unit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="tg-0lax">Mode</td>
+                <td class="tg-0lax">{current_mode}</td>
+                <td class="tg-0lax"></td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Lower Rate Limit</td>
+                <td class="tg-0lax">{array[1]}</td>
+                <td class="tg-0lax">ppm</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Upper Rate Limit</td>
+                <td class="tg-0lax">{array[2]}</td>
+                <td class="tg-0lax">ppm</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Maximum Sensor Rate</td>
+                <td class="tg-0lax">{array[3]}</td>
+                <td class="tg-0lax">ppm</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">AV Delay</td>
+                <td class="tg-0lax">{array[4]}</td>
+                <td class="tg-0lax"></td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Atrial Amplitude</td>
+                <td class="tg-0lax">{array[5]}</td>
+                <td class="tg-0lax">V</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Ventricular Amplitude</td>
+                <td class="tg-0lax">{array[6]}</td>
+                <td class="tg-0lax">V</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Atrial Pulse Width</td>
+                <td class="tg-0lax">{array[7]}</td>
+                <td class="tg-0lax">ms</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Ventricular Pulse Width</td>
+                <td class="tg-0lax">{array[8]}</td>
+                <td class="tg-0lax">ms</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Atrial Sensitivity</td>
+                <td class="tg-0lax">{array[9]}</td>
+                <td class="tg-0lax">mV</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Ventricular Sensitivity</td>
+                <td class="tg-0lax">{array[10]}</td>
+                <td class="tg-0lax">mV</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Absolute Refractory Period</td>
+                <td class="tg-0lax">{array[11]}</td>
+                <td class="tg-0lax">ms</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Ventricular Refractory Period</td>
+                <td class="tg-0lax">{array[12]}</td>
+                <td class="tg-0lax">ms</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Post Ventricular Absolute Refractory Period</td>
+                <td class="tg-0lax">{array[13]}</td>
+                <td class="tg-0lax">ms</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Activity Threshold</td>
+                <td class="tg-0lax">{array[14]}</td>
+                <td class="tg-0lax"></td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Reaction Time</td>
+                <td class="tg-0lax">{array[15]}</td>
+                <td class="tg-0lax">sec</td>
+            </tr>
+            <tr>
+                <td class="tg-0lax">Response Factor</td>
+                <td class="tg-0lax">{array[16]}</td>
+                <td class="tg-0lax"></td>
+            </tr>
+            </tbody>
+            </table>
+
             <h2>Resulted Figures</h2>
             <p>The following three figures below are the resultant graphs taken at the time interval chosen when the "print report" button was pressed. Figure 1 depicts the egram data \n
                 for the electrical acitivity found inside the atrium of the heart paced by the ATR_SIGNAL pin located at A0 on the board. Figure 2 depicts the egram daata for the \n
@@ -683,9 +793,6 @@ class App(ctk.CTk):
             <p><span class="figure-label">Figure 3:</span> Surface Egram Graph</p>
 
        
-            <h2>Parameters</h2>
-
-
             <!-- Add your content for each section here -->
 
         </body>

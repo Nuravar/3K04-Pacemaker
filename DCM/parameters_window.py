@@ -11,7 +11,8 @@ class ParametersWindow(ctk.CTkToplevel):
         super().__init__()
         self.app = app
         self.title("Parameters Window")
-        self.geometry('650x550')
+        self.geometry('850x750')
+        self.minsize(750, 650)
         self.overall_frame = ctk.CTkScrollableFrame(self)
         self.overall_frame.pack(side="top", fill="both", expand=True)
         self.frames = []
