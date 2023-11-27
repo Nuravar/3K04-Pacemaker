@@ -277,6 +277,25 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[19] = saved_parameters['Recovery Time']
         send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     else:
+        if pacing_mode_value == "AOO":
+            send_list[2] = 0
+        elif pacing_mode_value == "AAI":
+            send_list[2] = 2
+        elif pacing_mode_value == "VOO":
+            send_list[2] = 1
+        elif pacing_mode_value == "VVI":
+            send_list[2] = 3
+        elif pacing_mode_value == "AOOR":
+            send_list[2] = 4
+        elif pacing_mode_value == "AAIR":
+            send_list[2] = 6
+        elif pacing_mode_value == "VOOR":
+            send_list[2] = 5
+        elif pacing_mode_value == "VVIR":
+            send_list[2] = 7
+        else:
+            print("error - pacing mode not found")
+
         send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     send_list.pop()
     return send_list
