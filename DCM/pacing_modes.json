@@ -204,7 +204,7 @@
             },
             {
                 "title": "Activity Threshold",
-                "slider_range": [0, 7, 1],
+                "slider_range": [1, 7, 1],
                 "units": "",
                 "default_value": 4
             },
@@ -293,7 +293,7 @@
             },
             {
                 "title": "Activity Threshold",
-                "slider_range": [0, 7, 1],
+                "slider_range": [1, 7, 1],
                 "units": "",
                 "default_value": 4
             },
@@ -352,7 +352,7 @@
             },
             {
                 "title": "Activity Threshold",
-                "slider_range": [0, 7, 1],
+                "slider_range": [1, 7, 1],
                 "units": "",
                 "default_value": 4
             },
@@ -435,7 +435,7 @@
             },
             {
                 "title": "Activity Threshold",
-                "slider_range": [0, 7, 1],
+                "slider_range": [1, 7, 1],
                 "units": "",
                 "default_value": 4
             },

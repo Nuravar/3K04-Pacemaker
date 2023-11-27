@@ -9,7 +9,37 @@ import threading
 import customtkinter as ctk  # Replace tkinter with customtkinter
 import serial.tools.list_ports
 import re
+import json
 
+
+
+def check_and_update_boards(serial_id):
+    try:
+        # Try to open the boards.json file
+        with open('boards.json', 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        # If the file is not found, create an empty dictionary
+        data = {'Boards': {}}
+
+    # Check if the given serial_id already exists
+    if serial_id in data['Boards']:
+        # If it exists, return the corresponding board number
+        return data['Boards'][serial_id]
+    else:
+        # If it doesn't exist, find the next available board number
+        board_numbers = [int(board.split()[-1]) for board in data['Boards'].values()]
+        next_board_number = max(board_numbers) + 1 if board_numbers else 1
+
+        # Add the new serial_id and corresponding board number to the dictionary
+        data['Boards'][serial_id] = f"Board {next_board_number}"
+
+        # Save the updated data back to the boards.json file
+        with open('boards.json', 'w') as file:
+            json.dump(data, file, indent=2)
+
+        # Return the new board name
+        return data['Boards'][serial_id]
 
 
 def list_available_ports():
@@ -18,18 +48,24 @@ def list_available_ports():
         print("No COM ports found")
     else:
         for port, desc, hwid in sorted(ports):
-            #PORT VARIABLE HOLDS COM PORT
+            
             pattern = r'SER=(\d+)'
             match = re.search(pattern, hwid)
             if match:
                 ser_number = match.group(1)
-                #SER_NUMBER STORES SERIAL NUMBER
-    return port, ser_number
+                return port, ser_number
+        return None, None
+    
+
 
 def receiveSerial(port):
-    
-    st = struct.Struct('<BBBBBBBBBBBBBBBBBB')
+    # Initialize variables with default values
+    Mode = LRL = URL = MSR = AVDelay = 0
+    AAmp = VAmp = APulseWidth = VPulseWidth = 0
+    ASensitivity = VSensitivity = ARP = VRP = 0
+    ActivityThreshold = ReactionTime = ResponseFactor = RecoveryTime = 0
 
+    st = struct.Struct('<BBBBBBBBBBBBBBBBBB')
 
     print("in receive function")
     try:
@@ -37,34 +73,25 @@ def receiveSerial(port):
         received_data = com.read(st.size)
         unpacked_data = st.unpack(received_data)
 
-        Mode = unpacked_data[0]
-        LRL = unpacked_data[1]
-        URL = unpacked_data[2]
-        MSR = unpacked_data[3]
-        AVDelay = unpacked_data[4]
-        AAmp = (unpacked_data[5])/10
-        VAmp = (unpacked_data[6])/10
-        APulseWidth = (unpacked_data[7])
-        VPulseWidth = (unpacked_data[8])
-        ASensitivity = (unpacked_data[9])/10
-        VSensitivity = (unpacked_data[10])/10
-        ARP = (unpacked_data[11])*10
-        VRP = (unpacked_data[12])*10
-        ActivityThreshold = (unpacked_data[13])*10
-        ReactionTime = unpacked_data[14]
-        ResponseFactor = unpacked_data[15]
-        RecoveryTime = unpacked_data[16]
+        # Assign values from unpacked_data
+        Mode, LRL, URL, MSR, AVDelay = unpacked_data[:5]
+        AAmp, VAmp = unpacked_data[5]/10, unpacked_data[6]/10
+        APulseWidth, VPulseWidth = unpacked_data[7], unpacked_data[8]
+        ASensitivity, VSensitivity = unpacked_data[9]/10, unpacked_data[10]/10
+        ARP, VRP = unpacked_data[11]*10, unpacked_data[12]*10
+        ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime = unpacked_data[13]*10, unpacked_data[14], unpacked_data[15], unpacked_data[16]
 
-        print(Mode,LRL,URL,MSR)
-
-        
+        print("inside receive", Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime)
 
     except ValueError as e:
         print(f"Error: {e}")
-
     finally:
-        com.close()
-        return [Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime]
+        if com:
+            com.close()
+
+    # Return array outside of finally block
+    array = [Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime]
+    return array
 
 
 def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
@@ -103,7 +130,7 @@ def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWi
     com.close()
 
     if Function_call == 34:
-        receiveSerial(port)
+        return receiveSerial(port)
 
     
 def egramPull(port):
@@ -149,7 +176,7 @@ class SerialApp(ctk.CTkFrame):
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
 
-        self.port, self.ser_number = list_available_ports()
+        self.serial_port, self.serial_id = list_available_ports()
 
     def start(self):
         print("started graphs")

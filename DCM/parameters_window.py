@@ -2,8 +2,8 @@ import os
 import customtkinter as ctk
 from input_frame import InputFrame
 import json
-from simulink_serial import *
-
+from simulink_serial import send, SerialApp
+import time
 
 
 class ParametersWindow(ctk.CTkToplevel):
@@ -19,6 +19,7 @@ class ParametersWindow(ctk.CTkToplevel):
         self.pacing_mode = pacing_mode
         print("self.pacing_mode:", pacing_mode)
         self.load_parameters(self.pacing_mode)
+        self.serial_app = SerialApp()
         # Buttons to save changes or reset to default
         # Save Button
         self.save_button = ctk.CTkButton(self, text="Save Options", command=self.save_options, width=150, height=40, font=("Arial", 20))
@@ -138,7 +139,7 @@ class ParametersWindow(ctk.CTkToplevel):
             print("Options saved successfully.")
 
             #send packets to the pacemaker
-            
+            send_Data_checked(pacing_mode_value, saved_parameters)
             
         else:
             print("No user logged in.")
@@ -178,27 +179,28 @@ class ParametersWindow(ctk.CTkToplevel):
 
 
 
-def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
+def send_Pacemaker( type, pacing_mode_value, saved_parameters):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     user_file_path = os.path.join(script_dir, "user_accounts.json")
     file_path = os.path.join(script_dir, "pacing_modes.json")
-    send_list = [22, 86, 0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1]
-    port = 'COM3'
+    send_list = [22, 85, 0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 4, 30, 8, 5]
+    serial_app = SerialApp()
+    port = serial_app.serial_port
      #send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
     if pacing_mode_value == "AOO" and type == "save":
         send_list[2] = 0  # !!!!!!!!!!!!change depending on mode, I do not know which number is which mode
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
-        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[7] = saved_parameters['Atrial Amplitude']/1000
         send_list[9] = saved_parameters['Atrial Pulse Width']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "AAI" and type == "save":
         send_list[2] = 2
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
-        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[7] = saved_parameters['Atrial Amplitude']/1000
         send_list[9] = saved_parameters['Atrial Pulse Width']
-        send_list[11] = saved_parameters['Atrial Sensitivity']
+        send_list[11] = saved_parameters['Atrial Sensitivity']/1000
         send_list[13] = saved_parameters['Absolute Refractory Period']
         send_list[15] = saved_parameters['Post-Ventricular Atrial Refractory Period']
         send(*send_list, port)
@@ -206,16 +208,16 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
         send_list[2] = 1
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
-        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[8] = saved_parameters['Ventricular Amplitude']/1000
         send_list[10] = saved_parameters['Ventricular Pulse Width']
         send(*send_list, port)
     elif pacing_mode_value == "VVI" and type == "save":
         send_list[2] = 3
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
-        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[8] = saved_parameters['Ventricular Amplitude']/1000
         send_list[10] = saved_parameters['Ventricular Pulse Width']
-        send_list[12] = saved_parameters['Ventricular Sensitivity']
+        send_list[12] = saved_parameters['Ventricular Sensitivity']/1000
         send_list[14] = saved_parameters['Ventricular Refractory Period']
         send(*send_list, port)
     elif pacing_mode_value == "AOOR" and type == "save":
@@ -223,7 +225,7 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
         send_list[5] = saved_parameters['Maximum Sensor Rate']
-        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[7] = saved_parameters['Atrial Amplitude']/1000
         send_list[9] = saved_parameters['Atrial Pulse Width']
         send_list[16] = saved_parameters['Activity Threshold']
         send_list[17] = saved_parameters['Reaction Time']
@@ -235,9 +237,9 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
         send_list[5] = saved_parameters['Maximum Sensor Rate']
-        send_list[7] = saved_parameters['Atrial Amplitude']
+        send_list[7] = saved_parameters['Atrial Amplitude']/1000
         send_list[9] = saved_parameters['Atrial Pulse Width']
-        send_list[11] = saved_parameters['Atrial Sensitivity']
+        send_list[11] = saved_parameters['Atrial Sensitivity']/1000
         send_list[13] = saved_parameters['Absolute Refractory Period']
         send_list[15] = saved_parameters['Post-Ventricular Atrial Refractory Period']
         send_list[16] = saved_parameters['Activity Threshold']
@@ -250,7 +252,7 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
         send_list[5] = saved_parameters['Maximum Sensor Rate']
-        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[8] = saved_parameters['Ventricular Amplitude']/1000
         send_list[10] = saved_parameters['Ventricular Pulse Width']
         send_list[16] = saved_parameters['Activity Threshold']
         send_list[17] = saved_parameters['Reaction Time']
@@ -262,9 +264,9 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
         send_list[5] = saved_parameters['Maximum Sensor Rate']
-        send_list[8] = saved_parameters['Ventricular Amplitude']
+        send_list[8] = saved_parameters['Ventricular Amplitude']/1000
         send_list[10] = saved_parameters['Ventricular Pulse Width']
-        send_list[12] = saved_parameters['Ventricular Sensitivity']
+        send_list[12] = saved_parameters['Ventricular Sensitivity']/1000
         send_list[14] = saved_parameters['Ventricular Refractory Period']
         send_list[16] = saved_parameters['Activity Threshold']
         send_list[17] = saved_parameters['Reaction Time']
@@ -273,26 +275,39 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
         send(*send_list, port)
     else:
        send(*send_list, port)
-
+    send_list.pop()
     return send_list
 
+def convert_to_int(array):
+    for i in range(len(array)):
+        array[i] = int(array[i])
 
 
-def recieve_Pacemaker(self):
-    port = 'COM3'
-    values = [0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1]
-    return send(22, 34, *values, port)
 
-def send_Data_checked(self, pacing_mode_value, saved_parameters): #weird method of implementation, recursively check if the correct byte is sent until the correct one is sent could result in an infinte loop. 
-    values = [0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1]
-    values = send_Pacemaker("save", pacing_mode_value, saved_parameters)
-    checker = recieve_Pacemaker(self)
-    
-    if values == checker: #need to change simulink serial
+def recieve_Pacemaker():
+    serial_app = SerialApp()
+    port = serial_app.serial_port
+    values = [0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 4, 30, 8, 5]
+    array = send(22, 34, values[0], values[1], values[2], values[3],values[4], values[5],values[6], values[7],values[8], values[9],values[10], values[11],values[12], values[13],values[14], values[15], values[16], values[17], port)
+    print("second print", array)
+    return array
+
+def send_Data_checked(pacing_mode_value, saved_parameters): #weird method of implementation, recursively check if the correct byte is sent until the correct one is sent could result in an infinte loop. 
+    sent_values = send_Pacemaker("save", pacing_mode_value, saved_parameters)
+    time.sleep(1)
+    sent_values.pop(0)
+    sent_values.pop(0)
+    sent_values = sent_values[:4] + sent_values[5:]
+    checker = recieve_Pacemaker()
+    checker = checker[:4] + checker[5:]
+    convert_to_int(sent_values)
+    convert_to_int(checker)
+    print("values", sent_values)
+    print("check", checker)
+
+    if (sent_values == checker): #need to change simulink serial
         print("sent packets verified")
     else:
         send_Pacemaker("default", pacing_mode_value, saved_parameters)
         print("Invalid bytes sent")
-        send_Data_checked(pacing_mode_value, saved_parameters)
 
-    
