@@ -11,6 +11,55 @@ import serial.tools.list_ports
 import re
 
 
+def check_and_update_boards(serial_id):
+    try:
+        # Try to open the boards.json file
+        with open('boards.json', 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        # If the file is not found, create an empty dictionary
+        data = {'Boards': {}}
+
+    # Check if the given serial_id already exists
+    if serial_id in data['Boards']:
+        # If it exists, return the corresponding board number
+        return data['Boards'][serial_id]
+    else:
+        # If it doesn't exist, find the next available board number
+        board_numbers = [int(board.split()[-1]) for board in data['Boards'].values()]
+        next_board_number = max(board_numbers) + 1 if board_numbers else 1
+
+        # Add the new serial_id and corresponding board number to the dictionary
+        data['Boards'][serial_id] = f"Board {next_board_number}"
+
+        # Save the updated data back to the boards.json file
+        with open('boards.json', 'w') as file:
+            json.dump(data, file, indent=2)
+
+        # Return the new board name
+        return data['Boards'][serial_id]
+
+
+def list_available_ports():
+    ports = serial.tools.list_ports.comports()
+    if not ports:
+        print("No COM ports found")
+    else:
+        for port, desc, hwid in sorted(ports):
+            
+            pattern = r'SER=(\d+)'
+            match = re.search(pattern, hwid)
+            if match:
+                ser_number = match.group(1)
+                return port, ser_number
+        return None, None
+            
+def monitor_board_status(serial_app_instance):
+    while True:
+        current_serial_id, current_serial_port = list_available_ports()
+        if current_serial_id != serial_app_instance.serial_id or current_serial_port != serial_app_instance.serial_port:
+            serial_app_instance.update_board_status(current_serial_id, current_serial_port)
+        time.sleep(1)  # Adjust the sleep time as needed
 
 def list_available_ports():
     ports = serial.tools.list_ports.comports()
@@ -27,9 +76,7 @@ def list_available_ports():
     return port, ser_number
 
 def receiveSerial(port):
-    
     st = struct.Struct('<BBBBBBBBBBBBBBBBBB')
-
 
     print("in receive function")
     try:
@@ -57,8 +104,6 @@ def receiveSerial(port):
 
         print(Mode,LRL,URL,MSR)
 
-        
-
     except ValueError as e:
         print(f"Error: {e}")
 
@@ -68,8 +113,6 @@ def receiveSerial(port):
 
 
 def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
-
-
     st = struct.Struct('<BBBBBBBBBBBBBBBBBBBB')
 
     Function_call = int(Function_call)
@@ -92,7 +135,6 @@ def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWi
     ReactionTime = int(ReactionTime)
     ResponseFactor = int(ResponseFactor)
     RecoveryTime = int(RecoveryTime)
-
 
     serial_com = st.pack(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime)
     
@@ -129,6 +171,8 @@ class SerialApp(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         # Removed self.title("Serial Data Plotting")
 
+        self.serial_id = None  # Initialize with default or None
+
         with plt.style.context("DCM\\Themes\\pine.mplstyle"):
             # Create a figure for plotting
             self.fig, self.ax = plt.subplots()
@@ -148,8 +192,8 @@ class SerialApp(ctk.CTkFrame):
         self.start_time = None
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
+        self.serial_port, self.serial_id = list_available_ports()
 
-        self.port, self.ser_number = list_available_ports()
 
     def start(self):
         print("started graphs")
@@ -201,11 +245,27 @@ class SerialApp(ctk.CTkFrame):
 
             # Schedule the next update
             self.after(100, self.update_plot)
+        
+    def monitor_board_status(self):
+        while True:
+            current_serial_id, current_serial_port = list_available_ports()
+            if current_serial_id != self.serial_id or current_serial_port != self.serial_port:
+                self.update_board_status(current_serial_id, current_serial_port)
+            time.sleep(1)  # Adjust the sleep time as needed
+
+    def update_board_status(self, new_serial_id, new_serial_port):
+        # Thread-safe update of the GUI
+        self.serial_id = new_serial_id
+        self.serial_port = new_serial_port
 
 # Run the application
-# if __name__ == "__main__":
-#     app = SerialApp()
-#     app.mainloop()
+if __name__ == "__main__":
+    app = App(ctk.CTk)
+    app.mainloop()
 
+    # Start the background thread for monitoring board status
+    board_monitor_thread = threading.Thread(target=monitor_board_status, args=(serial_app,), daemon=True)
+    board_monitor_thread.start()
 
+    app.mainloop()  # Start the main event loop
 

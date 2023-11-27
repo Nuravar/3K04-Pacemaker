@@ -14,7 +14,6 @@ if platform.system() == "Darwin": # if user is MacOS
     FILE_PATH_PREFIX = "../DCM"
 else: # if user is Windows
     FILE_PATH_PREFIX = "DCM"
-PORT_NAME = 'COM5'
 cNord_theme_path = os.path.join(FILE_PATH_PREFIX,"Themes", "cNord_theme.json")
 ctk.set_default_color_theme(cNord_theme_path)
 ctk.set_appearance_mode("system")
@@ -536,11 +535,11 @@ class App(ctk.CTk):
         self.footer_frame.pack(fill='x', side='bottom', pady=10, padx=10)
 
         ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right', pady=10, padx=10)
-        ctk.CTkLabel(self.footer_frame, text='Pacemaker Controller').pack(side='right', padx=(0, 200))
+        ctk.CTkLabel(self.footer_frame, text=f"Connected to {check_and_update_boards(SerialApp.serial_id)}").pack(side='right', padx=(0, 200))
         
         self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A")
         self.connection.pack(side='left', padx=10)
-        self.verify_connection(PORT_NAME)
+        self.verify_connection(SerialApp.serial_port)
 
     def theme_event(self):
         print("Button clicked, current value:", ctk.get_appearance_mode())
