@@ -59,7 +59,7 @@
                 "title": "Atrial Sensitivity",
                 "slider_range": [0,5000,100],
                 "units": "mV",
-                "default_value": 100
+                "default_value": 4000
             },
             {
                 "title": "Absolute Refractory Period",
@@ -147,7 +147,7 @@
                 "title": "Ventricular Sensitivity",
                 "slider_range": [0,5000,100],
                 "units": "mV",
-                "default_value": 100
+                "default_value": 4000
             },
             {
                 "title": "Ventricular Refractory Period",
@@ -265,7 +265,7 @@
                 "title": "Atrial Sensitivity",
                 "slider_range": [0,5000,100],
                 "units": "mV",
-                "default_value": 100
+                "default_value": 4000
             },
             {
                 "title": "Absolute Refractory Period",
@@ -413,7 +413,7 @@
                 "title": "Ventricular Sensitivity",
                 "slider_range": [0,5000,100],
                 "units": "mV",
-                "default_value": 100
+                "default_value": 4000
             },
             {
                 "title": "Ventricular Refractory Period",

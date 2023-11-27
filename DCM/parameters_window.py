@@ -133,7 +133,7 @@ class ParametersWindow(ctk.CTkToplevel):
             for user in user_data["Users"]:
                 if user["Username"] == current_user:
                     user["Saved Parameters"][pacing_mode_value] = saved_parameters
-
+            # print("parameter window", saved_parameters)
             with open(file_path, "w") as file:
                 json.dump(user_data, file, indent=2)
 
