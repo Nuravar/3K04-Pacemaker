@@ -22,9 +22,8 @@ def check_and_update_boards(serial_id):
 
     # Check if the given serial_id already exists
     if serial_id in data['Boards']:
-        # If it exists, display the corresponding board number
-        board_number = data['Boards'][serial_id]
-        print(f"Board with serial comm id {serial_id} exists. Board Number: {board_number}")
+        # If it exists, return the corresponding board number
+        return data['Boards'][serial_id]
     else:
         # If it doesn't exist, find the next available board number
         board_numbers = [int(board.split()[-1]) for board in data['Boards'].values()]
@@ -33,12 +32,12 @@ def check_and_update_boards(serial_id):
         # Add the new serial_id and corresponding board number to the dictionary
         data['Boards'][serial_id] = f"Board {next_board_number}"
 
-        # Display the new information
-        print(f"Added new Board with serial comm id {serial_id}. Board Number: {data['Boards'][serial_id]}")
-
         # Save the updated data back to the boards.json file
         with open('boards.json', 'w') as file:
             json.dump(data, file, indent=2)
+
+        # Return the new board name
+        return data['Boards'][serial_id]
 
 
 def list_available_ports():
