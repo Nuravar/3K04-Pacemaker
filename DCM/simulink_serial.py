@@ -7,8 +7,24 @@ import struct
 import time
 import threading
 import customtkinter as ctk  # Replace tkinter with customtkinter
+import serial.tools.list_ports
+import re
 
 
+
+def list_available_ports():
+    ports = serial.tools.list_ports.comports()
+    if not ports:
+        print("No COM ports found")
+    else:
+        for port, desc, hwid in sorted(ports):
+            #PORT VARIABLE HOLDS COM PORT
+            pattern = r'SER=(\d+)'
+            match = re.search(pattern, hwid)
+            if match:
+                ser_number = match.group(1)
+                #SER_NUMBER STORES SERIAL NUMBER
+    return port, ser_number
 
 def receiveSerial(port):
     
@@ -132,6 +148,8 @@ class SerialApp(ctk.CTkFrame):
         self.start_time = None
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
+
+        self.port, self.ser_number = list_available_ports()
 
     def start(self):
         print("started graphs")

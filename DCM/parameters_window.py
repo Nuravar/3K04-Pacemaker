@@ -287,6 +287,7 @@ def send_Data_checked(self, pacing_mode_value, saved_parameters): #weird method 
     values = [0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1]
     values = send_Pacemaker("save", pacing_mode_value, saved_parameters)
     checker = recieve_Pacemaker(self)
+    
     if values == checker: #need to change simulink serial
         print("sent packets verified")
     else:
