@@ -56,7 +56,7 @@ def list_available_ports():
                 return port, ser_number
         return None, None
     
-
+    
 
 def receiveSerial(port):
     # Initialize variables with default values
@@ -177,7 +177,8 @@ class SerialApp(ctk.CTkFrame):
         self.max_length = 50  # Define the maximum length of the data arrays
 
         self.serial_port, self.serial_id = list_available_ports()
-
+        self.update_available_ports()
+        
     def start(self):
         print("started graphs")
         if not self.running:
@@ -228,6 +229,11 @@ class SerialApp(ctk.CTkFrame):
 
             # Schedule the next update
             self.after(100, self.update_plot)
+
+    def update_available_ports(self):
+        self.serial_port, self.serial_id = list_available_ports()
+        self.after(105, self.update_available_ports)
+
 
 # Run the application
 # if __name__ == "__main__":

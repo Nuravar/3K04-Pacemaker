@@ -536,11 +536,16 @@ class App(ctk.CTk):
 
         ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right', pady=10, padx=10)
 
-        ctk.CTkLabel(self.footer_frame, text=f"Connected to {check_and_update_boards(self.serial_app.serial_id)}").pack(side='right', padx=(0, 200))
-        
+        self.board_label = ctk.CTkLabel(self.footer_frame, text=f"Connected to {check_and_update_boards(self.serial_app.serial_id)}")
+        self.board_label.pack(side='right', padx=(0, 200))
+        self.update_footer()
         self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A")
         self.connection.pack(side='left', padx=10)
         self.verify_connection(self.serial_app.serial_port)
+
+    def update_footer(self):
+        self.board_label.configure(text = f"Connected to {check_and_update_boards(self.serial_app.serial_id)}")
+        self.after(105, self.update_footer)
 
     def theme_event(self):
         print("Button clicked, current value:", ctk.get_appearance_mode())
@@ -578,6 +583,7 @@ class App(ctk.CTk):
                 self.connection.configure(text=f"Connected To Port {port_name}", text_color="#1cac78")
         except serial.SerialException as e:
             print(f"Failed to connect on {port_name}: {e}")
+        self.after(110, self.verify_connection)
 
 if __name__ == '__main__':
     app = App()
