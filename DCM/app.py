@@ -439,6 +439,26 @@ class App(ctk.CTk):
             self.options_button.configure(state='normal')
             self.run_pacing.configure(state='normal')
             self.stop_pacing.configure(state='normal')
+
+            send_list = [22, 85, 0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 4, 30, 8, 5]
+            if choice == "AOO":
+                send(send_list[0], send_list[1], 0, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "AAI":
+                send(send_list[0], send_list[1], 2, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "VOO":
+                send(send_list[0], send_list[1], 1, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "VVI":
+                send(send_list[0], send_list[1], 3, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "AOOR":
+                send(send_list[0], send_list[1], 4, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "AAIR":
+                send(send_list[0], send_list[1], 6, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "VOOR":
+                send(send_list[0], send_list[1], 5, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            elif choice == "VVIR":
+                send(send_list[0], send_list[1], 7, send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], self.serial_app.serial_port)
+            else:
+                print("error case")
         else:
             self.options_button.configure(state='disabled')
             self.run_pacing.configure(state='disabled')
@@ -453,6 +473,9 @@ class App(ctk.CTk):
 
         if self.is_pacing_mode_selected:
             self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
+
+ 
+
 
     def show_main_screen(self):
         for widget in self.winfo_children():
@@ -483,31 +506,27 @@ class App(ctk.CTk):
 
         self.optionmenu_var = ctk.StringVar(value="Select Pacing Mode")
         self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=list(pacing_modes.keys()), command=self.optionmenu_callback, variable=self.optionmenu_var)
-        self.optionmenu.pack(side="right", padx=10)
+        self.optionmenu.pack(side="right", padx=1)
 
 
         self.toplevel_window = None
 
 
         # MAIN BODY CONTENT
-        self.body_frame = ctk.CTkTabview(self.main_frame)
+        self.body_frame = ctk.CTkFrame(self.main_frame)
         self.body_frame.pack(fill='both', expand=True, pady=20)
-        self.atrial = self.body_frame.add("Atrial")
-        self.body_frame.tab("Atrial").configure(border_color= "red", border_width=1.5)
-        self.ventricle = self.body_frame.add("Ventricular")
-        self.body_frame.tab("Ventricular").configure(border_color= "blue", border_width=1.5)
-        self.both = self.body_frame.add("Both")
-        self.body_frame.tab("Both").configure(border_color= "purple", border_width=1.5)
-        # ATRIAL CONTENT
-        ctk.CTkLabel(self.atrial, text='Atrial ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+
+        self.graph_state = 'atrial'
+
+       
+
+        # GRAPH CONTENT
+        ctk.CTkLabel(self.body_frame, text='ECG Output', font=("Calibri", 25, "bold")).pack(pady=10, padx=10, anchor='n')
+
+        self.serial_app_frame = SerialApp(self.body_frame)
+        self.serial_app_frame.pack(fill = 'x', pady = (10,2))
         
-        # VENTRICLE CONTENT
-        ctk.CTkLabel(self.ventricle, text='Ventricular ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
-        # BOTH CONTENT
-        ctk.CTkLabel(self.both, text='ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
-        
-        self.serial_app_frame = SerialApp(self.atrial)
-        self.serial_app_frame.pack()
+
         # MAIN BODY CONTENT END
 
         
@@ -534,17 +553,18 @@ class App(ctk.CTk):
         self.footer_frame = ctk.CTkFrame(self.main_frame)
         self.footer_frame.pack(fill='x', side='bottom', pady=10, padx=10)
 
-        ctk.CTkButton(self.footer_frame, text='Print Report', command=None).pack(side='right', pady=10, padx=10)
+        ctk.CTkButton(self.footer_frame, text='Print Report', command=self.printReport).pack(side='right', pady=10, padx=10)
 
-        self.board_label = ctk.CTkLabel(self.footer_frame, text=f"Connected to {check_and_update_boards(self.serial_app.serial_id)}")
-        self.board_label.pack(side='right', padx=(0, 200))
+        self.board_label = ctk.CTkLabel(self.footer_frame, text = (f"PACE++ V2.16.3 | {self.serial_app.serial_id} | Connected to {check_and_update_boards(self.serial_app.serial_id)} | McMaster University"))
+        self.board_label.pack(side='right', padx=(0, 320))
         self.update_footer()
         self.connection = ctk.CTkLabel(self.footer_frame, text="Finding Connection", text_color="#BF616A")
         self.connection.pack(side='left', padx=10)
-        self.verify_connection(self.serial_app.serial_port)
+        print(self.serial_app.serial_port)
+        self.verify_connection()
 
     def update_footer(self):
-        self.board_label.configure(text = f"Connected to {check_and_update_boards(self.serial_app.serial_id)}")
+        self.board_label.configure(text = (f"PACE++ V2.16.3 | Serial ID: {self.serial_app.serial_id} | Connected to {check_and_update_boards(self.serial_app.serial_id)} | McMaster University"))
         self.after(105, self.update_footer)
 
     def theme_event(self):
@@ -576,14 +596,83 @@ class App(ctk.CTk):
             # Create a new ParametersWindow for the selected pacing mode
             self.toplevel_window = ParametersWindow(self, self.optionmenu_var)
 
-    def verify_connection(self, port_name):
-        try:
-            with serial.Serial(port_name, baudrate=9600, timeout=1) as ser:
-                print("Connected to the device on port", port_name)
-                self.connection.configure(text=f"Connected To Port {port_name}", text_color="#1cac78")
-        except serial.SerialException as e:
-            print(f"Failed to connect on {port_name}: {e}")
+    def verify_connection(self):
+        self.connection.configure(text=f"Connected To Port {self.serial_app.serial_port}", text_color="#1cac78")
         self.after(110, self.verify_connection)
+
+
+
+
+    def printReport(self):
+        # Prepare data
+        report_date = datetime.now().strftime('%H:%M:%Y')
+        serial_id = self.serial_app.serial_id  # Ensure this is defined in your class
+
+        # HTML content
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>PACE++ Printed Report</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    margin: 40px;
+                }}
+                h1, h2 {{
+                    color: navy;
+                }}
+                .report-header {{
+                    color: darkred;
+                    font-size: 1.2em;
+                }}
+                table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                }}
+                th, td {{
+                    border: 1px solid black;
+                    padding: 8px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: #f2f2f2;
+                }}
+            </style>
+        </head>
+        <body>
+            <h1>PACE++ Printed Report</h1>
+            <p class="report-header">Institution Name: McMaster University</p>
+            <p class="report-header">Date and Time: {report_date}</p>
+            <p class="report-header">Version: PACE++ V2.16.3</p>
+            <p class="report-header">Serial Number: {serial_id}</p>
+
+            <h2>Table of Contents</h2>
+            <ul>
+                <li>Bradycardia Parameters Report</li>
+                <li>Temporary Parameters Report</li>
+                <li>Threshold Test Results</li>
+                <li>Measured Data</li>
+                <li>Trending Results</li>
+                <li>Rate Histogram</li>
+                <li>Implant Data</li>
+                <li>Net Change</li>
+                <li>Marker Legend Report</li>
+                <li>Session Net Change Report</li>
+            </ul>
+
+            <!-- Add your content for each section here -->
+
+        </body>
+        </html>
+        """
+
+        # Write HTML content to a file
+        with open("PACE++_Printed_Report.html", "w") as file:
+            file.write(html_content)
+
+        print("Report generated successfully.")
+
 
 if __name__ == '__main__':
     app = App()

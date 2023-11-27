@@ -154,18 +154,30 @@ def egramPull(port):
 class SerialApp(ctk.CTkFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
-        # Removed self.title("Serial Data Plotting")
-
+        self.serial_port, self.serial_id = list_available_ports()
+        self.update_available_ports()
         with plt.style.context("DCM\\Themes\\pine.mplstyle"):
-            # Create a figure for plotting
-            self.fig, self.ax = plt.subplots()
-            self.ax.set_title('Egram Data')
-            self.ax.set_xlabel('Time (s)')
-            self.ax.set_ylabel('Value')
-            self.line1, = self.ax.plot([], [], lw=2, label='Data 1')
-            self.line2, = self.ax.plot([], [], lw=2, label='Data 2')
+            self.fig, (self.ax1, self.ax2, self.ax3) = plt.subplots(1, 3, figsize=(50, 6))  # 3 subplots in a row
 
-        # Embed the plot in the Tkinter window
+            # Atrial graph
+            self.ax1.set_title('Atrial Output')
+            self.line1, = self.ax1.plot([], [], lw=2, label='Atrial Data')
+
+            # Ventricle graph
+            self.ax2.set_title('Ventricle Output')
+            self.line2, = self.ax2.plot([], [], lw=2, label='Ventricle Data')
+
+            # Combined graph
+            self.ax3.set_title('Egram Data')
+            self.line1_combined, = self.ax3.plot([], [], lw=2, label='Atrial Data')
+            self.line2_combined, = self.ax3.plot([], [], lw=2, label='Ventricle Data')
+            # Set labels and legend for each axis
+            for ax in [self.ax1, self.ax2, self.ax3]:
+                ax.set_xlabel('Time (t)')
+                ax.set_ylabel('Voltage (V)')
+                ax.legend(loc='upper right')
+        ax.legend()
+
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)
@@ -176,8 +188,7 @@ class SerialApp(ctk.CTkFrame):
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
 
-        self.serial_port, self.serial_id = list_available_ports()
-        self.update_available_ports()
+        
 
     def start(self):
         print("started graphs")
@@ -197,38 +208,42 @@ class SerialApp(ctk.CTkFrame):
 
     def update_plot(self):
         if self.running:
-            # Calculate elapsed time
             current_time = time.time() - self.start_time
-
-            # Pull data from egram (replace with your data fetching logic)
             egram_data = egramPull(self.serial_port)
 
-            # Append new data for both lines
             self.xdata.append(current_time)
-            self.ydata1.append(egram_data[0])  # First data point
-            self.ydata2.append(egram_data[1])  # Second data point
+            self.ydata1.append(egram_data[0])  # Atrial data
+            self.ydata2.append(egram_data[1])  # Ventricle data
 
-            # Keep only the latest data points within the fixed time interval
+            # Update atrial graph
+            self.line1.set_xdata(self.xdata)
+            self.line1.set_ydata(self.ydata1)
+            self.ax1.relim()
+            self.ax1.autoscale_view()
+
+            # Update ventricle graph
+            self.line2.set_xdata(self.xdata)
+            self.line2.set_ydata(self.ydata2)
+            self.ax2.relim()
+            self.ax2.autoscale_view()
+
+            # Update combined graph
+            self.line1_combined.set_xdata(self.xdata)
+            self.line1_combined.set_ydata(self.ydata1)
+            self.line2_combined.set_xdata(self.xdata)
+            self.line2_combined.set_ydata(self.ydata2)
+            self.ax3.relim()
+            self.ax3.autoscale_view()
+
+            # Keep only the latest data points
             if len(self.xdata) > self.max_length:
                 self.xdata.pop(0)
                 self.ydata1.pop(0)
                 self.ydata2.pop(0)
 
-            # Update the line data
-            self.line1.set_xdata(self.xdata)
-            self.line1.set_ydata(self.ydata1)
-            self.line2.set_xdata(self.xdata)
-            self.line2.set_ydata(self.ydata2)
-
-            # Adjust plot limits dynamically
-            self.ax.relim()
-            self.ax.autoscale_view()
-
-            # Redraw the plot
             self.canvas.draw()
-
-            # Schedule the next update
             self.after(100, self.update_plot)
+
 
     def update_available_ports(self):
         self.serial_port, self.serial_id = list_available_ports()

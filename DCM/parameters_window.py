@@ -203,14 +203,14 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[11] = saved_parameters['Atrial Sensitivity']/1000
         send_list[13] = saved_parameters['Absolute Refractory Period']
         send_list[15] = saved_parameters['Post-Ventricular Atrial Refractory Period']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "VOO" and type == "save":
         send_list[2] = 1
         send_list[3] = saved_parameters['Lower Rate Limit']
         send_list[4] = saved_parameters['Upper Rate Limit']
         send_list[8] = saved_parameters['Ventricular Amplitude']/1000
         send_list[10] = saved_parameters['Ventricular Pulse Width']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "VVI" and type == "save":
         send_list[2] = 3
         send_list[3] = saved_parameters['Lower Rate Limit']
@@ -219,7 +219,7 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[10] = saved_parameters['Ventricular Pulse Width']
         send_list[12] = saved_parameters['Ventricular Sensitivity']/1000
         send_list[14] = saved_parameters['Ventricular Refractory Period']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "AOOR" and type == "save":
         send_list[2] = 4
         send_list[3] = saved_parameters['Lower Rate Limit']
@@ -231,7 +231,7 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[17] = saved_parameters['Reaction Time']
         send_list[18] = saved_parameters['Response Factor']
         send_list[19] = saved_parameters['Recovery Time']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "AAIR" and type == "save":
         send_list[2] = 6
         send_list[3] = saved_parameters['Lower Rate Limit']
@@ -246,7 +246,7 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[17] = saved_parameters['Reaction Time']
         send_list[18] = saved_parameters['Response Factor']
         send_list[19] = saved_parameters['Recovery Time']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "VOOR" and type == "save":
         send_list[2] = 5
         send_list[3] = saved_parameters['Lower Rate Limit']
@@ -258,7 +258,7 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[17] = saved_parameters['Reaction Time']
         send_list[18] = saved_parameters['Response Factor']
         send_list[19] = saved_parameters['Recovery Time']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     elif pacing_mode_value == "VVIR" and type == "save":
         send_list[2] = 7
         send_list[3] = saved_parameters['Lower Rate Limit']
@@ -272,9 +272,9 @@ def send_Pacemaker( type, pacing_mode_value, saved_parameters):
         send_list[17] = saved_parameters['Reaction Time']
         send_list[18] = saved_parameters['Response Factor']
         send_list[19] = saved_parameters['Recovery Time']
-        send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     else:
-       send(*send_list, port)
+        send(send_list[0], send_list[1], send_list[2], send_list[3], send_list[4], send_list[5], send_list[6], send_list[7], send_list[8], send_list[9], send_list[10], send_list[11], send_list[12], send_list[13], send_list[14], send_list[15], send_list[16], send_list[17], send_list[18], send_list[19], port)
     send_list.pop()
     return send_list
 
