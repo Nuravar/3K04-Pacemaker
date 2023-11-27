@@ -1,1 +1,0 @@
-'<Configure>', on_resize
