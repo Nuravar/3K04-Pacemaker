@@ -675,7 +675,7 @@ class App(ctk.CTk):
 
     def verify_connection(self):
         self.connection.configure(text=f"Connected To Port {self.serial_app.serial_port}", text_color="#1cac78")
-        self.after(110, self.verify_connection)
+        self.after(500, self.verify_connection)
 
 
 
