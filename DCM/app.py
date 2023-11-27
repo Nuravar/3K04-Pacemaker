@@ -659,8 +659,8 @@ class App(ctk.CTk):
             
             <h2>Table of Contents</h2>
             <ul>
-                <li>Bradycardia Parameters </li>
-                <li>Resulted Figurest</li>
+                <li>Bradycardia Parameters.........................................................1 </li>
+                <li>Resulted Figures..................................................................2</li>
                 <li>Threshold Test Results</li>
                 <li>Measured Data</li>
                 <li>Trending Results</li>
@@ -790,7 +790,7 @@ class App(ctk.CTk):
             <p><span class="figure-label">Figure 3:</span> Combined Egram Data Graph</p>
 
             <img src="Surface_Electrogram.png" alt="Surface Electrogram Graph" style="width:100%;max-width:800px;"/>
-            <p><span class="figure-label">Figure 3:</span> Surface Egram Graph</p>
+            <p><span class="figure-label">Figure 4:</span> Surface Egram Graph</p>
 
        
             <!-- Add your content for each section here -->
