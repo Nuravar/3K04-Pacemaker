@@ -9,8 +9,7 @@ import threading
 import customtkinter as ctk  # Replace tkinter with customtkinter
 import serial.tools.list_ports
 import re
-import json
-import app
+
 
 def check_and_update_boards(serial_id):
     try:
@@ -61,6 +60,20 @@ def monitor_board_status(serial_app_instance):
         if current_serial_id != serial_app_instance.serial_id or current_serial_port != serial_app_instance.serial_port:
             serial_app_instance.update_board_status(current_serial_id, current_serial_port)
         time.sleep(1)  # Adjust the sleep time as needed
+
+def list_available_ports():
+    ports = serial.tools.list_ports.comports()
+    if not ports:
+        print("No COM ports found")
+    else:
+        for port, desc, hwid in sorted(ports):
+            #PORT VARIABLE HOLDS COM PORT
+            pattern = r'SER=(\d+)'
+            match = re.search(pattern, hwid)
+            if match:
+                ser_number = match.group(1)
+                #SER_NUMBER STORES SERIAL NUMBER
+    return port, ser_number
 
 def receiveSerial(port):
     st = struct.Struct('<BBBBBBBBBBBBBBBBBB')
@@ -179,8 +192,8 @@ class SerialApp(ctk.CTkFrame):
         self.start_time = None
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
-
         self.serial_port, self.serial_id = list_available_ports()
+
 
     def start(self):
         print("started graphs")
