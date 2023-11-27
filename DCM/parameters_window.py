@@ -4,6 +4,8 @@ from input_frame import InputFrame
 import json
 from simulink_serial import *
 
+
+
 class ParametersWindow(ctk.CTkToplevel):
     def __init__(self, app, pacing_mode):
         super().__init__()
@@ -181,7 +183,7 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
     user_file_path = os.path.join(script_dir, "user_accounts.json")
     file_path = os.path.join(script_dir, "pacing_modes.json")
     send_list = [22, 86, 0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1]
-    port = SerialApp.serial_port
+    port = 'COM3'
      #send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
     if pacing_mode_value == "AOO" and type == "save":
         send_list[2] = 0  # !!!!!!!!!!!!change depending on mode, I do not know which number is which mode
@@ -277,7 +279,7 @@ def send_Pacemaker(self, type, pacing_mode_value, saved_parameters):
 
 
 def recieve_Pacemaker(self):
-    port = SerialApp.serial_port
+    port = 'COM3'
     values = [0, 60, 120, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1]
     return send(22, 34, *values, port)
 
