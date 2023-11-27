@@ -14,7 +14,7 @@ if platform.system() == "Darwin": # if user is MacOS
     FILE_PATH_PREFIX = "../DCM"
 else: # if user is Windows
     FILE_PATH_PREFIX = "DCM"
-PORT_NAME = 'COM3'
+PORT_NAME = 'COM5'
 cNord_theme_path = os.path.join(FILE_PATH_PREFIX,"Themes", "cNord_theme.json")
 ctk.set_default_color_theme(cNord_theme_path)
 ctk.set_appearance_mode("system")
@@ -244,65 +244,6 @@ class App(ctk.CTk):
 
         # Continue with the main screen display
         self.show_main_screen()
-
-
-    # def login(self, account_type):
-    #     username = self.username_entry.get()
-    #     password = self.password_entry.get()
-
-    #     # Hash the entered password for comparison
-    #     hashed_password = hashlib.sha256(password.encode()).hexdigest()
-
-    #     filename = "user_accounts.json"
-    #     if account_type == "admin":
-    #         print("usertype set to admin")
-    #         usertype = "Admin"
-    #     else:
-    #         usertype = "Users"
-
-    #     # Check if the file exists
-    #     if not os.path.exists(filename):
-    #         error_message = f"Login failed: {account_type.capitalize()} account file not found."
-    #         self.show_message("Login Error", error_message)
-    #         return
-
-    #     script_dir = os.path.dirname(os.path.abspath(__file__))
-    #     user_file_path = os.path.join(script_dir, "user_accounts.json")
-    #     # Read user accounts from the file
-    #     try:
-    #         with open(user_file_path, "r") as file:    
-    #             data = json.load(file)
-    #     except json.JSONDecodeError:
-    #         error_message = f"Login failed: Error decoding {account_type.capitalize()} account file."
-    #         self.show_message("Login Error", error_message)
-    #         return
-
-    #     # Check if the provided username and password match any record in the file
-    #     for user_entry in data.get(usertype, []):
-    #         stored_username = user_entry["Username"]
-    #         stored_password = user_entry["Password"]
-    #         print(stored_username,stored_password)
-    #         if username == stored_username:
-    #             # Decrypt the stored password
-    #             ###decrypted_password = decrypt_data(stored_password)
-
-    #             # Compare the entered password with the decrypted stored password
-    #             if hashed_password == stored_password: ###change back to decrypted_password
-    #                 print(f"Logged in: Username - {username}")
-
-    #                 # Set the current_username variable
-    #                 self.current_username = username
-
-    #                 # Continue with the rest of the login process
-    #                 if account_type == "admin":
-    #                     print("went to deletion")
-    #                     self.show_deletion_screen()
-    #                 else:
-    #                     self.show_main_screen()
-    #                 return
-
-    #     error_message = "Login failed: Invalid username or password."
-    #     self.show_message("Login Error", error_message)
 
     def login(self, account_type):
         username = self.username_entry.get()
@@ -545,25 +486,6 @@ class App(ctk.CTk):
         self.optionmenu = ctk.CTkOptionMenu(self.nav_bar, values=list(pacing_modes.keys()), command=self.optionmenu_callback, variable=self.optionmenu_var)
         self.optionmenu.pack(side="right", padx=10)
 
-        # Create the "⚙ Options" button initially disabled
-        if self.is_pacing_mode_selected:
-            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='normal')
-            self.options_button.pack(side='right', padx=10)
-
-            self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='normal')
-            self.stop_pacing.pack(side='right', padx=10)
-
-            self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='normal')
-            self.run_pacing.pack(side='right', padx=10)
-        else:
-            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='disabled')
-            self.options_button.pack(side='right', padx=10)
-
-            self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='disabled')
-            self.stop_pacing.pack(side='right', padx=10)
-
-            self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='disabled')
-            self.run_pacing.pack(side='right', padx=10)
 
         self.toplevel_window = None
 
@@ -571,22 +493,44 @@ class App(ctk.CTk):
         # MAIN BODY CONTENT
         self.body_frame = ctk.CTkTabview(self.main_frame)
         self.body_frame.pack(fill='both', expand=True, pady=20)
-        self.body_frame.add("Atrial")
+        self.atrial = self.body_frame.add("Atrial")
         self.body_frame.tab("Atrial").configure(border_color= "red", border_width=1.5)
-        self.body_frame.add("Ventricular")
+        self.ventricle = self.body_frame.add("Ventricular")
         self.body_frame.tab("Ventricular").configure(border_color= "blue", border_width=1.5)
-        self.body_frame.add("Both")
+        self.both = self.body_frame.add("Both")
         self.body_frame.tab("Both").configure(border_color= "purple", border_width=1.5)
         # ATRIAL CONTENT
-        ctk.CTkLabel(self.body_frame.tab("Atrial"), text='Atrial ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+        ctk.CTkLabel(self.atrial, text='Atrial ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
         
         # VENTRICLE CONTENT
-        ctk.CTkLabel(self.body_frame.tab("Ventricular"), text='Ventricular ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+        ctk.CTkLabel(self.ventricle, text='Ventricular ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
         # BOTH CONTENT
-        ctk.CTkLabel(self.body_frame.tab("Both"), text='ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
-
+        ctk.CTkLabel(self.both, text='ECG Output', font=("Calibri", 25, "bold")).pack(pady = 10, padx = 10, anchor = 'w')
+        
+        self.serial_app_frame = SerialApp(self.atrial)
+        self.serial_app_frame.pack()
         # MAIN BODY CONTENT END
 
+        
+        # Create the "⚙ Options" button initially disabled
+        if self.is_pacing_mode_selected:
+            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='normal')
+            self.options_button.pack(side='right', padx=10)
+
+            self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='normal', command = self.serial_app_frame.stop)
+            self.stop_pacing.pack(side='right', padx=10)
+
+            self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='normal', command = self.serial_app_frame.start)
+            self.run_pacing.pack(side='right', padx=10)
+        else:
+            self.options_button = ctk.CTkButton(self.nav_bar, text='⚙ Options', command=self.show_parameters_popup, state='disabled')
+            self.options_button.pack(side='right', padx=10)
+
+            self.stop_pacing = ctk.CTkButton(self.nav_bar, text='⏸ Stop', state='disabled', command = self.serial_app_frame.stop)
+            self.stop_pacing.pack(side='right', padx=10)
+
+            self.run_pacing = ctk.CTkButton(self.nav_bar, text='▶ Run', state='disabled', command = self.serial_app_frame.start)
+            self.run_pacing.pack(side='right', padx=10)
 
         self.footer_frame = ctk.CTkFrame(self.main_frame)
         self.footer_frame.pack(fill='x', side='bottom', pady=10, padx=10)

@@ -6,6 +6,8 @@ import serial
 import struct
 import time
 import threading
+import customtkinter as ctk  # Replace tkinter with customtkinter
+
 
 
 def receiveSerial(port):
@@ -78,12 +80,9 @@ def send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWi
 
     serial_com = st.pack(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime)
     
-    #print(serial_com)
-    #print("len of serial com: ",len(serial_com))
     com = serial.Serial(port, baudrate=115200)
     com.write(serial_com)
     unpacked = st.unpack(serial_com)
-    #print(unpacked)
     print("sent")
     com.close()
 
@@ -109,88 +108,19 @@ def egramPull(port):
     com.close()
     return unpacked_data
 
-      
+class SerialApp(ctk.CTkFrame):
+    def __init__(self, master=None, **kwargs):
+        super().__init__(master, **kwargs)
+        # Removed self.title("Serial Data Plotting")
 
-
-
-
-
-#def main():
-    #send(Sync, Function_call, Mode, LRL, URL, MSR, AVDelay, AAmp, VAmp, APulseWidth, VPulseWidth, ASensitivity, VSensitivity, ARP, VRP, PVARP, ActivityThreshold, ReactionTime, ResponseFactor, RecoveryTime, port):
-    # Send: 85      Receive: 34      egramPull: 56
-    #send(22, 34, 0, 60, 120, 120, 150, 3.5, 3.5, 0.4, 0.4, 0.75, 2.5, 250, 320, 320, 10, 30, 8, 1, 'COM4')
-    #send(22, 85, 4, 60, 60, 120, 150, 5, 5, 1, 1, 4, 4, 250, 320, 320, 10, 30, 8, 1, 'COM4')
-
-    #while 1:
-    #    egramPull('COM4')
-    #    time.sleep(0.01)
-
-
-
-# def main():
-#     # Set up the figure for plotting
-#     plt.ion()
-#     fig, ax = plt.subplots()
-#     ax.set_title('Egram Data')
-#     ax.set_xlabel('Time (s)')
-#     ax.set_ylabel('Value')
-    
-#     # Initialize two lines, one for each data set
-#     line1, = ax.plot([], [], lw=2, label='Data 1')
-#     line2, = ax.plot([], [], lw=2, label='Data 2')
-
-#     # Initialize data lists and a time counter
-#     xdata, ydata1, ydata2 = [], [], []
-#     start_time = time.time()
-
-#     while True:
-#         # Calculate elapsed time
-#         current_time = time.time() - start_time
-
-#         # Pull data from egram
-#         egram_data = egramPull('COM3')
-        
-#         # Append new data for both lines
-#         xdata.append(current_time)
-#         ydata1.append(egram_data[0])  # First data point
-#         ydata2.append(egram_data[1])  # Second data point
-
-#         # Update the line data
-#         line1.set_xdata(xdata)
-#         line1.set_ydata(ydata1)
-#         line2.set_xdata(xdata)
-#         line2.set_ydata(ydata2)
-
-#         # Adjust plot limits dynamically
-#         ax.relim()
-#         ax.autoscale_view()
-
-#         # Redraw the plot
-#         fig.canvas.draw()
-#         fig.canvas.flush_events()
-
-#         # Wait for 0.1 seconds
-#         time.sleep(0.1)
-
-#     # Add a legend
-#     ax.legend()
-
-
-
-# main()
-
-class SerialApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Serial Data Plotting")
-
-        # Create a figure for plotting
-        self.fig, self.ax = plt.subplots()
-        self.ax.set_title('Egram Data')
-        self.ax.set_xlabel('Time (s)')
-        self.ax.set_ylabel('Value')
-        self.line1, = self.ax.plot([], [], lw=2, label='Data 1')
-        self.line2, = self.ax.plot([], [], lw=2, label='Data 2')
+        with plt.style.context("DCM\\Themes\\pine.mplstyle"):
+            # Create a figure for plotting
+            self.fig, self.ax = plt.subplots()
+            self.ax.set_title('Egram Data')
+            self.ax.set_xlabel('Time (s)')
+            self.ax.set_ylabel('Value')
+            self.line1, = self.ax.plot([], [], lw=2, label='Data 1')
+            self.line2, = self.ax.plot([], [], lw=2, label='Data 2')
 
         # Embed the plot in the Tkinter window
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
@@ -203,14 +133,8 @@ class SerialApp(tk.Tk):
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
 
-        # Add buttons
-        self.start_button = ttk.Button(self, text="Start", command=self.start)
-        self.start_button.pack(side=tk.LEFT, padx=20)
-
-        self.stop_button = ttk.Button(self, text="Stop", command=self.stop)
-        self.stop_button.pack(side=tk.RIGHT, padx=20)
-
     def start(self):
+        print("started graphs")
         if not self.running:
             self.running = True
             self.start_time = time.time()
@@ -222,6 +146,7 @@ class SerialApp(tk.Tk):
             self.update_plot()
 
     def stop(self):
+        print("stopped graphs")
         self.running = False
 
     def update_plot(self):
@@ -230,7 +155,7 @@ class SerialApp(tk.Tk):
             current_time = time.time() - self.start_time
 
             # Pull data from egram (replace with your data fetching logic)
-            egram_data = egramPull('COM3')
+            egram_data = egramPull('COM5')
 
             # Append new data for both lines
             self.xdata.append(current_time)
@@ -260,8 +185,9 @@ class SerialApp(tk.Tk):
             self.after(100, self.update_plot)
 
 # Run the application
-if __name__ == "__main__":
-    app = SerialApp()
-    app.mainloop()
+# if __name__ == "__main__":
+#     app = SerialApp()
+#     app.mainloop()
+
 
 
