@@ -139,7 +139,7 @@ class ParametersWindow(ctk.CTkToplevel):
             print("Options saved successfully.")
 
             #send packets to the pacemaker
-            send_Data_checked(pacing_mode_value, saved_parameters)
+            send_Data_checked("save", pacing_mode_value, saved_parameters)
             
         else:
             print("No user logged in.")
@@ -172,6 +172,8 @@ class ParametersWindow(ctk.CTkToplevel):
 
             # Reload parameters with updated default values
             self.load_parameters(self.pacing_mode)
+            print("the defualt values are: ", default_values)
+            send_Data_checked("default", pacing_mode_value, default_values)
             print("Reset to default values successfully.")
         else:
             print("No user logged in.")
@@ -292,8 +294,8 @@ def recieve_Pacemaker():
     print("second print", array)
     return array
 
-def send_Data_checked(pacing_mode_value, saved_parameters): #weird method of implementation, recursively check if the correct byte is sent until the correct one is sent could result in an infinte loop. 
-    sent_values = send_Pacemaker("save", pacing_mode_value, saved_parameters)
+def send_Data_checked( type, pacing_mode_value, saved_parameters): 
+    sent_values = send_Pacemaker(type, pacing_mode_value, saved_parameters)
     time.sleep(1)
     sent_values.pop(0)
     sent_values.pop(0)

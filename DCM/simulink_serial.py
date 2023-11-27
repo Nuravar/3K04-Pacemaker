@@ -249,11 +249,64 @@ class SerialApp(ctk.CTkFrame):
         self.serial_port, self.serial_id = list_available_ports()
         self.after(105, self.update_available_ports)
 
+    def save_graphs(self):
+        # Ensure the data is current on the graphs
+        self.update_plot()
+        
+        # Save Atrial Graph
+        fig1 = plt.figure()
+        ax1 = fig1.add_subplot(111)
+        ax1.plot(self.xdata, self.ydata1, lw=2, label='Atrial Data')
+        ax1.set_title('Atrial Output')
+        ax1.set_xlabel('Time (t)')
+        ax1.set_ylabel('Voltage (V)')
+        ax1.legend(loc='upper right')
+        fig1.savefig('Atrial_Graph.png')
+        plt.close(fig1)
 
-# Run the application
-# if __name__ == "__main__":
-#     app = SerialApp()
-#     app.mainloop()
+        # Save Ventricle Graph
+        fig2 = plt.figure()
+        ax2 = fig2.add_subplot(111)
+        ax2.plot(self.xdata, self.ydata2, lw=2, label='Ventricle Data')
+        ax2.set_title('Ventricle Output')
+        ax2.set_xlabel('Time (t)')
+        ax2.set_ylabel('Voltage (V)')
+        ax2.legend(loc='upper right')
+        fig2.savefig('Ventricle_Graph.png')
+        plt.close(fig2)
+
+        # Save Combined Graph
+        fig3 = plt.figure()
+        ax3 = fig3.add_subplot(111)
+        ax3.plot(self.xdata, self.ydata1, lw=2, label='Atrial Data')
+        ax3.plot(self.xdata, self.ydata2, lw=2, label='Ventricle Data')
+        ax3.set_title('Egram Data')
+        ax3.set_xlabel('Time (t)')
+        ax3.set_ylabel('Voltage (V)')
+        ax3.legend(loc='upper right')
+        fig3.savefig('Combined_Graph.png')
+        plt.close(fig3)
+
+        print("Graphs saved as PNG files.")
 
 
+    def plot_surface_electrogram(self):
+        # Sum the data from ydata1 and ydata2
+        ydata3 = [self.ydata1[i] + self.ydata2[i] for i in range(len(self.ydata1))]
+
+        # Create a new figure for the surface electrogram
+        fig, ax = plt.subplots(figsize=(25, 12))
+
+        # Plot the summed data
+        ax.plot(self.xdata, ydata3, lw=2, label='Surface Electrogram')
+
+        # Set title and labels
+        ax.set_title('Surface Electrogram')
+        ax.set_xlabel('Time (t)')
+        ax.set_ylabel('Voltage (V)')
+        ax.legend(loc='upper right')
+
+        # Save the figure
+        fig.savefig('Surface_Electrogram.png')
+        plt.close(fig)
 

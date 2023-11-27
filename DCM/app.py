@@ -607,7 +607,9 @@ class App(ctk.CTk):
         # Prepare data
         report_date = datetime.now().strftime('%H:%M:%Y')
         serial_id = self.serial_app.serial_id  # Ensure this is defined in your class
-
+        self.serial_app_frame.save_graphs()  
+        self.serial_app_frame.plot_surface_electrogram()
+        parmaeters = send()
         # HTML content
         html_content = f"""
         <!DOCTYPE html>
@@ -638,6 +640,9 @@ class App(ctk.CTk):
                 th {{
                     background-color: #f2f2f2;
                 }}
+                .figure-label {{
+                    font-weight: bold;
+                }}
             </style>
         </head>
         <body>
@@ -660,6 +665,26 @@ class App(ctk.CTk):
                 <li>Marker Legend Report</li>
                 <li>Session Net Change Report</li>
             </ul>
+            <h2>Resulted Figures</h2>
+            <p>The following three figures below are the resultant graphs taken at the time interval chosen when the "print report" button was pressed. Figure 1 depicts the egram data \n
+                for the electrical acitivity found inside the atrium of the heart paced by the ATR_SIGNAL pin located at A0 on the board. Figure 2 depicts the egram daata for the \n
+                electrical activatiy related to ventricular pacing done by the VENT_SIGNAL pin located at A1 on the board. From these two graphs, we can look at the resultant graph \n
+                where we can combine the two to examine the relationship between atrial and ventricular pacing the pacemaker. </p>
+            <img src="Atrial_Graph.png" alt="Atrial Graph" style="width:100%;max-width:600px;"/>
+            <p><span class="figure-label">Figure 1:</span> Atrial Output Graph</p>
+            
+            <img src="Ventricle_Graph.png" alt="Ventricle Graph" style="width:100%;max-width:600px;"/>
+            <p><span class="figure-label">Figure 2:</span> Ventricle Output Graph</p>
+            
+            <img src="Combined_Graph.png" alt="Combined Graph" style="width:100%;max-width:600px;"/>
+            <p><span class="figure-label">Figure 3:</span> Combined Egram Data Graph</p>
+
+            <img src="Surface_Electrogram.png" alt="Surface Electrogram Graph" style="width:100%;max-width:800px;"/>
+            <p><span class="figure-label">Figure 3:</span> Surface Egram Graph</p>
+
+       
+            <h2>Parameters</h2>
+
 
             <!-- Add your content for each section here -->
 
@@ -677,3 +702,4 @@ class App(ctk.CTk):
 if __name__ == '__main__':
     app = App()
     app.mainloop()
+
