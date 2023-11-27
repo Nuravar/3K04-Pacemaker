@@ -178,7 +178,7 @@ class SerialApp(ctk.CTkFrame):
 
         self.serial_port, self.serial_id = list_available_ports()
         self.update_available_ports()
-        
+
     def start(self):
         print("started graphs")
         if not self.running:
@@ -201,7 +201,7 @@ class SerialApp(ctk.CTkFrame):
             current_time = time.time() - self.start_time
 
             # Pull data from egram (replace with your data fetching logic)
-            egram_data = egramPull('COM5')
+            egram_data = egramPull(self.serial_port)
 
             # Append new data for both lines
             self.xdata.append(current_time)
