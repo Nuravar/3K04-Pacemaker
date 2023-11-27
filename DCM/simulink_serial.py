@@ -7,7 +7,57 @@ import struct
 import time
 import threading
 import customtkinter as ctk  # Replace tkinter with customtkinter
+import serial.tools.list_ports
+import re
+import json
 
+def check_and_update_boards(serial_id):
+    try:
+        # Try to open the boards.json file
+        with open('boards.json', 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        # If the file is not found, create an empty dictionary
+        data = {'Boards': {}}
+
+    # Check if the given serial_id already exists
+    if serial_id in data['Boards']:
+        # If it exists, display the corresponding board number
+        board_number = data['Boards'][serial_id]
+        print(f"Board with serial comm id {serial_id} exists. Board Number: {board_number}")
+    else:
+        # If it doesn't exist, find the next available board number
+        board_numbers = [int(board.split()[-1]) for board in data['Boards'].values()]
+        next_board_number = max(board_numbers) + 1 if board_numbers else 1
+
+        # Add the new serial_id and corresponding board number to the dictionary
+        data['Boards'][serial_id] = f"Board {next_board_number}"
+
+        # Display the new information
+        print(f"Added new Board with serial comm id {serial_id}. Board Number: {data['Boards'][serial_id]}")
+
+        # Save the updated data back to the boards.json file
+        with open('boards.json', 'w') as file:
+            json.dump(data, file, indent=2)
+
+
+def list_available_ports():
+    ports = serial.tools.list_ports.comports()
+    if not ports:
+        print("No COM ports found")
+    else:
+        for port, desc, hwid in sorted(ports):
+            
+            pattern = r'SER=(\d+)'
+            match = re.search(pattern, hwid)
+            if match:
+                ser_number = match.group(1)
+                return port, ser_number
+        return None, None
+            
+
+# Call the function to list available COM ports
+list_available_ports()
 
 
 def receiveSerial(port):
@@ -132,6 +182,8 @@ class SerialApp(ctk.CTkFrame):
         self.start_time = None
         self.running = False
         self.max_length = 50  # Define the maximum length of the data arrays
+
+        self.serial_port, self.serial_id = list_available_ports()
 
     def start(self):
         print("started graphs")
