@@ -5,7 +5,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 import struct
 import time
-import threading
 import customtkinter as ctk  # Replace tkinter with customtkinter
 import serial.tools.list_ports
 import re

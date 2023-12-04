@@ -180,7 +180,7 @@ class App(ctk.CTk):
         password_check = self.create_password_check.get()
 
         # Check if the number of accounts exceeds 10
-        if len(self.get_user_list()) >= 10:
+        if len(self.get_user_list()) >= 3:
             error_message = "Maximum number of accounts reached."
             self.show_message("Accounts Error", error_message)
             return
