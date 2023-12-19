@@ -1,35 +1,106 @@
-# PacePlusPlus
+# Pace++ 💖
+Pace++ is a simulated pacemaker built to visually and functionally represent the various functions of modern pacemakers today. The following project is based of [Boston Scientific's](https://www.bostonscientific.com/en-US/Home.html) pacemaker specifications. 
 
-## Introduction
-
-Welcome to Pace++! In the dynamic landscape of cardiac healthcare, our project takes center stage, introducing a state-of-the-art artificial pacemaker designed to meticulously regulate the heart's rhythm under a variety of conditions.
-
-## Project Overview
-
-In the realm of cardiac care, our artificial pacemaker stands as a pivotal device, strategically implanted to interface directly with the heart via the subclavian vein. Engineered to deliver precise electrical pulses to the right atrium and ventricle, our pacemaker rectifies irregular heartbeats, stabilizing the cardiac conduction system and ensuring seamless blood circulation.
-
-## Development Process
-
-1. Modeling with MATLAB Simulink
-
-Central to our development process was the use of MATLAB Simulink, a dynamic simulation environment. Simulink allowed us to meticulously model and refine our pacemaker's architecture, ensuring a high degree of accuracy and reliability in the design.
-
-2. Validation with Heartview
-
-To rigorously test and validate our state flow diagrams, we employed Heartview, a sophisticated cardiac simulation tool. The dual-platform approach of Simulink and Heartview was instrumental in achieving a robust design.
-
-3. Device Controller Monitor (DCM)
-
-A cornerstone of our pacemaker's innovation is the incorporation of the Device Controller Monitor (DCM). The DCM facilitates adaptive responses to individual patient cardiac cycles and provides a user-friendly interface for monitoring and modifying operational parameters.
-
-4. Multi-User Functionality
-
-Our DCM includes an advanced data management system capable of registering and storing information for up to ten users. This multi-user functionality enhances the pacemaker's versatility and practicality in diverse clinical settings, allowing each user to customize settings for personalized cardiac care.
+Through model-based code generation and a python gui, we created the following features:
+- 7 unique pacemaker modes (AOO, VOO, AAI, VVI, AOOR, VOOR, AAIR, VVIR)
+- Real-time electrocardiogram display
+- Local encrypted data storages     
 
 ## Technology Stack
+[Python](https://www.python.org/) | [Matlab Simulink](https://www.mathworks.com/products/simulink.html) | [Customtkinter](https://customtkinter.tomschimansky.com/) | [NXP FRDM K64F Board](https://www.nxp.com/design/design-center/development-boards/freedom-development-boards/mcu-boards/freedom-development-platform-for-kinetis-k64-k63-and-k24-mcus:FRDM-K64F) | [J-Link](https://www.segger.com/downloads/jlink/)
 
-Our project leverages Python and custom Tkinter for the DCM's user interface and serial communications. Simulink is employed for hardware control, reflecting a harmonious integration of mechatronics, embedded systems, and software development.
+## Showcase 
+#### DCM
+<p align="center">
+  <img src="Images/IntroScreen-Dark.png" alt="Intro Screen Dark" />
+  <br>
+  <em>The Intro Screen in Dark Mode</em>
+</p>
+<p align="center">
+  <img src="Images/IntroScreen-Light.png" alt="Intro Screen Dark" />
+  <br>
+  <em>The Intro Screen in Dark Mode</em>
+</p>
 
-## Conclusion
+<p align="center">
+  <img src="Images\EgramScreen1.png" alt="Intro Screen Dark" />
+  <br>
+  <em>Display of Heartrate in Dark Mode</em>
+</p>
 
-Pace++ represents a fusion of cutting-edge engineering and patient-centered design, setting a new benchmark in cardiac pacemaker technology. It showcases the essence of mechatronics, embedded systems, and the importance of software development and safety in healthcare innovations. Enjoy the journey through the following sections, and feel free to explore the codebase for a closer look at our groundbreaking work!
+#### Simulink
+<p align="center">
+  <img src="Images\Simulink1.jpg" alt="Intro Screen Dark" />
+  <br>
+  <em>General Overview of the Simulink Stateflow</em>
+</p>
+<p align="center">
+  <img src="Images\Simulink3.jpg" alt="Intro Screen Dark" />
+  <br>
+  <em> Overview of the Parameter Processing</em>
+</p>
+<p align="center">
+  <img src="Images\Simulink2.jpg" alt="Intro Screen Dark" />
+  <br>
+  <em>Overview of the Pacemaker Modes</em>
+</p>
+
+
+## Development Process
+#### Modeling with MATLAB Simulink
+Central to modelling our pacemaker's functionality was the use of MATLAB Simulink, which allowed us to generate code iteratively and quickly flash our code into our board. 
+
+Through user-set parameters, our Simulink code allow for pacing of both the atrium and ventricle alongside rate adaptive pacing with a in-built accelerometer. 
+
+All important user-set data and electrocardiogram data was framed. The resulting packet was sent through a micro-usb to the device controller monitor.  
+#### Device Controller Monitor (DCM)
+Through python's tkinter, we created a secure interface that allows for the modification of the pacemaker. Our GUI allows for:
+- Real-time display of the simulated heartbeat
+- Patient data to be saved and modified
+- Encryption of patient data
+- Serial communication to the K64F board
+
+#### Validation
+To test and validate our pacemaker mode function, we employed Heartview, a McMaster created cardiac simulation tool that was pre-flashed onto our board.
+
+## Installation
+#### Prerequisites
+1. Python 3.18 or later
+2. MATLAB Simulink 2023 or later
+
+#### Python Libraries 
+```bash
+pip install customtkinter matplotlib serial cyrptography 
+```
+
+#### MATLAB Simulink Libraries
+- Embedded Coder, Fixed-Point Designer, MATLAB Coder, Simulink Check, Simulink Coder, Simulink Coverage, Simulink Design Verifier, Simulink Desktop Real-Time, Simulink Test, and Stateflow
+- [Simulink Coder Support Package for NXP FRDM-K64F Board](https://www.mathworks.com/matlabcentral/fileexchange/55318-simulink-coder-support-package-for-nxp-frdm-k64f-board#:~:text=Simulink%C2%AE%20Coder%E2%84%A2%20Support,K64F%20peripherals%20and%20communication%20interfaces.)
+- [Kinetis SDK 1.2.0 mainline release](https://www.nxp.com/design/design-center/designs/software-development-kit-for-kinetis-mcus:KINETIS-SDK)
+- [V6.20a of the J-Link Software](https://www.segger.com/downloads/jlink/)
+
+In MATLAB, write the following in to the terminal:
+```matlab
+open([codertarget.freedomk64f.internal.getSpPkgRootDir,
+'/src/mw_sdk_interface.c']);
+```
+Upon opening the device change the following line:
+```matlab
+{ GPIO_MAKE_PIN(GPIOA_IDX, 0),  MW_NOT_USED},// PTA0, D8
+```
+into the following:
+```matlab
+{ GPIO_MAKE_PIN(GPIOC_IDX, 12),  MW_NOT_USED},// PTC12, D8
+```
+
+## Contributors
+[Christopher Nazarian](https://www.linkedin.com/in/christopher-nazarian-66394016a/)
+[Himanshu Singh](https://www.linkedin.com/in/himanshu-singh-99470b207/)
+[Matthew Galuszka](https://www.linkedin.com/in/mathew-galuszka-151bb1231/)
+[Shaan Suthar](https://www.linkedin.com/in/shaan-suthar/)
+[Varun Kothandaraman](https://www.linkedin.com/in/varun-ram/)
+[Shivan Guar](https://www.linkedin.com/in/shivan-gaur/)
+
+
+
+
