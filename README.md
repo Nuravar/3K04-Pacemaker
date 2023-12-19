@@ -12,6 +12,12 @@ Through model-based code generation and a python gui, we created the following f
 ## Showcase 
 #### DCM
 <p align="center">
+  <img src="Images\K64F-Board.jpg" alt="Intro Screen Dark" />
+  <br>
+  <em>The FRDM-K64F Board</em>
+</p>
+
+<p align="center">
   <img src="Images/IntroScreen-Dark.png" alt="Intro Screen Dark" />
   <br>
   <em>The Intro Screen in Dark Mode</em>
